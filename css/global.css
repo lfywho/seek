@@ -1,8 +1,9 @@
 /* ROOT */
 
-
-
-
+:root{
+    --pretoHeader: #0F0F0F;
+    --azul: #322BF0;
+}
 
 /* RESET */
 * {
@@ -14,12 +15,56 @@
 
 a {
     text-decoration: none;
-    color: black;
+    color: var(--pretoHeader);
 }
 
 /* HEADER */
 
 .cabecalho {
     background-color: black;
-    height: 5rem;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0 20px;
+}
+
+.logo{
+    height: 60%;
+}
+
+.logo a img{
+    height: 100%;
+}
+
+.navegarPaginas{
+    display: flex;
+    gap: 20px;
+    height: 100%;
+    align-items: center;
+}
+
+.navegarPaginas a{
+    color: white;
+}
+
+.abaAtiva {
+    height: 90%;
+    border-bottom: 4px solid var(--azul);
+    display: flex;
+    align-items: center;
+}
+
+.inputPesquisa{
+    width: 35%;
+    height: 30px;
+    background-color: var(--pretoHeader);
+    border-radius: 15px;
+    border: 1px solid white;
+}
+
+.menusHeader {
+    display: flex;
+    align-items: center;
+    gap: 20px;
 }
