@@ -7,6 +7,8 @@
 <body>
 
     <?php include __DIR__ . '/../view/header.php'; ?>
+    <?php include __DIR__ . '/../view/categoriesCarousel.php'; ?>
+    <?php include __DIR__ . '/../view/main.php'; ?>
     
 </body>
 </html>
