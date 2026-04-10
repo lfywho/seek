@@ -1,28 +1,39 @@
-<?php 
+<?php
+include __DIR__ . "/config/variaveisgerais.php";
 
-    //recebe o caminho desejado pelo usuario --- _SERVER recebe todas as informações do apache
-    $caminho = $_SERVER['REQUEST_URI'];
+//variavel nativa do php que contem informaçoes da url
+$url = $_SERVER["REQUEST_URI"];
 
-    //separa o caminho de possíveis argumentos
-    $vetorcaminho = parse_url($caminho);
+//variavel que remove parametros da url
+$divisao = parse_url($url);
 
-    //pega apenas o caminho sem os argumentos
-    $somentecaminho = $vetorcaminho['path'];
+//pega apenas uma parte da url
+$caminho = $divisao["path"];
 
-    //remove as barras do inicio e fim do caminho
-    $somentecaminho = trim($somentecaminho, '/');
+//remove a ultima barra na string 
+$caminho = trim($caminho, "/");
 
-    //gerar um vetor a partir do caminho restante
-    // considerar a barra como caractere para separação
-    $vetorcaminho = explode('/', $somentecaminho);
+//divite a string toda vez que aparece uma barra (/)
+$divisao = explode("/", $caminho);
 
-    //captura apenas o primeiro indice do vetor
-    $url = $vetorcaminho[0];
+// pega apenas a primeira chave do array
+$url = $divisao[0];
 
-    if($url == ''){
-        include __DIR__ . '/app/controller/inicioController.php';
-    }else{
-        include __DIR__ . '/app/controller/inexistenteController.php';
-    }
+
+//array com todas as rotas
+require __DIR__ . "/app/core/Rotas.php";
+
+
+//verifica se a string da variavel url existe no array rotas
+if (array_key_exists($url, $rotas)) {
+    //armazena em uma variavel a cheve que corresponde a variavel url
+    $nomecontrolador = $rotas[$url];
+    //redireciona o usuario para a pagina desejada
+    include __DIR__ . "/app/controller/$nomecontrolador.php";
+} else {
+    //caso não exista a pagina digitada redireciona para a pagina de erro
+    include __DIR__ . "/app/controller/inexistenteController.php";
+}
+
 
 ?>
