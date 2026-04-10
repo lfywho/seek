@@ -1,9 +1,18 @@
-<?php $titulopagina = "Seek - Inicio"; ?>
+<?php $titulopagina = "Seek - Inicio"; 
+
+$css = [
+    "css/global.css"
+];
+
+$js = [
+    "js/post-modal.js"
+];
+
+?>
 
 <!DOCTYPE html>
 <html lang="pt-br">
 <?php include __DIR__ . '/../view/head.php'; ?>
-<link rel="stylesheet" href="../css/global.css">
 <body>
 
     <?php include __DIR__ . '/../view/header.php'; ?>

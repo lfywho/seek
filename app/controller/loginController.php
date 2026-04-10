@@ -5,6 +5,11 @@ $titulopagina = "Seek - Login";
 $css = [
     "css/global.css"
 ];
+
+$js = [
+    "js/iniciologin.js"
+];
+
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">

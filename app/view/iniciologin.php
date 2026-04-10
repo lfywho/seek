@@ -22,7 +22,12 @@
 					<input type="email" id="email" name="email" required>
 
 					<label for="senha">Senha:</label>
-					<input type="password" id="senha" name="senha" required>
+					<div class="inicio-login__campo-senha">
+						<input type="password" id="senha" name="senha" required>
+						<button type="button" class="inicio-login__toggle-senha" aria-label="Mostrar senha" aria-pressed="false">
+							<img src="/assets/imgs/icons/hide_circle.svg" alt="" aria-hidden="true">
+						</button>
+					</div>
 
 					<a class="inicio-login__esqueci" href="#">Esqueci minha senha</a>
 
@@ -45,17 +50,37 @@
 				<h2>Cadastro</h2>
 				<p>Ja possui uma conta? <a href="#" data-toggle-form="login" class="link_fake">Entrar</a></p>
 
-				<form class="inicio-login__form" action="/cadastrar" method="post">
+				<form class="inicio-login__form" action="/cadastrar" method="post" id="cadastro-form">
 					<label for="cadastro-email">Email:</label>
 					<input type="email" id="cadastro-email" name="email" required>
 
 					<label for="cadastro-senha">Senha:</label>
-					<input type="password" id="cadastro-senha" name="senha" required>
+					<div class="inicio-login__campo-senha">
+						<input type="password" id="cadastro-senha" name="senha" required>
+						<button type="button" class="inicio-login__toggle-senha" aria-label="Mostrar senha" aria-pressed="false">
+							<img src="/assets/imgs/icons/hide_circle.svg" alt="" aria-hidden="true">
+						</button>
+					</div>
+
+					<div class="inicio-login__dicas-senha" id="cadastro-dicas-senha" hidden>
+						<p>Crie uma senha:</p>
+						<ul>
+							<li data-regra="tamanho">com pelo menos 8 caracteres</li>
+							<li data-regra="maiuscula-minuscula">com letras minusculas (a-z) e maiusculas (A-Z)</li>
+							<li data-regra="numero-simbolo">com pelo menos um numero (0-9) ou um simbolo</li>
+							<li data-regra="sem-email">que nao inclua seu endereco de email</li>
+						</ul>
+					</div>
 
 					<label for="cadastro-confirmar-senha">Confirmar senha:</label>
-					<input type="password" id="cadastro-confirmar-senha" name="confirmar_senha" required>
+					<div class="inicio-login__campo-senha">
+						<input type="password" id="cadastro-confirmar-senha" name="confirmar_senha" required>
+						<button type="button" class="inicio-login__toggle-senha" aria-label="Mostrar senha" aria-pressed="false">
+							<img src="/assets/imgs/icons/hide_circle.svg" alt="" aria-hidden="true">
+						</button>
+					</div>
 
-					<button type="submit" class="inicio-login__continuar">Continuar</button>
+					<button type="submit" class="inicio-login__continuar" id="cadastro-continuar" disabled>Continuar</button>
 
 					<div class="inicio-login__divisor"><span>ou</span></div>
 
@@ -72,36 +97,3 @@
 		</article>
 	</section>
 </main>
-
-<script>
-	(function () {
-		const paineis = document.querySelectorAll('[data-form-panel]');
-		const alternadores = document.querySelectorAll('[data-toggle-form]');
-		let painelAtual = document.querySelector('.inicio-login__painel--ativo') || paineis[0];
-
-		function mostrarPainel(nomePainel) {
-			const proximoPainel = document.querySelector('[data-form-panel="' + nomePainel + '"]');
-
-			if (!proximoPainel || proximoPainel === painelAtual) {
-				return;
-			}
-
-			painelAtual.hidden = true;
-			painelAtual.classList.remove('inicio-login__painel--ativo', 'inicio-login__painel--entrando');
-
-			proximoPainel.hidden = false;
-			proximoPainel.classList.remove('inicio-login__painel--entrando');
-			void proximoPainel.offsetWidth;
-			proximoPainel.classList.add('inicio-login__painel--ativo', 'inicio-login__painel--entrando');
-
-			painelAtual = proximoPainel;
-		}
-
-		alternadores.forEach(function (link) {
-			link.addEventListener('click', function (event) {
-				event.preventDefault();
-				mostrarPainel(link.getAttribute('data-toggle-form'));
-			});
-		});
-	})();
-</script>

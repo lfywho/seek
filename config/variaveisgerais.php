@@ -4,5 +4,7 @@
     
     $css = ["global.css"];
 
+    $js = [];
+
     $vsite = 1;
 ?>

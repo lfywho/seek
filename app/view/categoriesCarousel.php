@@ -51,9 +51,13 @@
 
 		if (!cards.length) return;
 
-		const gap = 12;
-		const cardWidth = cards[0].offsetWidth + gap;
-		const scrollStep = cardWidth * 3;
+		const getScrollStep = () => {
+			const styles = window.getComputedStyle(track);
+			const gap = parseFloat(styles.columnGap || styles.gap || '0');
+			const cardWidth = cards[0].offsetWidth + gap;
+			const visibleCards = window.innerWidth < 768 ? 2 : 4;
+			return cardWidth * visibleCards;
+		};
 
 		const updateButtons = () => {
 			const maxScroll = track.scrollWidth - track.clientWidth - 1;
@@ -62,11 +66,11 @@
 		};
 
 		prev.addEventListener('click', () => {
-			track.scrollBy({ left: -scrollStep, behavior: 'smooth' });
+			track.scrollBy({ left: -getScrollStep(), behavior: 'smooth' });
 		});
 
 		next.addEventListener('click', () => {
-			track.scrollBy({ left: scrollStep, behavior: 'smooth' });
+			track.scrollBy({ left: getScrollStep(), behavior: 'smooth' });
 		});
 
 		track.addEventListener('scroll', updateButtons);

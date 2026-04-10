@@ -6,4 +6,7 @@
     <?php for($g=0; $g<count($css); $g++): ?>
         <link rel="stylesheet" href="<?= $css[$g] ?>">
     <?php endfor; ?>
+    <?php for($j=0; $j<count($js); $j++): ?>
+        <script src="<?= $js[$j] ?>"></script>
+    <?php endfor; ?>
 </head>
