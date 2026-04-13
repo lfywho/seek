@@ -1,6 +1,3 @@
-/* ROOT */
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
-
 :root{
     --pretoHeader: #0F0F0F;
     --azul: #322BF0;
@@ -38,7 +35,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-image: url('/assets/imgs/fundo_login.jpg');
+    background-image: url('../img/fundo_login.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -267,6 +264,170 @@ body {
     background: #9da1b5;
 }
 
+.inicio-login__mensagem {
+    margin-top: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+.inicio-login__mensagem--erro {
+    color: #b32929;
+}
+
+.inicio-login__mensagem--sucesso {
+    color: #0f7c57;
+}
+
+.inicio-login__mensagem--oculta {
+    display: none;
+}
+
+.inicio-login__modal {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    display: grid;
+    place-items: center;
+    padding: 16px;
+}
+
+.inicio-login__modal[hidden] {
+    display: none;
+}
+
+.inicio-login__modal-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(5, 11, 21, 0.58);
+    backdrop-filter: blur(2px);
+}
+
+.inicio-login__modal-card {
+    position: relative;
+    z-index: 1;
+    width: min(380px, calc(100vw - 24px));
+    background: #f4f4f4;
+    border-radius: 8px;
+    padding: 24px 18px 20px;
+    box-shadow: 0 18px 42px rgba(0, 0, 0, 0.34);
+    animation: inicioLoginModalIn 0.25s ease;
+}
+
+.inicio-login__modal-card .inicio-login__form {
+    gap: 8px;
+}
+
+.inicio-login__modal-card .inicio-login__form input {
+    width: 100%;
+    height: 38px;
+}
+
+.inicio-login__modal-card .inicio-login__continuar {
+    margin-top: 14px;
+}
+
+.inicio-login__modal-fechar {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 28px;
+    height: 28px;
+    border: 0;
+    border-radius: 50%;
+    background: #e3e3e3;
+    color: #202020;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.inicio-login__modal-card h3 {
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 24px;
+    line-height: 1.1;
+}
+
+.inicio-login__modal-subtitulo {
+    text-align: center;
+    font-size: 12px;
+    margin-bottom: 8px;
+    color: #3d3d3d;
+}
+
+.inicio-login__recuperacao-etapa[hidden] {
+    display: none;
+}
+
+.inicio-login__codigo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    margin: 2px 0 4px;
+}
+
+.inicio-login__reenviar-email {
+    width: 100%;
+    height: 36px;
+    margin-top: 6px;
+    border-radius: 6px;
+    border: 1px solid var(--azul);
+    background: transparent;
+    color: var(--azul);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.inicio-login__reenviar-email:hover:not(:disabled) {
+    background: var(--azul);
+    color: #fff;
+}
+
+.inicio-login__reenviar-email:disabled {
+    border-color: #9da1b5;
+    color: #9da1b5;
+    cursor: not-allowed;
+}
+
+.inicio-login__timer {
+    text-align: center;
+    font-size: 11px;
+    color: #666;
+    margin-top: 4px;
+}
+
+.inicio-login__codigo-input {
+    width: 38px !important;
+    height: 42px !important;
+    padding: 0 !important;
+    text-align: center;
+    font-size: 19px;
+    font-weight: 700;
+    border-radius: 6px !important;
+}
+
+.inicio-login__codigo-separador {
+    font-size: 22px;
+    font-weight: 700;
+    color: #555;
+    margin: 0 2px;
+}
+
+@keyframes inicioLoginModalIn {
+    0% {
+        opacity: 0;
+        transform: translateY(10px) scale(0.98);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
 .inicio-login__divisor {
     position: relative;
     text-align: center;
@@ -398,6 +559,35 @@ body {
         height: 40px;
     }
 
+    .inicio-login__modal-card {
+        width: min(380px, calc(100vw - 20px));
+        border-radius: 10px;
+        padding: 20px 14px 16px;
+    }
+
+    .inicio-login__modal-card h3 {
+        font-size: clamp(22px, 6.5vw, 28px);
+        margin-bottom: 8px;
+    }
+
+    .inicio-login__modal-subtitulo {
+        font-size: 13px;
+    }
+
+    .inicio-login__codigo {
+        gap: 6px;
+    }
+
+    .inicio-login__codigo-input {
+        width: 42px !important;
+        height: 42px !important;
+        font-size: 20px;
+    }
+
+    .inicio-login__modal-card .inicio-login__continuar {
+        margin-top: 12px;
+    }
+
     .inicio-login__social {
         font-size: 13px;
         gap: 6px;
@@ -511,6 +701,13 @@ body {
     display: block;
 }
 
+#perfilMenuButton img {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
 .menuHeaderButton:hover {
     transform: translateY(-3px);
     transition: 0.3s;
@@ -544,8 +741,8 @@ body {
 }
 
 .perfilDropdownTop img {
-    width: 44px;
-    height: 44px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     object-fit: cover;
 }
@@ -675,10 +872,35 @@ body {
     padding: 12px 12px 14px;
 }
 
+.notificationsDropdownHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin: 2px 6px 12px;
+}
+
 .notificationsDropdownTitle {
     font-size: 16px;
     color: #111;
-    margin: 2px 6px 12px;
+    margin: 0;
+}
+
+.notificationsClearAllButton {
+    border: 0;
+    background: transparent;
+    color: #2f43ff;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 2px 4px;
+    border-radius: 6px;
+}
+
+.notificationsClearAllButton:hover,
+.notificationsClearAllButton:focus-visible {
+    background: #e8ebff;
+    outline: none;
 }
 
 .notificationsDropdownList {
@@ -708,6 +930,13 @@ body {
     border-radius: 18px;
     padding: 10px 10px 12px;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    position: relative;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.notificationCard.is-unread {
+    border-color: #96a0ff;
+    box-shadow: 0 0 0 2px rgba(50, 43, 240, 0.12);
 }
 
 .notificationAvatar {
@@ -732,6 +961,47 @@ body {
     font-size: 11px;
     line-height: 1.25;
     color: #333;
+}
+
+.notificationDeleteButton {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 24px;
+    height: 24px;
+    border: 0;
+    border-radius: 50%;
+    background: #f3f3f3;
+    padding: 4px;
+    opacity: 0;
+    pointer-events: none;
+    cursor: pointer;
+    transition: opacity 0.15s ease, background 0.15s ease;
+}
+
+.notificationDeleteButton img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.notificationCard:hover .notificationDeleteButton,
+.notificationCard:focus-within .notificationDeleteButton {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.notificationDeleteButton:hover,
+.notificationDeleteButton:focus-visible {
+    background: #ffdcdc;
+    outline: none;
+}
+
+.notificationsEmpty {
+    text-align: center;
+    color: #666;
+    font-size: 12px;
+    padding: 16px 8px;
 }
 
 .notificationsCTA {
@@ -952,6 +1222,22 @@ body {
     border-top: 1px solid #ececec;
 }
 
+.feedInfoLeft {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.feedPostTitle {
+    font-size: 11px;
+    font-weight: 700;
+    color: #222;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .logoName {
     min-width: 0;
     display: flex;
@@ -1066,43 +1352,41 @@ body {
     position: relative;
     z-index: 1;
     background: #fff;
-    border-radius: 8px;
+    border-radius: 10px;
     width: 100%;
     max-width: 900px;
-    min-height: 600px;
-    max-height: 95vh;
+    min-height: 500px;
+    max-height: 84vh;
     display: grid;
-    grid-template-columns: 1.2fr 1fr;
+    grid-template-columns: 1.15fr 1fr;
     overflow: hidden;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 24px 55px rgba(0, 0, 0, 0.35);
 }
 
 .post-modal__close {
-    position: absolute;
-    top: 14px;
-    right: 14px;
-    z-index: 10;
-    width: 32px;
-    height: 32px;
+    width: 34px;
+    height: 34px;
     border: 0;
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 50%;
-    font-size: 24px;
+    background: transparent;
+    border-radius: 6px;
+    font-size: 30px;
+    font-weight: 300;
+    line-height: 1;
+    color: #1a1a1a;
     cursor: pointer;
     display: grid;
     place-items: center;
-    transition: all 0.2s ease;
+    transition: background 0.2s ease;
 }
 
 .post-modal__close:hover {
-    background: #fff;
-    transform: scale(1.05);
+    background: #f1f1f1;
 }
 
 .post-modal__image {
     width: 100%;
     height: 100%;
-    background: #f0f0f0;
+    background: #ebebeb;
     display: grid;
     place-items: center;
 }
@@ -1114,108 +1398,90 @@ body {
 }
 
 .post-modal__info {
-    padding: 28px;
+    padding: 18px 22px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 14px;
 }
 
-.post-modal__header {
+.post-modal__top {
     display: flex;
-    justify-content: space-between;
-    align-items: start;
-    padding-right: 46px;
+    align-items: flex-start;
     gap: 12px;
 }
 
-.post-modal__header h2 {
-    font-size: 22px;
+.post-modal__top h2 {
+    font-size: 36px;
+    line-height: 1.05;
     font-weight: 700;
     flex: 1;
+    max-width: 240px;
 }
 
 .post-modal__actions {
     display: flex;
     gap: 8px;
-    flex: 0 0 auto;
+    margin-left: auto;
 }
 
-.post-modal__like,
-.post-modal__favorite {
+.post-modal__icon-btn {
     width: 40px;
     height: 40px;
-    border: 1px solid #ddd;
+    border: 1px solid #dedede;
     background: #fff;
-    border-radius: 4px;
+    border-radius: 6px;
     cursor: pointer;
     display: grid;
     place-items: center;
+    font-size: 18px;
+    color: #252525;
     transition: all 0.2s ease;
 }
 
-.post-modal__like:hover,
-.post-modal__favorite:hover {
+.post-modal__icon-btn:hover {
     background: #f5f5f5;
-    border-color: #bbb;
+    border-color: #c3c3c3;
 }
 
-.post-modal__like.active,
-.post-modal__favorite.active {
+.post-modal__icon-btn.active {
     background: var(--azul);
     color: #fff;
     border-color: var(--azul);
 }
 
-.post-modal__like img {
-    width: 16px;
-    height: 16px;
-}
-
-.post-modal__favorite {
-    font-size: 18px;
-    line-height: 1;
-}
-
 .post-modal__author {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 13px;
-    color: #666;
-}
-
-.post-modal__author-avatar {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    object-fit: cover;
+    font-size: 14px;
+    font-weight: 300;
+    color: #777;
+    line-height: 1.2;
 }
 
 .post-modal__description {
-    font-size: 15px;
-    line-height: 1.6;
-    color: #333;
+    font-size: 14px;
+    line-height: 1.4;
+    color: #3d3d3d;
+    margin-top: 6px;
 }
 
 .post-modal__stats {
     display: flex;
-    gap: 16px;
-    font-size: 12px;
-    color: #999;
-    border-top: 1px solid #eee;
-    border-bottom: 1px solid #eee;
-    padding: 8px 0;
+    gap: 14px;
+    font-size: 13px;
+    color: #9a9a9a;
+    border-top: 1px solid #ebebeb;
+    border-bottom: 1px solid #ebebeb;
+    padding: 10px 0;
 }
 
 .post-modal__comments {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
 }
 
 .post-modal__comments h3 {
-    font-size: 16px;
+    font-size: 30px;
     font-weight: 700;
 }
 
@@ -1223,91 +1489,67 @@ body {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    max-height: 150px;
+    max-height: 170px;
     overflow-y: auto;
 }
 
 .post-modal__comment {
-    padding: 8px;
-    background: #f9f9f9;
-    border-radius: 4px;
-    font-size: 12px;
+    padding: 10px 12px;
+    background: #f5f5f5;
+    border-radius: 8px;
+    font-size: 14px;
 }
 
 .post-modal__comment-user {
     font-weight: 600;
-    margin-bottom: 2px;
+    margin-bottom: 4px;
+    color: #1e1e1e;
 }
 
 .post-modal__comment-text {
-    color: #2f2f2f;
+    color: #424242;
     line-height: 1.35;
 }
 
 .post-modal__comment-reply {
-    margin-top: 6px;
+    margin-top: 8px;
     border: 0;
     background: transparent;
     color: var(--azul);
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 600;
     cursor: pointer;
     padding: 0;
 }
 
-.post-modal__replies {
-    margin-top: 8px;
-    margin-left: 12px;
-    padding-left: 10px;
-    border-left: 2px solid #e8e8e8;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.post-modal__reply {
-    background: #fff;
-    border: 1px solid #ececec;
-    border-radius: 4px;
-    padding: 6px;
-}
-
 .post-modal__comment-input {
     display: flex;
-    gap: 8px;
+    gap: 10px;
     align-items: center;
-    padding-bottom: 8px;
-    border-bottom: 1px solid #eee;
-}
-
-.post-modal__comment-input img {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    object-fit: cover;
 }
 
 .post-modal__comment-input input {
     flex: 1;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 6px 8px;
-    font-size: 12px;
+    border: 1px solid #dcdcdc;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 14px;
     outline: none;
 }
 
 .post-modal__comment-input input:focus {
-    border-color: var(--azul);
+    border-color: #bdbdbd;
 }
 
 .post-modal__comment-input button {
-    padding: 6px 12px;
-    padding: 8px 14px;
+    height: 36px;
+    padding: 0 18px;
     background: var(--azul);
     color: #fff;
     border: 0;
-    border-radius: 4px;
-    font-size: 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
 }
@@ -1321,19 +1563,19 @@ body {
     align-items: center;
     justify-content: space-between;
     gap: 8px;
-    font-size: 12px;
+    font-size: 14px;
     color: #4f4f4f;
-    background: #f6f7ff;
-    border: 1px solid #d9ddff;
-    border-radius: 4px;
-    padding: 6px 8px;
+    background: #f4f4f7;
+    border: 1px solid #d5d8ef;
+    border-radius: 6px;
+    padding: 10px 12px;
 }
 
 .post-modal__reply-target button {
     border: 0;
     background: transparent;
     color: var(--azul);
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 700;
     cursor: pointer;
 }
@@ -1345,10 +1587,34 @@ body {
     }
 
     .post-modal__image {
-        height: 300px;
+        height: 260px;
     }
 
     .post-modal__info {
         max-height: calc(90vh - 300px);
+        padding: 16px;
+    }
+
+    .post-modal__top h2 {
+        font-size: 21px;
+        max-width: 100%;
+    }
+
+    .post-modal__author {
+        font-size: 14px;
+    }
+
+    .post-modal__description {
+        font-size: 14px;
+    }
+
+    .post-modal__stats,
+    .post-modal__comments h3,
+    .post-modal__comment,
+    .post-modal__comment-reply,
+    .post-modal__comment-input button,
+    .post-modal__reply-target,
+    .post-modal__reply-target button {
+        font-size: 14px;
     }
 }

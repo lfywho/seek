@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/global.css">
+</head>
+
+<body>
+
+    <header class="cabecalho">
+    </header>
+    <section class="categories-carousel">
+
+        <div class="carousel-wrapper">
+            <button class="carousel-btn prev" aria-label="Categorias anteriores">&#10094;</button>
+
+            <div class="carousel-viewport">
+                <div class="carousel-track" id="categoriesTrack">
+                    <!-- JS vai inserir aqui -->
+                </div>
+            </div>
+
+            <button class="carousel-btn next" aria-label="Próximas categorias">&#10095;</button>
+        </div>
+    </section>
+    <main class="conteudo">
+
+        <section class="feedImgs" id="feedContainer" aria-label="Feed de projetos">
+            <!-- JS vai inserir os posts aqui -->
+        </section>
+
+        <!-- Modal continua igual -->
+        <div class="post-modal" id="postModal" hidden>
+            <div class="post-modal__overlay"></div>
+            <div class="post-modal__content">
+                <div class="post-modal__image">
+                    <img id="modalPostImg" src="" alt="">
+                </div>
+
+                <div class="post-modal__info">
+                    <div class="post-modal__top">
+                        <h2 id="modalPostTitulo"></h2>
+
+                        <div class="post-modal__actions">
+                            <button type="button" class="post-modal__icon-btn" id="modalLike" aria-label="Curtir">👍</button>
+                            <button type="button" class="post-modal__icon-btn" id="modalFavorite" aria-label="Favoritar">☆</button>
+                        </div>
+
+                        <button type="button" class="post-modal__close" aria-label="Fechar modal">×</button>
+                    </div>
+
+                    <div class="post-modal__author">
+                        <span id="modalAuthorName"></span>
+                    </div>
+
+                    <p class="post-modal__description" id="modalDescription"></p>
+
+                    <div class="post-modal__stats">
+                        <span id="modalAprovacao"></span>
+                        <span id="modalLikes"></span>
+                    </div>
+
+                    <section class="post-modal__comments" aria-label="Comentários do post">
+                        <h3>Comentários</h3>
+
+                        <div class="post-modal__comment-input">
+                            <input id="commentInput" type="text" placeholder="Adicione um comentário...">
+                            <button id="sendComment" type="button">Enviar</button>
+                        </div>
+
+                        <div class="post-modal__reply-target" id="replyTarget" hidden>
+                            <span id="replyTargetText">Respondendo comentário</span>
+                            <button type="button" id="cancelReply">Cancelar</button>
+                        </div>
+
+                        <div class="post-modal__comments-list" id="commentsList"></div>
+                    </section>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="js/ambiente.js"></script>
+    <script src="js/conexao_com_api/carregar_post_index.js"></script>
+    <script src="js/carousel.js"></script>
+    <script src="js/header.js"></script>
+    <script src="js/usuario_logado.js"></script>
+</body>
+
+</html>

@@ -52,8 +52,8 @@ document.addEventListener('DOMContentLoaded', function () {
             botao.setAttribute('aria-pressed', mostrarSenha ? 'true' : 'false');
             botao.setAttribute('aria-label', mostrarSenha ? 'Ocultar senha' : 'Mostrar senha');
             icone.src = mostrarSenha
-                ? '/assets/imgs/icons/circle.svg'
-                : '/assets/imgs/icons/hide_circle.svg';
+                ? 'img/icons/circle.svg'
+                : 'img/icons/hide_circle.svg';
         });
     });
 

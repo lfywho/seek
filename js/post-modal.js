@@ -12,9 +12,9 @@ document.addEventListener('DOMContentLoaded', function () {
     
     // Posts data - deve vir do servidor, mas por enquanto fixo aqui
     const postsData = {
-        1: { thumb: '/assets/imgs/logo.png', titulo: 'Projeto de interface', autor: 'Nome do autor', aprovacao: '80%', likes: '3,5mil', descricao: 'Este é um projeto de interface moderna e responsiva. Desenvolvido com foco em usabilidade e design contemporâneo.' },
-        2: { thumb: '/assets/imgs/logo_login.png', titulo: 'Manual visual', autor: 'Nome do autor', aprovacao: '80%', likes: '3,5mil', descricao: 'Guia completo de design visual com paletas de cores e tipografia detalhada.' },
-        3: { thumb: '/assets/imgs/logo_letraspretas_coluna.png', titulo: 'Concept art urbano', autor: 'Nome do autor', aprovacao: '80%', likes: '3,5mil', descricao: 'Concept art explorando ambientes urbanos futuristas com ilustrações digitais.' },
+        1: { thumb: 'img/logo.png', titulo: 'Projeto de interface', autor: 'Nome do autor', aprovacao: '80%', likes: '3,5mil', descricao: 'Este é um projeto de interface moderna e responsiva. Desenvolvido com foco em usabilidade e design contemporâneo.' },
+        2: { thumb: 'img/logo_login.png', titulo: 'Manual visual', autor: 'Nome do autor', aprovacao: '80%', likes: '3,5mil', descricao: 'Guia completo de design visual com paletas de cores e tipografia detalhada.' },
+        3: { thumb: 'img/logo_letraspretas_coluna.png', titulo: 'Concept art urbano', autor: 'Nome do autor', aprovacao: '80%', likes: '3,5mil', descricao: 'Concept art explorando ambientes urbanos futuristas com ilustrações digitais.' },
     };
 
     // Estado de posts (likes, favoritos e comentarios)
@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // Preencher dados do modal
         document.getElementById('modalPostImg').src = post.thumb;
         document.getElementById('modalPostTitulo').textContent = post.titulo;
-        document.getElementById('modalAuthorAvatar').src = '/assets/imgs/userProfile.png';
+        document.getElementById('modalAuthorAvatar').src = 'img/userProfile.png';
         document.getElementById('modalAuthorName').textContent = post.autor;
         document.getElementById('modalDescription').textContent = post.descricao;
         document.getElementById('modalAprovacao').textContent = post.aprovacao;
