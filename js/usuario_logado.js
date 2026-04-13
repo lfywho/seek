@@ -101,6 +101,18 @@ document.addEventListener('DOMContentLoaded', function () {
 		if (notificationsReloadButton) {
 			notificationsReloadButton.disabled = true;
 		}
+
+		if (notificationsMenuButton) {
+			notificationsMenuButton.classList.remove('has-unread');
+		}
+	}
+
+	function atualizarIndicadorNotificacoesNaoLidas(possuiNaoLidas) {
+		if (!notificationsMenuButton) {
+			return;
+		}
+
+		notificationsMenuButton.classList.toggle('has-unread', !!possuiNaoLidas);
 	}
 
 	function mensagemTipoNotificacao(notificacao) {
@@ -128,8 +140,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
 		if (!Array.isArray(notificacoes) || !notificacoes.length) {
 			notificationsList.innerHTML = '<p class="notificationsEmpty">Nenhuma notificacao encontrada.</p>';
+			atualizarIndicadorNotificacoesNaoLidas(false);
 			return;
 		}
+
+		var possuiNaoLidas = false;
 
 		notificacoes.forEach(function (notificacao) {
 			var card = document.createElement('article');
@@ -139,6 +154,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 			if (Number(notificacao.lida) === 0) {
 				card.classList.add('is-unread');
+				possuiNaoLidas = true;
 			}
 
 			var remetenteNome = notificacao.remetente_nome || 'Usuario';
@@ -156,6 +172,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
 			notificationsList.appendChild(card);
 		});
+
+		atualizarIndicadorNotificacoesNaoLidas(possuiNaoLidas);
 	}
 
 	async function buscarNotificacoes(idUsuario) {
@@ -210,6 +228,7 @@ document.addEventListener('DOMContentLoaded', function () {
 			renderizarNotificacoes(lista);
 		} catch (error) {
 			notificationsList.innerHTML = '<p class="notificationsEmpty">Nao foi possivel carregar notificacoes.</p>';
+			atualizarIndicadorNotificacoesNaoLidas(false);
 		}
 	}
 
@@ -287,6 +306,9 @@ document.addEventListener('DOMContentLoaded', function () {
 					await marcarNotificacaoLida(id, usuarioAtualId);
 					card.dataset.read = '1';
 					card.classList.remove('is-unread');
+
+					var aindaPossuiNaoLidas = !!notificationsList.querySelector('.notificationCard.is-unread');
+					atualizarIndicadorNotificacoesNaoLidas(aindaPossuiNaoLidas);
 				}
 			}
 		});

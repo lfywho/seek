@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	var modalLikes = document.getElementById('modalLikes');
 	var modalLikeButton = document.getElementById('modalLike');
 	var modalFavoriteButton = document.getElementById('modalFavorite');
+	var modalShareButton = document.getElementById('modalShare');
 	var modalCloseButton = document.querySelector('.post-modal__close');
 	var modalOverlay = document.querySelector('.post-modal__overlay');
 	var commentInput = document.getElementById('commentInput');
@@ -20,8 +21,9 @@ document.addEventListener('DOMContentLoaded', function () {
 	var loggedUser = getUsuarioLogado();
 	var postsCache = [];
 	var postState = {};
+	var POST_ID_QUERY_KEY = 'postId';
 
-	if (!feedContainer || !modal || !modalImage || !modalTitle || !modalAuthorName || !modalDescription || !modalFollowers || !modalLikes || !modalLikeButton || !modalFavoriteButton || !modalCloseButton || !modalOverlay || !commentInput || !sendCommentButton || !replyTarget || !replyTargetText || !cancelReplyButton || !commentsList) {
+	if (!feedContainer || !modal || !modalImage || !modalTitle || !modalAuthorName || !modalDescription || !modalFollowers || !modalLikes || !modalLikeButton || !modalFavoriteButton || !modalShareButton || !modalCloseButton || !modalOverlay || !commentInput || !sendCommentButton || !replyTarget || !replyTargetText || !cancelReplyButton || !commentsList) {
 		return;
 	}
 
@@ -65,6 +67,44 @@ document.addEventListener('DOMContentLoaded', function () {
 
 	function getPostAuthorPhoto(post) {
 		return post.user && post.user.foto ? post.user.foto : 'img/userProfile.png';
+	}
+
+	function getPostIdFromUrl() {
+		var params = new URLSearchParams(window.location.search);
+		var rawValue = params.get(POST_ID_QUERY_KEY);
+		if (!rawValue) {
+			return null;
+		}
+
+		var parsed = Number(rawValue);
+		if (!Number.isInteger(parsed) || parsed <= 0) {
+			return null;
+		}
+
+		return parsed;
+	}
+
+	function setPostIdInUrl(postId) {
+		var url = new URL(window.location.href);
+		url.searchParams.set(POST_ID_QUERY_KEY, String(postId));
+		history.replaceState({}, '', url);
+	}
+
+	function clearPostIdFromUrl() {
+		var url = new URL(window.location.href);
+		url.searchParams.delete(POST_ID_QUERY_KEY);
+		history.replaceState({}, '', url);
+	}
+
+	function getCurrentPostShareUrl() {
+		var postId = Number(modal.dataset.currentPostId);
+		if (!postId) {
+			return window.location.href;
+		}
+
+		var shareUrl = new URL(window.location.href);
+		shareUrl.searchParams.set(POST_ID_QUERY_KEY, String(postId));
+		return shareUrl.toString();
 	}
 
 	function updateLikeButton(postId) {
@@ -267,6 +307,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		document.body.style.overflow = '';
 		commentInput.value = '';
 		setReplyTargetVisible(false);
+		clearPostIdFromUrl();
 	}
 
 	async function loadComments(postId) {
@@ -301,7 +342,14 @@ document.addEventListener('DOMContentLoaded', function () {
 		return Array.isArray(data) && data[0] ? Number(data[0].total_likes) || 0 : 0;
 	}
 
-	async function openPost(post) {
+	async function openPost(post, options) {
+		var config = options || {};
+		var shouldSyncUrl = config.syncUrl !== false;
+
+		if (shouldSyncUrl) {
+			setPostIdInUrl(post.id);
+		}
+
 		setModalContent(post);
 
 		if (!postState[post.id]) {
@@ -331,6 +379,24 @@ document.addEventListener('DOMContentLoaded', function () {
 		} catch (error) {
 			commentsList.innerHTML = '<p style="text-align:center;color:#b32929;font-size:12px;">Nao foi possivel carregar os comentarios.</p>';
 		}
+	}
+
+	async function openPostFromUrlIfPresent() {
+		var postIdFromUrl = getPostIdFromUrl();
+		if (!postIdFromUrl) {
+			return;
+		}
+
+		var targetPost = postsCache.find(function (post) {
+			return Number(post.id) === postIdFromUrl;
+		});
+
+		if (!targetPost) {
+			clearPostIdFromUrl();
+			return;
+		}
+
+		await openPost(targetPost, { syncUrl: false });
 	}
 
 	async function toggleLike() {
@@ -397,6 +463,46 @@ document.addEventListener('DOMContentLoaded', function () {
 		renderComments(postId, state.comments);
 	}
 
+	async function shareCurrentPost() {
+		var postId = Number(modal.dataset.currentPostId);
+		if (!postId) {
+			return;
+		}
+
+		var post = postsCache.find(function (item) {
+			return Number(item.id) === postId;
+		});
+
+		var shareUrl = getCurrentPostShareUrl();
+		var shareTitle = post && post.titulo ? post.titulo : 'Post no Seek';
+
+		if (navigator.share) {
+			try {
+				await navigator.share({
+					title: shareTitle,
+					url: shareUrl
+				});
+				return;
+			} catch (error) {
+				if (error && error.name === 'AbortError') {
+					return;
+				}
+			}
+		}
+
+		if (navigator.clipboard && navigator.clipboard.writeText) {
+			try {
+				await navigator.clipboard.writeText(shareUrl);
+				alert('Link do post copiado para a area de transferencia.');
+				return;
+			} catch (error) {
+				// fallback handled below
+			}
+		}
+
+		alert('Nao foi possivel compartilhar automaticamente. Copie este link: ' + shareUrl);
+	}
+
 	async function loadPosts() {
 		feedContainer.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#777;padding:20px 0;">Carregando posts...</p>';
 
@@ -408,6 +514,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 			postsCache = await response.json();
 			renderFeed(postsCache);
+			await openPostFromUrlIfPresent();
 		} catch (error) {
 			feedContainer.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#b32929;padding:20px 0;">Nao foi possivel carregar os posts.</p>';
 		}
@@ -420,6 +527,10 @@ document.addEventListener('DOMContentLoaded', function () {
 	modalFavoriteButton.addEventListener('click', function () {
 		modalFavoriteButton.dataset.active = modalFavoriteButton.dataset.active === 'true' ? 'false' : 'true';
 		updateFavoriteButton();
+	});
+
+	modalShareButton.addEventListener('click', function () {
+		shareCurrentPost();
 	});
 
 	modalCloseButton.addEventListener('click', closeModal);

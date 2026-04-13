@@ -4,8 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Seek - Login</title>
     <link rel="stylesheet" href="css/global.css">
+    <link rel="shortcut icon" href="img/favicon.png" type="image/x-icon">
+
 </head>
 
 <body>
@@ -118,7 +120,8 @@
         <div class="inicio-login__modal-overlay" data-fechar-recuperacao></div>
 
         <section class="inicio-login__modal-card" role="dialog" aria-modal="true" aria-labelledby="recuperacao-titulo">
-            <button type="button" class="inicio-login__modal-fechar" aria-label="Fechar" data-fechar-recuperacao>x</button>
+            <button type="button" class="inicio-login__modal-fechar" aria-label="Fechar"
+                data-fechar-recuperacao>x</button>
 
             <h3 id="recuperacao-titulo">Recuperar senha</h3>
             <p class="inicio-login__modal-subtitulo" id="recuperacao-subtitulo">Informe o email da sua conta.</p>
@@ -132,16 +135,23 @@
                 <div class="inicio-login__recuperacao-etapa" data-rec-etapa="2" hidden>
                     <label for="recuperacao-codigo-1">Codigo enviado por email:</label>
                     <div class="inicio-login__codigo" aria-label="Digite o codigo de 6 digitos">
-                        <input type="text" id="recuperacao-codigo-1" class="inicio-login__codigo-input" inputmode="numeric" maxlength="1" autocomplete="one-time-code" required>
-                        <input type="text" class="inicio-login__codigo-input" inputmode="numeric" maxlength="1" required>
-                        <input type="text" class="inicio-login__codigo-input" inputmode="numeric" maxlength="1" required>
+                        <input type="text" id="recuperacao-codigo-1" class="inicio-login__codigo-input"
+                            inputmode="numeric" maxlength="1" autocomplete="one-time-code" required>
+                        <input type="text" class="inicio-login__codigo-input" inputmode="numeric" maxlength="1"
+                            required>
+                        <input type="text" class="inicio-login__codigo-input" inputmode="numeric" maxlength="1"
+                            required>
                         <span class="inicio-login__codigo-separador" aria-hidden="true">-</span>
-                        <input type="text" class="inicio-login__codigo-input" inputmode="numeric" maxlength="1" required>
-                        <input type="text" class="inicio-login__codigo-input" inputmode="numeric" maxlength="1" required>
-                        <input type="text" class="inicio-login__codigo-input" inputmode="numeric" maxlength="1" required>
+                        <input type="text" class="inicio-login__codigo-input" inputmode="numeric" maxlength="1"
+                            required>
+                        <input type="text" class="inicio-login__codigo-input" inputmode="numeric" maxlength="1"
+                            required>
+                        <input type="text" class="inicio-login__codigo-input" inputmode="numeric" maxlength="1"
+                            required>
                     </div>
 
-                    <button type="button" class="inicio-login__reenviar-email" id="reenviar-codigo-btn">Reenviar email</button>
+                    <button type="button" class="inicio-login__reenviar-email" id="reenviar-codigo-btn">Reenviar
+                        email</button>
                     <p class="inicio-login__timer" id="recuperacao-timer" aria-live="polite"></p>
                 </div>
 
@@ -149,7 +159,8 @@
                     <label for="recuperacao-senha">Nova senha:</label>
                     <div class="inicio-login__campo-senha">
                         <input type="password" id="recuperacao-senha" name="nova_senha" required>
-                        <button type="button" class="inicio-login__toggle-senha" aria-label="Mostrar senha" aria-pressed="false">
+                        <button type="button" class="inicio-login__toggle-senha" aria-label="Mostrar senha"
+                            aria-pressed="false">
                             <img src="img/icons/hide_circle.svg" alt="" aria-hidden="true">
                         </button>
                     </div>
@@ -167,22 +178,24 @@
                     <label for="recuperacao-confirmar-senha">Confirmar nova senha:</label>
                     <div class="inicio-login__campo-senha">
                         <input type="password" id="recuperacao-confirmar-senha" name="confirmar_nova_senha" required>
-                        <button type="button" class="inicio-login__toggle-senha" aria-label="Mostrar senha" aria-pressed="false">
+                        <button type="button" class="inicio-login__toggle-senha" aria-label="Mostrar senha"
+                            aria-pressed="false">
                             <img src="img/icons/hide_circle.svg" alt="" aria-hidden="true">
                         </button>
                     </div>
                 </div>
 
                 <button type="submit" class="inicio-login__continuar" id="recuperacao-continuar">Continuar</button>
-                <p class="inicio-login__mensagem inicio-login__mensagem--oculta" id="recuperacao-feedback" aria-live="polite"></p>
+                <p class="inicio-login__mensagem inicio-login__mensagem--oculta" id="recuperacao-feedback"
+                    aria-live="polite"></p>
             </form>
         </section>
     </div>
 
-<script src="js/ambiente.js"></script>
-<script src="js/login.js"></script>
-<script src="js/conexao_com_api/formularios/login.js"></script>
-<script src="js/conexao_com_api/formularios/cadastro.js"></script>
+    <script src="js/ambiente.js"></script>
+    <script src="js/login.js"></script>
+    <script src="js/conexao_com_api/formularios/login.js"></script>
+    <script src="js/conexao_com_api/formularios/cadastro.js"></script>
 
 </body>
 
