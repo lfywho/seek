@@ -1,14 +1,24 @@
 function montarHeader() {
+    var activeNav = (document.body && document.body.dataset.activeNav ? document.body.dataset.activeNav : 'explorar').toLowerCase();
+
+    function buildNavItem(chave, label, href) {
+        if (activeNav === chave) {
+            return '<div class="abaAtiva"><a href="' + href + '">' + label + '</a></div>';
+        }
+
+        return '<a href="' + href + '">' + label + '</a>';
+    }
+
     const header = document.querySelector('header');
     header.innerHTML = `
     <div class="logo">
-        <a href=""><img src="img/logo.png" alt=""></a>
+        <a href="index.html"><img src="img/logo.png" alt=""></a>
     </div>
 
     <nav class="navegarPaginas">
-        <div class="abaAtiva"><a class="" href="">Explorar</a></div>
-        <a href="">Aprender</a>
-        <a href="">Vagas</a>
+        ${buildNavItem('explorar', 'Explorar', 'index.html')}
+        ${buildNavItem('aprender', 'Aprender', 'cursos.html')}
+        ${buildNavItem('vagas', 'Vagas', 'vagas.html')}
     </nav>
 
     <input class="inputPesquisa" type="search">

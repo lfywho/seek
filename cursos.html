@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Seek - Aprender</title>
+	<link rel="stylesheet" href="css/global.css">
+	<link rel="shortcut icon" href="img/favicon.png" type="image/x-icon">
+</head>
+
+<body data-active-nav="aprender">
+	<header class="cabecalho"></header>
+
+	<section class="categories-carousel">
+		<div class="carousel-wrapper">
+			<button class="carousel-btn prev" aria-label="Categorias anteriores">&#10094;</button>
+
+			<div class="carousel-viewport">
+				<div class="carousel-track" id="categoriesTrack"></div>
+			</div>
+
+			<button class="carousel-btn next" aria-label="Próximas categorias">&#10095;</button>
+		</div>
+	</section>
+
+	<main class="conteudo conteudo-cursos">
+		<section class="cursos-layout" aria-label="Catálogo de cursos">
+			<aside class="cursos-filtros" aria-label="Filtros de cursos">
+				<h2>Tipo de curso</h2>
+				<label class="filtro-opcao"><input type="radio" name="tipo-curso" checked>Todos</label>
+				<label class="filtro-opcao"><input type="radio" name="tipo-curso">Curso</label>
+				<label class="filtro-opcao"><input type="radio" name="tipo-curso">Profissão</label>
+
+				<h2>Duração</h2>
+				<p class="filtro-duracao-label">1 a <span id="duracaoValor">140</span> horas</p>
+				<div class="filtro-range-wrap">
+					<input type="range" min="1" max="140" value="140" class="filtro-range" id="duracaoRange" aria-label="Filtrar por duração">
+				</div>
+
+				<h2>Tópico</h2>
+				<label class="filtro-opcao"><input type="checkbox">3D</label>
+				<label class="filtro-opcao"><input type="checkbox">Adobe Photoshop</label>
+				<label class="filtro-opcao"><input type="checkbox">Design gráfico</label>
+				<label class="filtro-opcao"><input type="checkbox">UI/UX Design</label>
+				<label class="filtro-opcao"><input type="checkbox">Adobe Illustrator</label>
+			</aside>
+
+			<section class="cursos-grid-v2" aria-label="Cursos em destaque">
+				<article class="curso-card-v2">
+					<div class="curso-card-v2__media">
+						<img src="img/curso_teste.png" alt="Curso de design de produto">
+						<span class="curso-tag curso-tag--roxo">TOP SALE</span>
+						<button type="button" class="curso-save-btn" aria-label="Salvar curso"><img src="img/icons/favoritos.svg" alt=""></button>
+						<span class="curso-tempo">40h</span>
+						<h3>Título do curso</h3>
+					</div>
+					<div class="curso-card-v2__body">
+						<div class="curso-card-v2__linha curso-card-v2__linha--autor">
+							<span class="curso-icone">◉</span>
+							<span>Nome do autor</span>
+							<div class="curso-card-v2__rating"><span>4,9</span><span>☆</span><span>3,5mil</span><span>◔</span></div>
+						</div>
+						<div class="curso-card-v2__linha curso-card-v2__linha--preco">
+							<span>Básico · Curso</span>
+							<div class="curso-preco-v2"><span>R$50,00</span><strong>R$39,90</strong></div>
+						</div>
+					</div>
+				</article>
+
+				<article class="curso-card-v2">
+					<div class="curso-card-v2__media">
+						<img src="img/curso_teste.png" alt="Curso de design de produto">
+						<span class="curso-tag curso-tag--roxo">TOP SALE</span>
+						<button type="button" class="curso-save-btn" aria-label="Salvar curso"><img src="img/icons/favoritos.svg" alt=""></button>
+						<span class="curso-tempo">40h</span>
+						<h3>Título do curso</h3>
+					</div>
+					<div class="curso-card-v2__body">
+						<div class="curso-card-v2__linha curso-card-v2__linha--autor">
+							<span class="curso-icone">◉</span>
+							<span>Nome do autor</span>
+							<div class="curso-card-v2__rating"><span>4,9</span><span>☆</span><span>3,5mil</span><span>◔</span></div>
+						</div>
+						<div class="curso-card-v2__linha curso-card-v2__linha--preco">
+							<span>Básico · Curso</span>
+							<div class="curso-preco-v2"><span>R$50,00</span><strong>R$39,90</strong></div>
+						</div>
+					</div>
+				</article>
+
+				<article class="curso-card-v2">
+					<div class="curso-card-v2__media">
+						<img src="img/curso_teste.png" alt="Curso de design de produto">
+						<span class="curso-tag curso-tag--roxo">TOP SALE</span>
+						<button type="button" class="curso-save-btn" aria-label="Salvar curso"><img src="img/icons/favoritos.svg" alt=""></button>
+						<span class="curso-tempo">40h</span>
+						<h3>Título do curso</h3>
+					</div>
+					<div class="curso-card-v2__body">
+						<div class="curso-card-v2__linha curso-card-v2__linha--autor">
+							<span class="curso-icone">◉</span>
+							<span>Nome do autor</span>
+							<div class="curso-card-v2__rating"><span>4,9</span><span>☆</span><span>3,5mil</span><span>◔</span></div>
+						</div>
+						<div class="curso-card-v2__linha curso-card-v2__linha--preco">
+							<span>Básico · Curso</span>
+							<div class="curso-preco-v2"><span>R$50,00</span><strong>R$39,90</strong></div>
+						</div>
+					</div>
+				</article>
+
+				<article class="curso-card-v2">
+					<div class="curso-card-v2__media">
+						<img src="img/curso_teste.png" alt="Curso de design de produto">
+						<span class="curso-tag curso-tag--roxo">TOP SALE</span>
+						<button type="button" class="curso-save-btn" aria-label="Salvar curso"><img src="img/icons/favoritos.svg" alt=""></button>
+						<span class="curso-tempo">40h</span>
+						<h3>Título do curso</h3>
+					</div>
+					<div class="curso-card-v2__body">
+						<div class="curso-card-v2__linha curso-card-v2__linha--autor">
+							<span class="curso-icone">◉</span>
+							<span>Nome do autor</span>
+							<div class="curso-card-v2__rating"><span>4,9</span><span>☆</span><span>3,5mil</span><span>◔</span></div>
+						</div>
+						<div class="curso-card-v2__linha curso-card-v2__linha--preco">
+							<span>Básico · Curso</span>
+							<div class="curso-preco-v2"><span>R$50,00</span><strong>R$39,90</strong></div>
+						</div>
+					</div>
+				</article>
+
+				<article class="curso-card-v2">
+					<div class="curso-card-v2__media">
+						<img src="img/curso_teste.png" alt="Curso de design de produto">
+						<span class="curso-tag curso-tag--roxo">TOP SALE</span>
+						<button type="button" class="curso-save-btn" aria-label="Salvar curso"><img src="img/icons/favoritos.svg" alt=""></button>
+						<span class="curso-tempo">40h</span>
+						<h3>Título do curso</h3>
+					</div>
+					<div class="curso-card-v2__body">
+						<div class="curso-card-v2__linha curso-card-v2__linha--autor">
+							<span class="curso-icone">◉</span>
+							<span>Nome do autor</span>
+							<div class="curso-card-v2__rating"><span>4,9</span><span>☆</span><span>3,5mil</span><span>◔</span></div>
+						</div>
+						<div class="curso-card-v2__linha curso-card-v2__linha--preco">
+							<span>Básico · Curso</span>
+							<div class="curso-preco-v2"><span>R$50,00</span><strong>R$39,90</strong></div>
+						</div>
+					</div>
+				</article>
+
+				<article class="curso-card-v2">
+					<div class="curso-card-v2__media">
+						<img src="img/curso_teste.png" alt="Curso de design de produto">
+						<span class="curso-tag curso-tag--roxo">TOP SALE</span>
+						<button type="button" class="curso-save-btn" aria-label="Salvar curso"><img src="img/icons/favoritos.svg" alt=""></button>
+						<span class="curso-tempo">40h</span>
+						<h3>Título do curso</h3>
+					</div>
+					<div class="curso-card-v2__body">
+						<div class="curso-card-v2__linha curso-card-v2__linha--autor">
+							<span class="curso-icone">◉</span>
+							<span>Nome do autor</span>
+							<div class="curso-card-v2__rating"><span>4,9</span><span>☆</span><span>3,5mil</span><span>◔</span></div>
+						</div>
+						<div class="curso-card-v2__linha curso-card-v2__linha--preco">
+							<span>Básico · Curso</span>
+							<div class="curso-preco-v2"><span>R$50,00</span><strong>R$39,90</strong></div>
+						</div>
+					</div>
+				</article>
+			</section>
+		</section>
+	</main>
+
+    <script src="js/ambiente.js"></script>
+
+	<script src="js/header.js"></script>
+	<script src="js/usuario_logado.js"></script>
+	<script src="js/cursos-carousel.js"></script>
+	<script src="js/cursos-filtros.js"></script>
+</body>
+
+</html>

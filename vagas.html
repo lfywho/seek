@@ -7,11 +7,161 @@
     <title>Seek - Vagas</title>
     <link rel="stylesheet" href="css/global.css">
     <link rel="shortcut icon" href="img/favicon.png" type="image/x-icon">
-
 </head>
 
-<body>
+<body data-active-nav="vagas">
+    <header class="cabecalho"></header>
 
+    <section class="categories-carousel">
+        <div class="carousel-wrapper">
+            <button class="carousel-btn prev" aria-label="Categorias anteriores">&#10094;</button>
+
+            <div class="carousel-viewport">
+                <div class="carousel-track" id="categoriesTrack"></div>
+            </div>
+
+            <button class="carousel-btn next" aria-label="Próximas categorias">&#10095;</button>
+        </div>
+    </section>
+
+    <main class="conteudo conteudo-vagas">
+        <section class="vagas-layout" aria-label="Catálogo de vagas">
+            <aside class="vagas-filtros" aria-label="Filtros de vagas">
+                <h2>Tipo de Vaga</h2>
+                <label class="filtro-opcao"><input type="radio" name="tipo-vaga" checked>Todos</label>
+                <label class="filtro-opcao"><input type="radio" name="tipo-vaga">Curso</label>
+                <label class="filtro-opcao"><input type="radio" name="tipo-vaga">Profissão</label>
+
+                <h2>Tempo de postagem</h2>
+                <p class="filtro-duracao-label">1 a <span id="vagasTempoMax">20</span> <span id="vagasTempoUnidade">dias</span></p>
+
+                <div class="filtro-opcao-linha">
+                    <label class="filtro-opcao filtro-opcao--inline"><input type="radio" name="tempo-postagem" value="horas">Horas</label>
+                    <label class="filtro-opcao filtro-opcao--inline"><input type="radio" name="tempo-postagem" value="dias" checked>Dias</label>
+                </div>
+
+                <div class="filtro-range-wrap">
+                    <input type="range" min="1" max="20" value="10" class="filtro-range" id="vagasTempoRange" aria-label="Filtrar por tempo de postagem">
+                </div>
+
+                <h2>Categorias</h2>
+                <label class="filtro-opcao"><input type="checkbox">3D</label>
+                <label class="filtro-opcao"><input type="checkbox">Adobe Photoshop</label>
+                <label class="filtro-opcao"><input type="checkbox">Design gráfico</label>
+                <label class="filtro-opcao"><input type="checkbox">UI/UX Design</label>
+                <label class="filtro-opcao"><input type="checkbox">Adobe Illustrator</label>
+            </aside>
+
+            <section class="vagas-grid" aria-label="Vagas em destaque">
+                <article class="vaga-card">
+                    <div class="vaga-card__topo">
+                        <span class="vaga-card__chip">Design gráfico</span>
+                        <span class="vaga-card__tempo">Há 5 horas</span>
+                    </div>
+                    <h3>Título da vaga</h3>
+                    <div class="vaga-card__meta">
+                        <span>◎ Nome do autor</span>
+                        <span>◉ chiquichiqui,Bahia</span>
+                    </div>
+                    <p>Uma descrição breve do que se trata a vaga em questão, tendo suas principais informações necessárias para o usuário poder se interessar</p>
+                    <div class="vaga-card__rodape">
+                        <span class="vaga-card__salario">R$ 1000 - 1500 mês</span>
+                        <span class="vaga-card__views">3,5mil ◉</span>
+                    </div>
+                </article>
+
+                <article class="vaga-card">
+                    <div class="vaga-card__topo">
+                        <span class="vaga-card__chip">Design gráfico</span>
+                        <span class="vaga-card__tempo">Há 5 horas</span>
+                    </div>
+                    <h3>Título da vaga</h3>
+                    <div class="vaga-card__meta">
+                        <span>◎ Nome do autor</span>
+                        <span>◉ chiquichiqui,Bahia</span>
+                    </div>
+                    <p>Uma descrição breve do que se trata a vaga em questão, tendo suas principais informações necessárias para o usuário poder se interessar</p>
+                    <div class="vaga-card__rodape">
+                        <span class="vaga-card__salario">R$ 1000 - 1500 mês</span>
+                        <span class="vaga-card__views">3,5mil ◉</span>
+                    </div>
+                </article>
+
+                <article class="vaga-card">
+                    <div class="vaga-card__topo">
+                        <span class="vaga-card__chip">Design gráfico</span>
+                        <span class="vaga-card__tempo">Há 5 horas</span>
+                    </div>
+                    <h3>Título da vaga</h3>
+                    <div class="vaga-card__meta">
+                        <span>◎ Nome do autor</span>
+                        <span>◉ chiquichiqui,Bahia</span>
+                    </div>
+                    <p>Uma descrição breve do que se trata a vaga em questão, tendo suas principais informações necessárias para o usuário poder se interessar</p>
+                    <div class="vaga-card__rodape">
+                        <span class="vaga-card__salario">R$ 1000 - 1500 mês</span>
+                        <span class="vaga-card__views">3,5mil ◉</span>
+                    </div>
+                </article>
+
+                <article class="vaga-card">
+                    <div class="vaga-card__topo">
+                        <span class="vaga-card__chip">Design gráfico</span>
+                        <span class="vaga-card__tempo">Há 5 horas</span>
+                    </div>
+                    <h3>Título da vaga</h3>
+                    <div class="vaga-card__meta">
+                        <span>◎ Nome do autor</span>
+                        <span>◉ chiquichiqui,Bahia</span>
+                    </div>
+                    <p>Uma descrição breve do que se trata a vaga em questão, tendo suas principais informações necessárias para o usuário poder se interessar</p>
+                    <div class="vaga-card__rodape">
+                        <span class="vaga-card__salario">R$ 1000 - 1500 mês</span>
+                        <span class="vaga-card__views">3,5mil ◉</span>
+                    </div>
+                </article>
+
+                <article class="vaga-card">
+                    <div class="vaga-card__topo">
+                        <span class="vaga-card__chip">Design gráfico</span>
+                        <span class="vaga-card__tempo">Há 5 horas</span>
+                    </div>
+                    <h3>Título da vaga</h3>
+                    <div class="vaga-card__meta">
+                        <span>◎ Nome do autor</span>
+                        <span>◉ chiquichiqui,Bahia</span>
+                    </div>
+                    <p>Uma descrição breve do que se trata a vaga em questão, tendo suas principais informações necessárias para o usuário poder se interessar</p>
+                    <div class="vaga-card__rodape">
+                        <span class="vaga-card__salario">R$ 1000 - 1500 mês</span>
+                        <span class="vaga-card__views">3,5mil ◉</span>
+                    </div>
+                </article>
+
+                <article class="vaga-card">
+                    <div class="vaga-card__topo">
+                        <span class="vaga-card__chip">Design gráfico</span>
+                        <span class="vaga-card__tempo">Há 5 horas</span>
+                    </div>
+                    <h3>Título da vaga</h3>
+                    <div class="vaga-card__meta">
+                        <span>◎ Nome do autor</span>
+                        <span>◉ chiquichiqui,Bahia</span>
+                    </div>
+                    <p>Uma descrição breve do que se trata a vaga em questão, tendo suas principais informações necessárias para o usuário poder se interessar</p>
+                    <div class="vaga-card__rodape">
+                        <span class="vaga-card__salario">R$ 1000 - 1500 mês</span>
+                        <span class="vaga-card__views">3,5mil ◉</span>
+                    </div>
+                </article>
+            </section>
+        </section>
+    </main>
+
+    <script src="js/header.js"></script>
+    <script src="js/usuario_logado.js"></script>
+    <script src="js/cursos-carousel.js"></script>
+    <script src="js/vagas-filtros.js"></script>
 </body>
 
 </html>

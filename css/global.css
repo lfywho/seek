@@ -735,9 +735,9 @@ body {
 .messagesDropdownMenu,
 .notificationsDropdownMenu,
 .optionsDropdownMenu {
-    position: absolute;
-    top: calc(100% + 14px);
-    right: 0;
+    position: fixed;
+    top: 78px;
+    right: 24px;
     width: 270px;
     background: #f7f7f7;
     border-radius: 20px;
@@ -1298,9 +1298,371 @@ body {
     opacity: 0.75;
 }
 
+/* CURSOS */
+
+.conteudo-cursos {
+    height: auto;
+    min-height: calc(100vh - 120px);
+    padding: 14px 22px 34px;
+    background: #e9e9e9;
+}
+
+.cursos-layout {
+    display: grid;
+    grid-template-columns: 270px 1fr;
+    gap: 24px;
+    align-items: start;
+}
+
+.cursos-filtros {
+    background: transparent;
+    padding: 8px 10px;
+    color: #191919;
+}
+
+.cursos-filtros h2 {
+    font-size: 15px;
+    line-height: 1.04;
+    margin-bottom: 12px;
+    margin-top: 8px;
+}
+
+.filtro-opcao {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    font-size: 13px;
+    color: #151515;
+    cursor: pointer;
+}
+
+.filtro-opcao input[type="radio"],
+.filtro-opcao input[type="checkbox"] {
+    width: 19px;
+    height: 19px;
+    accent-color: #6a2fff;
+}
+
+.filtro-duracao-label {
+    font-size: 13px;
+    margin-bottom: 6px;
+    color: #454545;
+}
+
+.filtro-range-wrap {
+    width: 100%;
+    margin-bottom: 14px;
+}
+
+.filtro-range {
+    width: 100%;
+    accent-color: #6a2fff;
+    cursor: pointer;
+}
+
+.cursos-grid-v2 {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(240px, 1fr));
+    gap: 16px;
+}
+
+.curso-card-v2 {
+    border-radius: 12px;
+    border: 1px solid #c6c6c6;
+    background: #efefef;
+    overflow: hidden;
+}
+
+.curso-card-v2__media {
+    position: relative;
+    aspect-ratio: 1.17 / 1;
+    overflow: hidden;
+    background: #ddd;
+}
+
+.curso-card-v2__media::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.08) 55%, rgba(0, 0, 0, 0.48) 100%);
+}
+
+.curso-card-v2__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.curso-tag {
+    position: absolute;
+    top: 8px;
+    left: 10px;
+    border-radius: 999px;
+    padding: 4px 10px;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 800;
+    z-index: 2;
+}
+
+.curso-tag--roxo {
+    background: #6829f8;
+}
+
+.curso-save-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 24px;
+    height: 24px;
+    border-radius: 5px;
+    border: 0;
+    background: rgba(0, 0, 0, 0.44);
+    display: grid;
+    place-items: center;
+    z-index: 2;
+    cursor: pointer;
+}
+
+.curso-save-btn img {
+    width: 14px;
+    height: 14px;
+    filter: invert(1);
+}
+
+.curso-tempo {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    z-index: 2;
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.58);
+    color: #fff;
+    font-size: 11px;
+    padding: 2px 5px;
+}
+
+.curso-card-v2__media h3 {
+    position: absolute;
+    left: 12px;
+    bottom: 8px;
+    z-index: 2;
+    color: #fff;
+    font-size: 17px;
+    line-height: 0.94;
+    max-width: 72%;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+.curso-card-v2__body {
+    padding: 8px 12px 10px;
+}
+
+.curso-card-v2__linha {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.curso-card-v2__linha--autor {
+    color: #222;
+    font-size: 14px;
+    justify-content: flex-start;
+    gap: 0;
+}
+
+.curso-icone {
+    color: #575757;
+    font-size: 14px;
+    margin-right: 2px;
+}
+
+.curso-card-v2__linha--autor > span:nth-child(2) {
+    margin-left: 0;
+}
+
+.curso-card-v2__rating {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: #787878;
+    font-size: 13px;
+    margin-left: auto;
+}
+
+.curso-card-v2__linha--preco {
+    margin-top: 6px;
+    color: #7a7a7a;
+    font-size: 11px;
+}
+
+.curso-preco-v2 {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    line-height: 1;
+}
+
+.curso-preco-v2 span {
+    font-size: 12px;
+    text-decoration: line-through;
+    color: #9d9d9d;
+}
+
+.curso-preco-v2 strong {
+    font-size: 20px;
+    color: #141414;
+}
+
+/* VAGAS */
+
+.conteudo-vagas {
+    height: auto;
+    min-height: calc(100vh - 120px);
+    padding: 14px 22px 30px;
+    background: #e9e9e9;
+}
+
+.vagas-layout {
+    display: grid;
+    grid-template-columns: 230px 1fr;
+    gap: 18px;
+    align-items: start;
+}
+
+.vagas-filtros {
+    padding: 6px 2px;
+    color: #141414;
+}
+
+.vagas-filtros h2 {
+    font-size: 17px;
+    line-height: 1.05;
+    margin-bottom: 8px;
+    margin-top: 8px;
+}
+
+.filtro-opcao-linha {
+    display: flex;
+    align-items: center;
+    gap: 26px;
+}
+
+.filtro-opcao--inline {
+    margin-bottom: 6px;
+}
+
+.vagas-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(250px, 1fr));
+    gap: 14px;
+}
+
+.vaga-card {
+    border: 1px solid #c8c8c8;
+    background: #efefef;
+    border-radius: 8px;
+    padding: 15px;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+}
+
+.vaga-card__topo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.vaga-card__chip {
+    border: 1px solid #a8a8a8;
+    border-radius: 3px;
+    color: #8f8f8f;
+    font-size: 12px;
+    line-height: 1;
+    padding: 2px 5px;
+}
+
+.vaga-card__tempo {
+    color: #979797;
+    font-size: 12px;
+}
+
+.vaga-card h3 {
+    color: #314bff;
+    font-size: 18px;
+    line-height: 1;
+}
+
+.vaga-card__meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    color: #383838;
+    font-size: 13px;
+}
+
+.vaga-card p {
+    color: #252525;
+    font-size: 13px;
+    line-height: 1.25;
+}
+
+.vaga-card__rodape {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.vaga-card__salario {
+    color: #2858ff;
+    font-size: 13px;
+}
+
+.vaga-card__views {
+    color: #7f7f7f;
+    font-size: 12px;
+}
+
 @media (max-width: 1100px) {
     .feedImgs {
         grid-template-columns: repeat(3, minmax(220px, 1fr));
+    }
+
+    .cursos-layout {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    .cursos-filtros {
+        border-bottom: 1px solid #cfcfcf;
+        padding-bottom: 14px;
+    }
+
+    .cursos-grid-v2 {
+        grid-template-columns: repeat(2, minmax(240px, 1fr));
+    }
+
+    .vagas-layout {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .vagas-filtros {
+        border-bottom: 1px solid #cdcdcd;
+        padding-bottom: 12px;
+    }
+
+    .vagas-grid {
+        grid-template-columns: repeat(2, minmax(250px, 1fr));
     }
 }
 
@@ -1318,6 +1680,66 @@ body {
     .userName,
     .likeView {
         font-size: 11px;
+    }
+
+    .conteudo-cursos {
+        padding: 12px 10px 22px;
+    }
+
+    .cursos-grid-v2 {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .cursos-filtros h2 {
+        font-size: 14px;
+        margin-top: 4px;
+    }
+
+    .filtro-opcao,
+    .filtro-duracao-label {
+        font-size: 13px;
+    }
+
+    .curso-card-v2__media h3 {
+        font-size: 16px;
+    }
+
+    .curso-card-v2__linha--autor,
+    .curso-card-v2__rating,
+    .curso-card-v2__linha--preco {
+        font-size: 12px;
+    }
+
+    .curso-preco-v2 strong {
+        font-size: 18px;
+    }
+
+    .conteudo-vagas {
+        padding: 12px 10px 22px;
+    }
+
+    .vagas-filtros h2 {
+        font-size: 16px;
+    }
+
+    .filtro-opcao-linha {
+        gap: 20px;
+    }
+
+    .vagas-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .vaga-card h3 {
+        font-size: 17px;
+    }
+
+    .vaga-card__meta,
+    .vaga-card p,
+    .vaga-card__salario {
+        font-size: 13px;
     }
 }
 
