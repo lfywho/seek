@@ -228,6 +228,10 @@ document.addEventListener('DOMContentLoaded', function () {
         dropdown.menu.hidden = false;
     };
 
+    const closeAllDropdowns = function () {
+        dropdowns.forEach(closeDropdown);
+    };
+
     dropdowns.forEach(function (dropdown) {
         dropdown.button.addEventListener('click', function (event) {
             event.stopPropagation();
@@ -251,9 +255,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
     document.addEventListener('keydown', function (event) {
         if (event.key === 'Escape') {
-            dropdowns.forEach(closeDropdown);
+            closeAllDropdowns();
         }
     });
+
+    window.addEventListener('scroll', function () {
+        closeAllDropdowns();
+    }, { passive: true });
 });
 
 montarHeader();

@@ -1,5 +1,5 @@
 // variável global
-var ip_api = "http://192.168.107.212:4500";
+var ip_api = "http://192.168.1.14:4500";
 
 function getStorageJSON(chave) {
 	try {
