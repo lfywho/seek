@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seek - Usuario</title>
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="shortcut icon" href="img/favicon.png" type="image/x-icon">
+</head>
+
+<body class="usuario-page" data-active-nav="perfil">
+
+    <header class="cabecalho">
+
+    </header>
+
+    <main class="usuario-layout">
+        <section class="usuario-banner" aria-label="Banner do perfil">
+            <img id="usuarioBannerImagem" class="usuario-banner__image" src="img/bannervagas.jpg" alt="Banner do perfil do usuário">
+        </section>
+
+        <section class="usuario-page__content">
+            <aside class="usuario-profile-card" aria-label="Resumo do perfil">
+                <button class="usuario-profile-card__menu" type="button" aria-label="Abrir menu de opções" aria-haspopup="menu" aria-expanded="false" aria-controls="usuarioProfileMenu">&#8942;</button>
+
+                <div class="usuario-profile-card__menu-popover" id="usuarioProfileMenu" role="menu" aria-label="Opções do perfil" hidden>
+                    <button type="button" class="usuario-profile-card__menu-item usuario-profile-card__menu-item--danger" role="menuitem">Denunciar</button>
+                    <button type="button" class="usuario-profile-card__menu-item usuario-profile-card__menu-item--danger" role="menuitem">Bloquear</button>
+                </div>
+
+                <div class="usuario-profile-card__avatar-wrap">
+                    <img id="usuarioAvatarImagem" class="usuario-profile-card__avatar" src="img/userProfile.png" alt="Foto de perfil do usuário">
+                </div>
+
+                <div class="usuario-profile-card__body">
+                    <header class="usuario-profile-card__header">
+                        <h1>Nome do Usuário</h1>
+                        <p>Emprego(Cargo)</p>
+                    </header>
+
+                    <dl class="usuario-profile-card__stats" aria-label="Estatísticas do perfil">
+                        <button>
+                            <dt>Seguidores</dt>
+                            <dd>—</dd>
+                        </button>
+                        <button>
+                            <dt>Conexões</dt>
+                            <dd>—</dd>
+                        </button>
+                        <button>
+                            <dt>Curtidas</dt>
+                            <dd>—</dd>
+                        </button>
+                    </dl>
+
+                    <div class="usuario-profile-card__actions">
+                        <button type="button" class="usuario-btn usuario-btn--primary">Seguir</button>
+                        <button type="button" class="usuario-btn usuario-btn--secondary">Mensagem</button>
+                    </div>
+
+                    <ul class="usuario-profile-card__details" aria-label="Informações do usuário">
+                        <li>
+                            <img src="img/icons/local.svg" alt="" aria-hidden="true">
+                            <span>onde ele mora,país</span>
+                        </li>
+                        <li>
+                            <img src="img/icons/email.svg" alt="" aria-hidden="true">
+                            <a href="#">link.do.site.pessoal</a>
+                        </li>
+                    </ul>
+
+                    <p class="usuario-profile-card__description">Este usuário trabalha com apresso no desenvolvimento de design para empresas e branding, ele é focado em trazer uma identidade visual única e extremamente profissional</p>
+
+                    <div class="usuario-profile-card__divider" aria-hidden="true"></div>
+
+                    <section class="usuario-profile-card__social" aria-label="Redes sociais">
+                        <h2>Redes sociais</h2>
+                        <div class="usuario-profile-card__social-links">
+                            <a href="#" aria-label="Instagram"><img src="img/icons/instagram.svg" alt=""></a>
+                            <a href="#" aria-label="Email"><img src="img/icons/email.svg" alt=""></a>
+                            <a href="#" aria-label="Compartilhar"><img src="img/icons/Share.svg" alt=""></a>
+                            <a href="#" aria-label="Curtir"><img src="img/icons/like.svg" alt=""></a>
+                        </div>
+                    </section>
+                </div>
+            </aside>
+
+            <section class="usuario-main-panel" aria-label="Conteúdo principal do perfil">
+                <nav class="usuario-tabs" aria-label="Navegação do perfil">
+                    <button type="button" class="usuario-tab is-active" data-tab="trabalhos" aria-selected="true">Trabalhos</button>
+                    <button type="button" class="usuario-tab" data-tab="cursos" aria-selected="false">Cursos</button>
+                    <button type="button" class="usuario-tab" data-tab="avaliacoes" aria-selected="false">Avaliações</button>
+                </nav>
+
+                <section class="usuario-tabpanel" id="usuarioTabPanel" aria-live="polite"></section>
+            </section>
+        </section>
+    </main>
+
+</body>
+
+<script src="js/ambiente.js"></script>
+<script src="js/header.js"></script>
+<script src="js/usuario_logado.js"></script>
+<script src="js/usuario.js"></script>
+
+</html>

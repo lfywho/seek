@@ -80,7 +80,7 @@ function montarHeader() {
                     <div class="perfilDropdownInfo">
                         <strong>Nome do usuário</strong>
                         <div class="perfilDropdownLinks">
-                            <button type="button">Ver perfil</button>
+                            <a href="usuario.html" type="button">Ver perfil</a>
                             <span>•</span>
                             <button type="button">Editar perfil</button>
                         </div>
