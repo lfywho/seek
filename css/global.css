@@ -249,6 +249,9 @@ body {
     background: var(--azul);
     color: #fff;
     font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .inicio-login__continuar:hover {
@@ -1276,6 +1279,12 @@ body {
     text-overflow: ellipsis;
 }
 
+.feedPostTime {
+    font-size: 10px;
+    color: #7a7a7a;
+    line-height: 1.1;
+}
+
 .likeView {
     display: flex;
     align-items: center;
@@ -1297,6 +1306,10 @@ body {
     width: 12px;
     height: 12px;
     opacity: 0.75;
+}
+
+.viewsPost__count {
+    line-height: 1;
 }
 
 /* CURSOS */

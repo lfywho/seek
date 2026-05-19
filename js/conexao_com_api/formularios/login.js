@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		limparMensagem();
 
 		botaoEntrar.disabled = true;
-		botaoEntrar.innerHTML = '<div class="loader"></div>';
+		botaoEntrar.innerHTML = 'Carregando...';
 
 		var email = emailInput.value.trim();
 		var senha = senhaInput.value;

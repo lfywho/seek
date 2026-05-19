@@ -53,6 +53,50 @@ document.addEventListener('DOMContentLoaded', function () {
 		});
 	}
 
+	function getRelativeTime(value) {
+		if (!value) {
+			return '';
+		}
+
+		var date = new Date(value);
+		if (Number.isNaN(date.getTime())) {
+			return '';
+		}
+
+		var diffMs = Date.now() - date.getTime();
+		if (diffMs < 0) {
+			diffMs = 0;
+		}
+
+		var seconds = Math.floor(diffMs / 1000);
+		if (seconds < 60) {
+			return 'agora mesmo';
+		}
+
+		var minutes = Math.floor(seconds / 60);
+		if (minutes < 60) {
+			return minutes === 1 ? 'há 1 minuto' : 'há ' + minutes + ' minutos';
+		}
+
+		var hours = Math.floor(minutes / 60);
+		if (hours < 24) {
+			return hours === 1 ? 'há 1 hora' : 'há ' + hours + ' horas';
+		}
+
+		var days = Math.floor(hours / 24);
+		if (days < 30) {
+			return days === 1 ? 'há 1 dia' : 'há ' + days + ' dias';
+		}
+
+		var months = Math.floor(days / 30);
+		if (months < 12) {
+			return months === 1 ? 'há 1 mês' : 'há ' + months + ' meses';
+		}
+
+		var years = Math.floor(months / 12);
+		return years === 1 ? 'há 1 ano' : 'há ' + years + ' anos';
+	}
+
 	function getPostImage(post) {
 		if (Array.isArray(post.imagens) && post.imagens.length > 0) {
 			return post.imagens[0];
@@ -254,16 +298,11 @@ document.addEventListener('DOMContentLoaded', function () {
 		var likeView = document.createElement('div');
 		likeView.className = 'likeView';
 
-		var followers = document.createElement('span');
-		followers.className = 'likesPost';
-		followers.textContent = (post.total_seguidores || 0) + ' seg.';
+		var postTime = document.createElement('span');
+		postTime.className = 'feedPostTime';
+		postTime.textContent = getRelativeTime(post.criado_em) || formatDate(post.criado_em);
 
-		var likes = document.createElement('span');
-		likes.className = 'viewsPost';
-		likes.innerHTML = '<img src="img/icons/like.svg" alt="">' + escapeHtml(post.total_likes || 0);
-
-		likeView.appendChild(followers);
-		likeView.appendChild(likes);
+		likeView.appendChild(postTime);
 
 		info.appendChild(left);
 		info.appendChild(likeView);

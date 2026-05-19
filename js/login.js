@@ -30,6 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let etapaRecuperacaoAtual = 1;
     let intervaloCronometro = null;
     let tempoRestante = 0;
+    let tokenRecuperacaoAtual = '';
 
     function mostrarPainel(nomePainel) {
         const proximoPainel = document.querySelector('[data-form-panel="' + nomePainel + '"]');
@@ -179,7 +180,72 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
-            botaoRecuperacao.disabled = !novaSenhaRecuperacaoInput.value.trim() || !confirmarSenhaRecuperacaoInput.value.trim();
+            botaoRecuperacao.disabled = !validarRegrasSenhaRecuperacao() || novaSenhaRecuperacaoInput.value !== confirmarSenhaRecuperacaoInput.value;
+        }
+
+        function obterMensagemErroResposta(dados, fallback) {
+            return (dados && dados.message) ? dados.message : fallback;
+        }
+
+        async function enviarCodigoRecuperacao(email) {
+            var response = await fetch(ip_api + '/usuarios/criar-codigo-verificacao', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email: email })
+            });
+
+            var data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(obterMensagemErroResposta(data, 'Nao foi possivel enviar o codigo.'));
+            }
+
+            return data;
+        }
+
+        async function verificarCodigoRecuperacao(email, codigo) {
+            var response = await fetch(ip_api + '/usuarios/verificar-codigo-recuperacao', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email: email, codigo: codigo })
+            });
+
+            var data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(obterMensagemErroResposta(data, 'Codigo incorreto.'));
+            }
+
+            if (!data.tokenRecuperacao) {
+                throw new Error('Nao foi possivel validar o codigo.');
+            }
+
+            return data;
+        }
+
+        async function atualizarSenhaRecuperacao(tokenRecuperacao, novaSenha) {
+            var response = await fetch(ip_api + '/usuarios/atualizar-senha', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    tokenRecuperacao: tokenRecuperacao,
+                    novaSenha: novaSenha
+                })
+            });
+
+            var data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(obterMensagemErroResposta(data, 'Nao foi possivel atualizar a senha.'));
+            }
+
+            return data;
         }
 
         function iniciarCronometroCodigo() {
@@ -260,6 +326,7 @@ document.addEventListener('DOMContentLoaded', function () {
         function abrirModalRecuperacao() {
             modalRecuperacao.hidden = false;
             document.body.style.overflow = 'hidden';
+            tokenRecuperacaoAtual = '';
             atualizarEtapaRecuperacao(1);
         }
 
@@ -267,6 +334,7 @@ document.addEventListener('DOMContentLoaded', function () {
             modalRecuperacao.hidden = true;
             document.body.style.overflow = '';
             formRecuperacao.reset();
+            tokenRecuperacaoAtual = '';
             if (intervaloCronometro) {
                 clearInterval(intervaloCronometro);
             }
@@ -381,47 +449,84 @@ document.addEventListener('DOMContentLoaded', function () {
             event.preventDefault();
             limparMensagemRecuperacao();
 
-            if (etapaRecuperacaoAtual === 1) {
-                if (!emailRecuperacaoInput.value.trim() || !emailRecuperacaoInput.checkValidity()) {
-                    atualizarMensagemRecuperacao('Digite um email valido para continuar.', 'erro');
-                    return;
+            var carregandoEnvioEmail = etapaRecuperacaoAtual === 1;
+
+            if (carregandoEnvioEmail) {
+                botaoRecuperacao.textContent = 'Carregando...';
+                botaoRecuperacao.disabled = true;
+            } else {
+                botaoRecuperacao.disabled = true;
+            }
+
+            (async function () {
+                try {
+                    if (etapaRecuperacaoAtual === 1) {
+                        if (!emailRecuperacaoInput.value.trim() || !emailRecuperacaoInput.checkValidity()) {
+                            atualizarMensagemRecuperacao('Digite um email valido para continuar.', 'erro');
+                            return;
+                        }
+
+                        await enviarCodigoRecuperacao(emailRecuperacaoInput.value.trim());
+                        atualizarEtapaRecuperacao(2);
+                        atualizarMensagemRecuperacao('Codigo enviado com sucesso! Verifique seu email.', 'sucesso');
+                        return;
+                    }
+
+                    if (etapaRecuperacaoAtual === 2) {
+                        if (codigoRecuperacaoCompleto().length !== 6) {
+                            atualizarMensagemRecuperacao('Digite os 6 numeros do codigo recebido no email.', 'erro');
+                            return;
+                        }
+
+                        var resultadoCodigo = await verificarCodigoRecuperacao(emailRecuperacaoInput.value.trim(), codigoRecuperacaoCompleto());
+                        tokenRecuperacaoAtual = resultadoCodigo.tokenRecuperacao;
+                        atualizarEtapaRecuperacao(3);
+                        atualizarMensagemRecuperacao('Codigo verificado com sucesso! Agora crie sua nova senha.', 'sucesso');
+                        return;
+                    }
+
+                    if (!validarRegrasSenhaRecuperacao()) {
+                        dicasSenhaRecuperacao.hidden = false;
+                        atualizarMensagemRecuperacao('Sua senha nao atende todos os requisitos de seguranca. Complete todos os itens listados.', 'erro');
+                        return;
+                    }
+
+                    if (novaSenhaRecuperacaoInput.value !== confirmarSenhaRecuperacaoInput.value) {
+                        atualizarMensagemRecuperacao('As senhas digitadas nao coincidem. Digite a mesma senha nos dois campos.', 'erro');
+                        return;
+                    }
+
+                    if (!tokenRecuperacaoAtual) {
+                        atualizarMensagemRecuperacao('Codigo de recuperacao invalido ou expirado. Solicite um novo codigo.', 'erro');
+                        atualizarEtapaRecuperacao(1);
+                        return;
+                    }
+
+                    await atualizarSenhaRecuperacao(tokenRecuperacaoAtual, novaSenhaRecuperacaoInput.value);
+                    atualizarMensagemRecuperacao('Sua senha foi redefinida com sucesso! Redirecionando para o login...', 'sucesso');
+
+                    if (emailInput) {
+                        emailInput.value = emailRecuperacaoInput.value.trim();
+                    }
+
+                    setTimeout(function () {
+                        fecharModalRecuperacao();
+                        mostrarPainel('login');
+                        if (senhaInput) {
+                            senhaInput.focus();
+                        }
+                    }, 900);
+                } catch (error) {
+                    atualizarMensagemRecuperacao(error.message || 'Nao foi possivel concluir a recuperacao.', 'erro');
+                } finally {
+                    if (carregandoEnvioEmail && etapaRecuperacaoAtual === 1) {
+                        botaoRecuperacao.textContent = 'Continuar';
+                    }
+
+                    botaoRecuperacao.disabled = false;
+                    atualizarEstadoBotaoRecuperacao();
                 }
-
-                atualizarEtapaRecuperacao(2);
-                atualizarMensagemRecuperacao('Codigo enviado com sucesso! Verifique seu email nos proximos minutos.', 'sucesso');
-                return;
-            }
-
-            if (etapaRecuperacaoAtual === 2) {
-                if (codigoRecuperacaoCompleto().length !== 6) {
-                    atualizarMensagemRecuperacao('Digite os 6 numeros do codigo recebido no email.', 'erro');
-                    return;
-                }
-
-                atualizarEtapaRecuperacao(3);
-                return;
-            }
-
-            if (!validarRegrasSenhaRecuperacao()) {
-                dicasSenhaRecuperacao.hidden = false;
-                atualizarMensagemRecuperacao('Sua senha nao atende todos os requisitos de seguranca. Complete todos os itens listados.', 'erro');
-                return;
-            }
-
-            if (novaSenhaRecuperacaoInput.value !== confirmarSenhaRecuperacaoInput.value) {
-                atualizarMensagemRecuperacao('As senhas digitadas nao coincidem. Digite a mesma senha nos dois campos.', 'erro');
-                return;
-            }
-
-            atualizarMensagemRecuperacao('Sua senha foi redefinida com sucesso! Vous sera redirecione para fazer login com sua nova senha.', 'sucesso');
-
-            if (emailInput) {
-                emailInput.value = emailRecuperacaoInput.value.trim();
-            }
-
-            setTimeout(function () {
-                fecharModalRecuperacao();
-            }, 900);
+            })();
         });
 
         atualizarEstadoBotaoRecuperacao();

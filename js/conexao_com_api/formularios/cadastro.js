@@ -20,6 +20,29 @@ document.addEventListener('DOMContentLoaded', function () {
 	feedback.setAttribute('aria-live', 'polite');
 	botaoCadastro.insertAdjacentElement('afterend', feedback);
 
+	function senhaAtendeRequisitos(senha, email) {
+		var senhaNormalizada = String(senha || '');
+		var emailNormalizado = String(email || '').trim().toLowerCase();
+
+		if (senhaNormalizada.length < 8) {
+			return false;
+		}
+
+		if (!/[a-z]/.test(senhaNormalizada) || !/[A-Z]/.test(senhaNormalizada)) {
+			return false;
+		}
+
+		if (!/[0-9]|[^A-Za-z0-9\s]/.test(senhaNormalizada)) {
+			return false;
+		}
+
+		if (emailNormalizado && senhaNormalizada.toLowerCase().includes(emailNormalizado)) {
+			return false;
+		}
+
+		return true;
+	}
+
 	function exibirMensagem(texto, tipo) {
 		feedback.textContent = texto;
 		feedback.classList.remove('inicio-login__mensagem--oculta', 'inicio-login__mensagem--erro', 'inicio-login__mensagem--sucesso');
@@ -40,6 +63,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
 		if (senhaInput.value !== confirmarSenhaInput.value) {
 			exibirMensagem('As senhas nao coincidem.', 'erro');
+			return;
+		}
+
+		if (!senhaAtendeRequisitos(senhaInput.value, emailInput.value)) {
+			exibirMensagem('A senha nao atende aos requisitos.', 'erro');
 			return;
 		}
 
@@ -71,6 +99,10 @@ document.addEventListener('DOMContentLoaded', function () {
 			if (response.ok) {
 				exibirMensagem('Conta criada com sucesso!', 'sucesso');
 				cadastroForm.reset();
+				var linkLogin = document.querySelector('[data-toggle-form="login"]');
+				if (linkLogin) {
+					linkLogin.click();
+				}
 				return;
 			}
 
