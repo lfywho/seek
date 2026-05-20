@@ -1200,7 +1200,10 @@ body {
     gap: 14px;
     width: 100%;
     padding: 14px 18px 36px;
-    background: #fff;
+}
+
+.usuario-feedImgs {
+    grid-template-columns: repeat(3, minmax(220px, 1fr));
 }
 
 .feedCard {
@@ -1760,6 +1763,10 @@ body {
         grid-template-columns: repeat(3, minmax(220px, 1fr));
     }
 
+    .usuario-feedImgs {
+        grid-template-columns: repeat(2, minmax(220px, 1fr));
+    }
+
     .cursos-layout {
         grid-template-columns: 1fr;
         gap: 14px;
@@ -1791,6 +1798,12 @@ body {
 
 @media (max-width: 820px) {
     .feedImgs {
+        grid-template-columns: repeat(2, minmax(170px, 1fr));
+        gap: 10px;
+        padding: 12px;
+    }
+
+    .usuario-feedImgs {
         grid-template-columns: repeat(2, minmax(170px, 1fr));
         gap: 10px;
         padding: 12px;
@@ -1868,6 +1881,10 @@ body {
 
 @media (max-width: 520px) {
     .feedImgs {
+        grid-template-columns: 1fr;
+    }
+
+    .usuario-feedImgs {
         grid-template-columns: 1fr;
     }
 }
@@ -2290,13 +2307,16 @@ body.usuario-page {
     font-size: 14px;
     line-height: 1.2;
     text-align: center;
-    color: #ff2a1f;
     transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.usuario-profile-card__menu-item--danger{
+    color: #ff2a1f;
 }
 
 .usuario-profile-card__menu-item:hover,
 .usuario-profile-card__menu-item:focus-visible {
-    background: rgba(255, 42, 31, 0.08);
+    transform: translateY(-1px);
     outline: none;
 }
 
@@ -2424,6 +2444,7 @@ body.usuario-page {
     color: #7c7c7c;
     font-size: 14px;
     line-height: 1.35;
+    margin-top: 15px;
 }
 
 .usuario-profile-card__details li {

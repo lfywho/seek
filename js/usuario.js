@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     var tabButtons = Array.prototype.slice.call(document.querySelectorAll('.usuario-tab'));
     var tabPanel = document.getElementById('usuarioTabPanel');
+    var currentTabKey = 'trabalhos';
 
     if (!tabButtons.length || !tabPanel) {
         return;
@@ -191,27 +192,36 @@ document.addEventListener('DOMContentLoaded', function () {
                 image: thumbnails.green
             }
         ],
-        cursos: [
+        vagas: [
             {
-                author: 'Nome do autor',
-                rating: '96%',
-                likes: '1,8mil',
-                views: '4,1mil',
-                image: thumbnails.dark
+                chip: 'Design gráfico',
+                tempo: 'Há 5 horas',
+                titulo: 'Título da vaga',
+                autor: 'Nome do autor',
+                local: 'chiquichiqui, Bahia',
+                descricao: 'Uma descrição breve do que se trata a vaga em questão, tendo suas principais informações necessárias para o usuário poder se interessar',
+                salario: 'R$ 1000 - 1500 mês',
+                views: '3,5mil'
             },
             {
-                author: 'Nome do autor',
-                rating: '94%',
-                likes: '2,2mil',
-                views: '5,3mil',
-                image: thumbnails.purple
+                chip: 'UI/UX Design',
+                tempo: 'Há 2 dias',
+                titulo: 'Vaga para design de produto',
+                autor: 'Nome do autor',
+                local: 'São Paulo, SP',
+                descricao: 'Uma vaga focada em interface, experiência do usuário e prototipação visual para times de produto.',
+                salario: 'R$ 2000 - 2800 mês',
+                views: '2,1mil'
             },
             {
-                author: 'Nome do autor',
-                rating: '92%',
-                likes: '1,6mil',
-                views: '3,7mil',
-                image: thumbnails.green
+                chip: 'Branding',
+                tempo: 'Há 1 semana',
+                titulo: 'Direção de arte para marca',
+                autor: 'Nome do autor',
+                local: 'Curitiba, PR',
+                descricao: 'Projeto para criação e manutenção de identidade visual com foco em campanhas e comunicação.',
+                salario: 'R$ 3000 - 4500 mês',
+                views: '1,4mil'
             }
         ],
         avaliacoes: [
@@ -258,8 +268,191 @@ document.addEventListener('DOMContentLoaded', function () {
         return article;
     }
 
+    function normalizeTabKey(tabKey) {
+        if (tabKey === 'Posts') {
+            return 'trabalhos';
+        }
+
+        return tabKey;
+    }
+
+    function getPostImage(post) {
+        if (Array.isArray(post.imagens) && post.imagens.length > 0) {
+            return post.imagens[0];
+        }
+
+        return 'img/logo.png';
+    }
+
+    function getPostAuthor(post) {
+        return post.user && post.user.nome ? post.user.nome : 'Usuário';
+    }
+
+    function getPostAuthorPhoto(post) {
+        return post.user && post.user.foto ? post.user.foto : 'img/userProfile.png';
+    }
+
+    function getRelativeTime(value) {
+        if (!value) {
+            return '';
+        }
+
+        var date = new Date(value);
+        if (Number.isNaN(date.getTime())) {
+            return '';
+        }
+
+        var diffMs = Date.now() - date.getTime();
+        if (diffMs < 0) {
+            diffMs = 0;
+        }
+
+        var seconds = Math.floor(diffMs / 1000);
+        if (seconds < 60) {
+            return 'agora mesmo';
+        }
+
+        var minutes = Math.floor(seconds / 60);
+        if (minutes < 60) {
+            return minutes === 1 ? 'há 1 minuto' : 'há ' + minutes + ' minutos';
+        }
+
+        var hours = Math.floor(minutes / 60);
+        if (hours < 24) {
+            return hours === 1 ? 'há 1 hora' : 'há ' + hours + ' horas';
+        }
+
+        var days = Math.floor(hours / 24);
+        if (days < 30) {
+            return days === 1 ? 'há 1 dia' : 'há ' + days + ' dias';
+        }
+
+        var months = Math.floor(days / 30);
+        if (months < 12) {
+            return months === 1 ? 'há 1 mês' : 'há ' + months + ' meses';
+        }
+
+        var years = Math.floor(months / 12);
+        return years === 1 ? 'há 1 ano' : 'há ' + years + ' anos';
+    }
+
+    function formatDate(value) {
+        if (!value) {
+            return '';
+        }
+
+        var date = new Date(value);
+        if (Number.isNaN(date.getTime())) {
+            return '';
+        }
+
+        return date.toLocaleDateString('pt-BR', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric'
+        });
+    }
+
+    function buildFeedCard(post) {
+        var article = document.createElement('article');
+        article.className = 'feedCard';
+        article.dataset.postId = String(post.id);
+        article.innerHTML =
+            '<div class="feedImg">' +
+            '<img src="' + getPostImage(post) + '" alt="' + (post.titulo || 'Post') + '">' +
+            '</div>' +
+            '<div class="infoPost">' +
+            '<div class="feedInfoLeft">' +
+            '<span class="feedPostTitle">' + (post.titulo || 'Sem título') + '</span>' +
+            '<div class="logoName">' +
+            '<img class="logoUser" src="' + getPostAuthorPhoto(post) + '" alt="' + getPostAuthor(post) + '">' +
+            '<span class="userName">' + getPostAuthor(post) + '</span>' +
+            '</div>' +
+            '</div>' +
+            '<div class="likeView">' +
+            '<span class="feedPostTime">' + (getRelativeTime(post.criado_em) || formatDate(post.criado_em)) + '</span>' +
+            '</div>' +
+            '</div>';
+
+        return article;
+    }
+
+    function buildVagaCard(vaga) {
+        var article = document.createElement('article');
+        article.className = 'vaga-card';
+        article.innerHTML =
+            '<div class="vaga-card__topo">' +
+            '<span class="vaga-card__chip">' + (vaga.chip || 'Vaga') + '</span>' +
+            '<span class="vaga-card__tempo">' + (vaga.tempo || '') + '</span>' +
+            '</div>' +
+            '<h3>' + (vaga.titulo || 'Título da vaga') + '</h3>' +
+            '<div class="vaga-card__meta">' +
+            '<span class="vaga-card__autor"><img src="img/userProfilepreto.png" alt="" aria-hidden="true">' + (vaga.autor || 'Usuário') + '</span>' +
+            '<span class="vaga-card__local"><img src="img/icons/local.svg" alt="" aria-hidden="true">' + (vaga.local || '') + '</span>' +
+            '</div>' +
+            '<p>' + (vaga.descricao || '') + '</p>' +
+            '<div class="vaga-card__rodape">' +
+            '<span class="vaga-card__salario">' + (vaga.salario || '') + '</span>' +
+            '<span class="vaga-card__views">' + (vaga.views || '') + ' <img src="img/icons/olho.svg" alt="" aria-hidden="true"></span>' +
+            '</div>';
+
+        return article;
+    }
+
+    function renderPostsTab(posts) {
+        var listaPosts = Array.isArray(posts) ? posts : [];
+
+        tabPanel.innerHTML = '';
+
+        if (window.usuarioPerfilPostsLoading) {
+            tabPanel.innerHTML = '<p class="usuario-empty-state">Carregando posts...</p>';
+            return;
+        }
+
+        if (!listaPosts.length) {
+            tabPanel.innerHTML = '<p class="usuario-empty-state">Nenhum post disponível para este perfil.</p>';
+            return;
+        }
+
+        var grid = document.createElement('div');
+        grid.className = 'feedImgs usuario-feedImgs';
+
+        listaPosts.forEach(function (post) {
+            grid.appendChild(buildFeedCard(post));
+        });
+
+        tabPanel.appendChild(grid);
+    }
+
     function renderTab(tabKey) {
-        var items = tabs[tabKey] || [];
+        var normalizedTabKey = normalizeTabKey(tabKey);
+
+        if (normalizedTabKey === 'trabalhos') {
+            renderPostsTab(window.usuarioPerfilPosts || []);
+            return;
+        }
+
+        if (normalizedTabKey === 'vagas') {
+            var vagasItems = tabs.vagas || [];
+            tabPanel.innerHTML = '';
+
+            if (!vagasItems.length) {
+                tabPanel.innerHTML = '<p class="usuario-empty-state">Nenhuma vaga disponível para este perfil.</p>';
+                return;
+            }
+
+            var vagasGrid = document.createElement('div');
+            vagasGrid.className = 'vagas-grid';
+
+            vagasItems.forEach(function (vaga) {
+                vagasGrid.appendChild(buildVagaCard(vaga));
+            });
+
+            tabPanel.appendChild(vagasGrid);
+            return;
+        }
+
+        var items = tabs[normalizedTabKey] || [];
         tabPanel.innerHTML = '';
 
         if (!items.length) {
@@ -281,6 +474,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function setActiveTab(tabKey) {
+        currentTabKey = tabKey;
+        var normalizedTabKey = normalizeTabKey(tabKey);
+
         tabButtons.forEach(function (button) {
             var isActive = button.dataset.tab === tabKey;
             button.classList.toggle('is-active', isActive);
@@ -288,8 +484,19 @@ document.addEventListener('DOMContentLoaded', function () {
             button.tabIndex = isActive ? 0 : -1;
         });
 
-        renderTab(tabKey);
+        renderTab(normalizedTabKey);
     }
+
+    window.usuarioPerfilPosts = Array.isArray(window.usuarioPerfilPosts) ? window.usuarioPerfilPosts : [];
+    window.usuarioPerfilPostsLoading = !!window.usuarioPerfilPostsLoading;
+    window.renderUsuarioPerfilPosts = function (posts) {
+        window.usuarioPerfilPosts = Array.isArray(posts) ? posts : [];
+        window.usuarioPerfilPostsLoading = false;
+
+        if (normalizeTabKey(currentTabKey) === 'trabalhos') {
+            renderTab('trabalhos');
+        }
+    };
 
     tabButtons.forEach(function (button) {
         button.addEventListener('click', function () {
@@ -297,5 +504,5 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    setActiveTab('trabalhos');
+    setActiveTab('Posts');
 });

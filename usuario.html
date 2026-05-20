@@ -27,6 +27,7 @@
                 <div class="usuario-profile-card__menu-popover" id="usuarioProfileMenu" role="menu" aria-label="Opções do perfil" hidden>
                     <button type="button" class="usuario-profile-card__menu-item usuario-profile-card__menu-item--danger" role="menuitem">Denunciar</button>
                     <button type="button" class="usuario-profile-card__menu-item usuario-profile-card__menu-item--danger" role="menuitem">Bloquear</button>
+                    <button type="button" class="usuario-profile-card__menu-item" role="menuitem">Editar perfil</button>
                 </div>
 
                 <div class="usuario-profile-card__avatar-wrap">
@@ -45,16 +46,16 @@
                             <dd>—</dd>
                         </button>
                         <button>
-                            <dt>Conexões</dt>
+                            <dt>Seguindo</dt>
                             <dd>—</dd>
                         </button>
                         <button>
-                            <dt>Curtidas</dt>
+                            <dt>Posts</dt>
                             <dd>—</dd>
                         </button>
                     </dl>
 
-                    <div class="usuario-profile-card__actions">
+                    <div class="usuario-profile-card__actions" id="container-seguir-mensagem">
                         <button type="button" class="usuario-btn usuario-btn--primary">Seguir</button>
                         <button type="button" class="usuario-btn usuario-btn--secondary">Mensagem</button>
                     </div>
@@ -88,8 +89,8 @@
 
             <section class="usuario-main-panel" aria-label="Conteúdo principal do perfil">
                 <nav class="usuario-tabs" aria-label="Navegação do perfil">
-                    <button type="button" class="usuario-tab is-active" data-tab="trabalhos" aria-selected="true">Trabalhos</button>
-                    <button type="button" class="usuario-tab" data-tab="cursos" aria-selected="false">Cursos</button>
+                    <button type="button" class="usuario-tab is-active" data-tab="Posts" aria-selected="true">Posts</button>
+                    <button type="button" class="usuario-tab" data-tab="vagas" aria-selected="false">Vagas</button>
                     <button type="button" class="usuario-tab" data-tab="avaliacoes" aria-selected="false">Avaliações</button>
                 </nav>
 
@@ -103,6 +104,7 @@
 <script src="js/ambiente.js"></script>
 <script src="js/header.js"></script>
 <script src="js/usuario_logado.js"></script>
+<script src="js/conexao_com_api/carregar_usuario.js"></script>
 <script src="js/usuario.js"></script>
 
 </html>
