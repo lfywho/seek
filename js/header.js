@@ -21,7 +21,38 @@ function montarHeader() {
         ${buildNavItem('vagas', 'Vagas', 'vagas.html')}
     </nav>
 
-    <input class="inputPesquisa" type="search">
+    <div class="inputPesquisaWrapper">
+        <button type="button" class="inputPesquisaIconButton inputPesquisaIconLeft" aria-label="Pesquisar">
+            <img class="inputPesquisaIcon" src="img/icons/lupapreta.svg" alt="">
+        </button>
+        <input class="inputPesquisa" type="search">
+        <button type="button" class="inputPesquisaIconButton inputPesquisaIconRight" aria-label="Abrir filtros">
+            <img class="inputPesquisaIcon" src="img/icons/filtroinputpreto.svg" alt="">
+        </button>
+
+        <div class="inputPesquisaDropdown" id="inputPesquisaDropdown" hidden>
+            <div class="inputPesquisaDropdownTitle" id="inputPesquisaDropdownTitle">Recentes</div>
+
+            <div class="inputPesquisaDropdownList" id="inputPesquisaDropdownList">
+                <div class="inputPesquisaSugestaoRow">
+                    <button type="button" class="inputPesquisaSugestaoItem">Design gráfico</button>
+                    <button type="button" class="inputPesquisaExcluirButton" aria-label="Excluir recente">X</button>
+                </div>
+                <div class="inputPesquisaSugestaoRow">
+                    <button type="button" class="inputPesquisaSugestaoItem">Ilustração</button>
+                    <button type="button" class="inputPesquisaExcluirButton" aria-label="Excluir recente">X</button>
+                </div>
+                <div class="inputPesquisaSugestaoRow">
+                    <button type="button" class="inputPesquisaSugestaoItem">Concept art</button>
+                    <button type="button" class="inputPesquisaExcluirButton" aria-label="Excluir recente">X</button>
+                </div>
+                <div class="inputPesquisaSugestaoRow">
+                    <button type="button" class="inputPesquisaSugestaoItem">Art 3D</button>
+                    <button type="button" class="inputPesquisaExcluirButton" aria-label="Excluir recente">X</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="menusHeader">
         <div class="messagesDropdown">
@@ -181,6 +212,19 @@ function montarHeader() {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+    const searchWrapper = document.querySelector('.inputPesquisaWrapper');
+    const searchInput = document.querySelector('.inputPesquisa');
+    const searchDropdown = document.getElementById('inputPesquisaDropdown');
+    const searchDropdownTitle = document.getElementById('inputPesquisaDropdownTitle');
+    const searchDropdownList = document.getElementById('inputPesquisaDropdownList');
+    const searchIconButtons = searchWrapper ? searchWrapper.querySelectorAll('.inputPesquisaIconButton') : [];
+    const userSearchApiUrl = 'http://localhost:4500/pesquisa/usuarios/';
+    const recentSearches = ['Design gráfico', 'Ilustração', 'Concept art', 'Art 3D'];
+
+    let searchDebounceTimer = null;
+    let searchRequestController = null;
+    let searchRequestToken = 0;
+
     const dropdowns = [
         {
             root: document.querySelector('.messagesDropdown'),
@@ -207,8 +251,183 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     if (!dropdowns.length) {
-        return;
+        if (!(searchWrapper && searchInput && searchDropdown)) {
+            return;
+        }
     }
+
+    const escapeHtml = function (value) {
+        return String(value)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    };
+
+    const setSearchPanel = function (title, contentHtml) {
+        if (!searchDropdownTitle || !searchDropdownList) {
+            return;
+        }
+
+        searchDropdownTitle.textContent = title;
+        searchDropdownList.innerHTML = contentHtml;
+    };
+
+    const renderRecentSearches = function () {
+        const itemsHtml = recentSearches.length
+            ? recentSearches.map(function (term) {
+                return '<div class="inputPesquisaSugestaoRow">' +
+                    '<button type="button" class="inputPesquisaSugestaoItem" data-term="' + escapeHtml(term) + '">' + escapeHtml(term) + '</button>' +
+                    '<button type="button" class="inputPesquisaExcluirButton" aria-label="Excluir recente">X</button>' +
+                    '</div>';
+            }).join('')
+            : '<p class="inputPesquisaEstadoVazio">Nenhuma pesquisa recente.</p>';
+
+        setSearchPanel('Recentes', itemsHtml);
+    };
+
+    const renderSearchMessage = function (title, message) {
+        setSearchPanel(title, '<p class="inputPesquisaEstadoVazio">' + escapeHtml(message) + '</p>');
+    };
+
+    const renderSearchUsers = function (users) {
+        if (!users.length) {
+            renderSearchMessage('Usuários', 'Nenhum usuário encontrado.');
+            return;
+        }
+
+        const itemsHtml = users.map(function (user) {
+            const userId = escapeHtml(user.id);
+            const userName = escapeHtml(user.nome || 'Usuário');
+            const userPhoto = escapeHtml(user.foto || 'img/userProfile.png');
+
+            return '<a class="inputPesquisaResultadoItem" href="usuario.html?id=' + userId + '">' +
+                '<img class="inputPesquisaResultadoFoto" src="' + userPhoto + '" alt="">' +
+                '<span class="inputPesquisaResultadoNome">' + userName + '</span>' +
+                '</a>';
+        }).join('');
+
+        setSearchPanel('Usuários', itemsHtml);
+    };
+
+    const cancelPendingSearch = function () {
+        clearTimeout(searchDebounceTimer);
+        searchDebounceTimer = null;
+
+        if (searchRequestController) {
+            searchRequestController.abort();
+            searchRequestController = null;
+        }
+
+        searchRequestToken += 1;
+    };
+
+    const searchUsers = function (term) {
+        cancelPendingSearch();
+
+        const requestToken = searchRequestToken;
+        searchRequestController = new AbortController();
+
+        renderSearchMessage('Usuários', 'Carregando usuários...');
+
+        fetch(userSearchApiUrl + encodeURIComponent(term), {
+            signal: searchRequestController.signal
+        })
+            .then(function (response) {
+                if (!response.ok) {
+                    throw new Error('Falha ao consultar a pesquisa de usuários.');
+                }
+
+                return response.json();
+            })
+            .then(function (users) {
+                if (requestToken !== searchRequestToken) {
+                    return;
+                }
+
+                renderSearchUsers(Array.isArray(users) ? users : []);
+            })
+            .catch(function (error) {
+                if (error && error.name === 'AbortError') {
+                    return;
+                }
+
+                renderSearchMessage('Usuários', 'Não foi possível carregar os usuários.');
+            })
+            .finally(function () {
+                if (requestToken === searchRequestToken) {
+                    searchRequestController = null;
+                }
+            });
+    };
+
+    const syncSearchState = function () {
+        if (!(searchWrapper && searchInput && searchDropdown)) {
+            return;
+        }
+
+        const term = searchInput.value.trim();
+
+        openSearchDropdown();
+        cancelPendingSearch();
+
+        if (!term.length) {
+            renderRecentSearches();
+            return;
+        }
+
+        if (term.length < 3) {
+            renderSearchMessage('Usuários', 'Digite pelo menos 3 letras para pesquisar usuários.');
+            return;
+        }
+
+        renderSearchMessage('Usuários', 'Pesquisando usuários...');
+        searchDebounceTimer = setTimeout(function () {
+            searchUsers(term);
+        }, 300);
+    };
+
+    const setSearchIcons = function (isOpen) {
+        if (!searchWrapper) {
+            return;
+        }
+
+        const leftIcon = searchWrapper.querySelector('.inputPesquisaIconLeft .inputPesquisaIcon');
+        const rightIcon = searchWrapper.querySelector('.inputPesquisaIconRight .inputPesquisaIcon');
+
+        if (leftIcon) {
+            leftIcon.src = 'img/icons/lupapreta.svg';
+        }
+
+        if (rightIcon) {
+            rightIcon.src = 'img/icons/filtroinputpreto.svg';
+        }
+    };
+
+    const openSearchDropdown = function () {
+        if (!(searchWrapper && searchInput && searchDropdown)) {
+            return;
+        }
+
+        closeAllDropdowns();
+        searchWrapper.classList.add('is-open');
+        searchInput.setAttribute('aria-expanded', 'true');
+        searchDropdown.hidden = false;
+        setSearchIcons(true);
+    };
+
+    const closeSearchDropdown = function () {
+        if (!(searchWrapper && searchInput && searchDropdown)) {
+            return;
+        }
+
+        cancelPendingSearch();
+        searchWrapper.classList.remove('is-open');
+        searchInput.setAttribute('aria-expanded', 'false');
+        searchDropdown.hidden = true;
+        setSearchIcons(false);
+    };
 
     const closeDropdown = function (dropdown) {
         dropdown.root.classList.remove('is-open');
@@ -232,6 +451,66 @@ document.addEventListener('DOMContentLoaded', function () {
         dropdowns.forEach(closeDropdown);
     };
 
+    if (searchWrapper && searchInput && searchDropdown) {
+        searchInput.setAttribute('aria-expanded', 'false');
+        renderRecentSearches();
+
+        searchInput.addEventListener('focus', syncSearchState);
+        searchInput.addEventListener('click', syncSearchState);
+        searchInput.addEventListener('input', syncSearchState);
+        searchWrapper.addEventListener('click', function () {
+            openSearchDropdown();
+            if (!searchInput.value.trim().length) {
+                renderRecentSearches();
+            }
+        });
+
+        searchIconButtons.forEach(function (button) {
+            button.addEventListener('click', function (event) {
+                event.preventDefault();
+                event.stopPropagation();
+                syncSearchState();
+            });
+        });
+
+        searchDropdown.addEventListener('click', function (event) {
+            const deleteButton = event.target.closest('.inputPesquisaExcluirButton');
+
+            if (!deleteButton) {
+                return;
+            }
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            const row = deleteButton.closest('.inputPesquisaSugestaoRow');
+            if (row) {
+                const termButton = row.querySelector('.inputPesquisaSugestaoItem');
+                if (termButton) {
+                    const term = termButton.dataset.term || termButton.textContent.trim();
+                    const index = recentSearches.indexOf(term);
+
+                    if (index !== -1) {
+                        recentSearches.splice(index, 1);
+                    }
+                }
+
+                row.remove();
+
+                if (!recentSearches.length) {
+                    renderRecentSearches();
+                }
+            }
+
+            const searchItemButton = event.target.closest('.inputPesquisaSugestaoItem');
+            if (searchItemButton) {
+                const term = searchItemButton.dataset.term || searchItemButton.textContent.trim();
+                searchInput.value = term;
+                syncSearchState();
+            }
+        });
+    }
+
     dropdowns.forEach(function (dropdown) {
         dropdown.button.addEventListener('click', function (event) {
             event.stopPropagation();
@@ -251,16 +530,22 @@ document.addEventListener('DOMContentLoaded', function () {
                 closeDropdown(dropdown);
             }
         });
+
+        if (searchWrapper && !searchWrapper.contains(event.target)) {
+            closeSearchDropdown();
+        }
     });
 
     document.addEventListener('keydown', function (event) {
         if (event.key === 'Escape') {
             closeAllDropdowns();
+            closeSearchDropdown();
         }
     });
 
     window.addEventListener('scroll', function () {
         closeAllDropdowns();
+        closeSearchDropdown();
     }, { passive: true });
 });
 
