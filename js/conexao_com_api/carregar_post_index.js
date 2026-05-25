@@ -1,39 +1,24 @@
 document.addEventListener('DOMContentLoaded', function () {
 	var feedContainer = document.getElementById('feedContainer');
 	var modal = document.getElementById('postModal');
-	var modalImage = document.getElementById('modalPostImg');
 	var modalTitle = document.getElementById('modalPostTitulo');
 	var modalAuthorName = document.getElementById('modalAuthorName');
-	var modalDescription = document.getElementById('modalDescription');
-	var modalFollowers = document.getElementById('modalAprovacao');
-	var modalLikes = document.getElementById('modalLikes');
+	var modalAuthorAvatar = document.getElementById('modalAuthorAvatar');
+	var modalGallery = document.getElementById('modalGallery');
 	var modalLikeButton = document.getElementById('modalLike');
 	var modalFavoriteButton = document.getElementById('modalFavorite');
 	var modalShareButton = document.getElementById('modalShare');
+	var modalInfoButton = document.getElementById('modalInfo');
+	var modalCommentsButton = document.getElementById('modalComments');
 	var modalCloseButton = document.querySelector('.post-modal__close');
 	var modalOverlay = document.querySelector('.post-modal__overlay');
-	var commentInput = document.getElementById('commentInput');
-	var sendCommentButton = document.getElementById('sendComment');
-	var replyTarget = document.getElementById('replyTarget');
-	var replyTargetText = document.getElementById('replyTargetText');
-	var cancelReplyButton = document.getElementById('cancelReply');
-	var commentsList = document.getElementById('commentsList');
-	var loggedUser = getUsuarioLogado();
+	var loggedUser = typeof getUsuarioLogado === 'function' ? getUsuarioLogado() : null;
 	var postsCache = [];
 	var postState = {};
 	var POST_ID_QUERY_KEY = 'postId';
 
-	if (!feedContainer || !modal || !modalImage || !modalTitle || !modalAuthorName || !modalDescription || !modalFollowers || !modalLikes || !modalLikeButton || !modalFavoriteButton || !modalShareButton || !modalCloseButton || !modalOverlay || !commentInput || !sendCommentButton || !replyTarget || !replyTargetText || !cancelReplyButton || !commentsList) {
+	if (!feedContainer || !modal || !modalTitle || !modalAuthorName || !modalAuthorAvatar || !modalGallery || !modalLikeButton || !modalFavoriteButton || !modalShareButton || !modalCloseButton || !modalOverlay) {
 		return;
-	}
-
-	function escapeHtml(value) {
-		return String(value || '')
-			.replace(/&/g, '&amp;')
-			.replace(/</g, '&lt;')
-			.replace(/>/g, '&gt;')
-			.replace(/"/g, '&quot;')
-			.replace(/'/g, '&#39;');
 	}
 
 	function formatDate(value) {
@@ -105,6 +90,14 @@ document.addEventListener('DOMContentLoaded', function () {
 		return 'img/logo.png';
 	}
 
+	function getPostImages(post) {
+		if (Array.isArray(post.imagens) && post.imagens.length > 0) {
+			return post.imagens.filter(Boolean);
+		}
+
+		return [getPostImage(post)];
+	}
+
 	function getPostAuthor(post) {
 		return post.user && post.user.nome ? post.user.nome : 'Usuário';
 	}
@@ -151,6 +144,42 @@ document.addEventListener('DOMContentLoaded', function () {
 		return shareUrl.toString();
 	}
 
+	function createGalleryTile(src, altText) {
+		var figure = document.createElement('figure');
+		figure.className = 'post-modal__tile';
+
+		var image = document.createElement('img');
+		image.src = src;
+		image.alt = altText;
+
+		figure.appendChild(image);
+		return figure;
+	}
+
+	function renderGallery(post) {
+		var images = getPostImages(post).slice(0, 6);
+
+		if (!images.length) {
+			images = ['img/logo.png'];
+		}
+
+		modalGallery.dataset.count = String(images.length);
+		modalGallery.innerHTML = '';
+
+		for (var index = 0; index < images.length; index += 1) {
+			modalGallery.appendChild(createGalleryTile(images[index], (post.titulo || 'Projeto') + ' - imagem ' + (index + 1)));
+		}
+	}
+
+	function setModalContent(post) {
+		modal.dataset.currentPostId = String(post.id);
+		modalTitle.textContent = post.titulo || 'Projeto';
+		modalAuthorName.textContent = getPostAuthor(post);
+		modalAuthorAvatar.src = getPostAuthorPhoto(post);
+		modalAuthorAvatar.alt = getPostAuthor(post);
+		renderGallery(post);
+	}
+
 	function updateLikeButton(postId) {
 		var state = postState[postId];
 		if (!state) {
@@ -158,99 +187,18 @@ document.addEventListener('DOMContentLoaded', function () {
 		}
 
 		modalLikeButton.classList.toggle('active', !!state.liked);
-		modalLikeButton.textContent = state.liked ? '❤️' : '👍';
-		modalLikes.textContent = '❤️ ' + state.totalLikes + ' curtidas';
+		modalLikeButton.setAttribute('aria-pressed', state.liked ? 'true' : 'false');
+		modalLikeButton.title = state.totalLikes + ' curtidas';
 	}
 
-	function updateFavoriteButton() {
-		modalFavoriteButton.classList.toggle('active', !!modalFavoriteButton.dataset.active);
-	}
-
-	function setReplyTargetVisible(visible, commentId, userName) {
-		replyTarget.hidden = !visible;
-		replyTarget.dataset.commentId = commentId || '';
-		replyTargetText.textContent = visible ? 'Respondendo a ' + userName : 'Respondendo comentário';
-		if (!visible) {
-			commentInput.placeholder = 'Adicione um comentário...';
-			delete commentInput.dataset.replyTo;
+	function updateFavoriteButton(postId) {
+		var state = postState[postId];
+		if (!state) {
 			return;
 		}
 
-		commentInput.placeholder = 'Escreva sua resposta...';
-		commentInput.dataset.replyTo = commentId;
-		commentInput.focus();
-	}
-
-	function normalizeReplies(comment) {
-		if (Array.isArray(comment.respostas)) {
-			return comment.respostas;
-		}
-
-		if (Array.isArray(comment.replies)) {
-			return comment.replies;
-		}
-
-		return [];
-	}
-
-	function createCommentElement(comment, level) {
-		var article = document.createElement('article');
-		article.className = 'post-modal__comment';
-		if (level > 0) {
-			article.style.marginLeft = '14px';
-			article.style.borderLeft = '2px solid #e4e4e4';
-		}
-
-		var userName = comment.nome || comment.nome_de_usuario || comment.user || 'Usuário';
-		var text = comment.comentario || comment.text || '';
-		var commentId = comment.id || comment.comentario_id || null;
-
-		var html = '';
-		html += '<div class="post-modal__comment-user">' + escapeHtml(userName) + '</div>';
-		html += '<div class="post-modal__comment-text">' + escapeHtml(text) + '</div>';
-
-		if (commentId) {
-			html += '<button type="button" class="post-modal__comment-reply" data-comment-id="' + escapeHtml(commentId) + '" data-comment-user="' + escapeHtml(userName) + '">Responder</button>';
-		}
-
-		article.innerHTML = html;
-
-		normalizeReplies(comment).forEach(function (reply) {
-			article.appendChild(createCommentElement(reply, level + 1));
-		});
-
-		return article;
-	}
-
-	function renderComments(postId, comments) {
-		commentsList.innerHTML = '';
-
-		if (!comments.length) {
-			commentsList.innerHTML = '<p style="text-align:center;color:#8b8b8b;font-size:12px;">Nenhum comentário ainda.</p>';
-			return;
-		}
-
-		comments.forEach(function (comment) {
-			commentsList.appendChild(createCommentElement(comment, 0));
-		});
-
-		commentsList.querySelectorAll('.post-modal__comment-reply').forEach(function (button) {
-			button.addEventListener('click', function () {
-				var commentId = button.dataset.commentId;
-				var commentUser = button.dataset.commentUser;
-				setReplyTargetVisible(true, commentId, commentUser);
-			});
-		});
-	}
-
-	function setModalContent(post) {
-		modal.dataset.currentPostId = String(post.id);
-		modalImage.src = getPostImage(post);
-		modalImage.alt = post.titulo || 'Post';
-		modalTitle.textContent = post.titulo || 'Post';
-		modalAuthorName.textContent = getPostAuthor(post);
-		modalDescription.textContent = post.legenda || '';
-		modalFollowers.textContent = (post.total_seguidores || 0) + ' seguidores';
+		modalFavoriteButton.classList.toggle('active', !!state.favorite);
+		modalFavoriteButton.setAttribute('aria-pressed', state.favorite ? 'true' : 'false');
 	}
 
 	function renderCard(post) {
@@ -344,18 +292,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	function closeModal() {
 		modal.hidden = true;
 		document.body.style.overflow = '';
-		commentInput.value = '';
-		setReplyTargetVisible(false);
 		clearPostIdFromUrl();
-	}
-
-	async function loadComments(postId) {
-		var response = await fetch(ip_api + '/comentarios/' + postId);
-		if (!response.ok) {
-			return [];
-		}
-
-		return response.json();
 	}
 
 	async function loadLikeStatus(postId) {
@@ -395,28 +332,21 @@ document.addEventListener('DOMContentLoaded', function () {
 			postState[post.id] = {
 				liked: false,
 				favorite: false,
-				totalLikes: Number(post.total_likes) || 0,
-				comments: []
+				totalLikes: Number(post.total_likes) || 0
 			};
 		}
 
 		openModal();
 		modalLikeButton.disabled = !loggedUser;
-		sendCommentButton.disabled = !loggedUser;
 
 		try {
-			var loadedComments = await loadComments(post.id);
-			postState[post.id].comments = Array.isArray(loadedComments) ? loadedComments : [];
-
-			var likeState = await loadLikeStatus(post.id);
-			postState[post.id].liked = !!likeState;
-
+			postState[post.id].liked = !!(await loadLikeStatus(post.id));
 			postState[post.id].totalLikes = await loadLikeCount(post.id) || postState[post.id].totalLikes;
-
 			updateLikeButton(post.id);
-			renderComments(post.id, postState[post.id].comments);
+			updateFavoriteButton(post.id);
 		} catch (error) {
-			commentsList.innerHTML = '<p style="text-align:center;color:#b32929;font-size:12px;">Nao foi possivel carregar os comentarios.</p>';
+			updateLikeButton(post.id);
+			updateFavoriteButton(post.id);
 		}
 	}
 
@@ -465,41 +395,6 @@ document.addEventListener('DOMContentLoaded', function () {
 		state.liked = !!data.liked;
 		state.totalLikes = await loadLikeCount(postId) || state.totalLikes;
 		updateLikeButton(postId);
-	}
-
-	async function submitComment() {
-		var postId = Number(modal.dataset.currentPostId);
-		var content = commentInput.value.trim();
-		var state = postState[postId];
-
-		if (!state || !loggedUser || !loggedUser.id || !content) {
-			return;
-		}
-
-		var replyTo = commentInput.dataset.replyTo || '';
-		var url = replyTo ? ip_api + '/comentarios/' + postId + '/responder/' + replyTo : ip_api + '/comentarios/' + postId;
-		var body = replyTo
-			? { idusuario: loggedUser.id, conteudo: content }
-			: { idusuario: loggedUser.id, conteudo: content };
-
-		var response = await fetch(url, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify(body)
-		});
-
-		if (!response.ok) {
-			return;
-		}
-
-		commentInput.value = '';
-		setReplyTargetVisible(false);
-
-		var comments = await loadComments(postId);
-		state.comments = Array.isArray(comments) ? comments : [];
-		renderComments(postId, state.comments);
 	}
 
 	async function shareCurrentPost() {
@@ -564,30 +459,52 @@ document.addEventListener('DOMContentLoaded', function () {
 	});
 
 	modalFavoriteButton.addEventListener('click', function () {
-		modalFavoriteButton.dataset.active = modalFavoriteButton.dataset.active === 'true' ? 'false' : 'true';
-		updateFavoriteButton();
+		var postId = Number(modal.dataset.currentPostId);
+		if (!postState[postId]) {
+			return;
+		}
+
+		postState[postId].favorite = !postState[postId].favorite;
+		updateFavoriteButton(postId);
 	});
 
 	modalShareButton.addEventListener('click', function () {
 		shareCurrentPost();
 	});
 
+	if (modalInfoButton) {
+		modalInfoButton.addEventListener('click', function () {
+			var postId = Number(modal.dataset.currentPostId);
+			var post = postsCache.find(function (item) {
+				return Number(item.id) === postId;
+			});
+
+			if (!post) {
+				return;
+			}
+
+			alert(post.legenda || 'Sem descricao para este projeto.');
+		});
+	}
+
+	if (modalCommentsButton) {
+		modalCommentsButton.addEventListener('click', function () {
+			var postId = Number(modal.dataset.currentPostId);
+			var post = postsCache.find(function (item) {
+				return Number(item.id) === postId;
+			});
+
+			if (!post) {
+				return;
+			}
+
+			var created = getRelativeTime(post.criado_em) || formatDate(post.criado_em) || 'data indisponivel';
+			alert('Publicado ' + created + '.');
+		});
+	}
+
 	modalCloseButton.addEventListener('click', closeModal);
 	modalOverlay.addEventListener('click', closeModal);
-
-	sendCommentButton.addEventListener('click', function () {
-		submitComment();
-	});
-
-	commentInput.addEventListener('keydown', function (event) {
-		if (event.key === 'Enter') {
-			submitComment();
-		}
-	});
-
-	cancelReplyButton.addEventListener('click', function () {
-		setReplyTargetVisible(false);
-	});
 
 	document.addEventListener('keydown', function (event) {
 		if (event.key === 'Escape' && !modal.hidden) {

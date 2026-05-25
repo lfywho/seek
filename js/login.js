@@ -2,8 +2,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const paineis = document.querySelectorAll('[data-form-panel]');
     const alternadores = document.querySelectorAll('[data-toggle-form]');
+    const botoesTipoCadastro = document.querySelectorAll('[data-cadastro-tipo]');
+    const cadastroEscolhaContinuarButton = document.querySelector('#cadastro-escolha-continuar');
     const botoesSenha = document.querySelectorAll('.inicio-login__toggle-senha');
+    const emailInput = document.querySelector('#email');
+    const senhaInput = document.querySelector('#senha');
     const cadastroForm = document.querySelector('#cadastro-form');
+    const cadastroTipoInput = document.querySelector('#cadastro-tipo');
+    const cadastroDuplaCampo = document.querySelector('.inicio-login__dupla-campo');
+    const cadastroCnpjGrupo = document.querySelector('#cadastro-cnpj-grupo');
+    const cadastroCnpjInput = document.querySelector('#cadastro-cnpj');
     const cadastroSenhaInput = document.querySelector('#cadastro-senha');
     const cadastroEmailInput = document.querySelector('#cadastro-email');
     const cadastroConfirmarSenhaInput = document.querySelector('#cadastro-confirmar-senha');
@@ -31,6 +39,99 @@ document.addEventListener('DOMContentLoaded', function () {
     let intervaloCronometro = null;
     let tempoRestante = 0;
     let tokenRecuperacaoAtual = '';
+    let tipoCadastroSelecionado = '';
+
+    function atualizarCamposCadastroPorTipo(tipoCadastro) {
+        var cadastroEmpresarial = tipoCadastro === 'empresarial';
+
+        if (cadastroDuplaCampo) {
+            cadastroDuplaCampo.classList.toggle('is-empresarial', cadastroEmpresarial);
+        }
+
+        if (cadastroCnpjGrupo) {
+            cadastroCnpjGrupo.hidden = !cadastroEmpresarial;
+        }
+
+        if (cadastroCnpjInput) {
+            cadastroCnpjInput.required = cadastroEmpresarial;
+            cadastroCnpjInput.disabled = !cadastroEmpresarial;
+
+            if (!cadastroEmpresarial) {
+                cadastroCnpjInput.value = '';
+            }
+        }
+    }
+
+    function selecionarTipoCadastro(tipoCadastro) {
+        if (tipoCadastro !== 'padrao' && tipoCadastro !== 'empresarial') {
+            return;
+        }
+
+        tipoCadastroSelecionado = tipoCadastro;
+
+        if (cadastroTipoInput) {
+            cadastroTipoInput.value = tipoCadastro;
+        }
+
+        if (cadastroEscolhaContinuarButton) {
+            cadastroEscolhaContinuarButton.disabled = false;
+        }
+
+        botoesTipoCadastro.forEach(function (botao) {
+            var ativo = botao.getAttribute('data-cadastro-tipo') === tipoCadastro;
+            var tipoBotao = botao.getAttribute('data-cadastro-tipo');
+            var icone = botao.querySelector('.inicio-login__tipo-icone img');
+            botao.classList.toggle('inicio-login__tipo-card--ativo', ativo);
+            botao.setAttribute('aria-pressed', ativo ? 'true' : 'false');
+
+            if (icone) {
+                if (tipoBotao === 'padrao') {
+                    icone.src = ativo ? 'img/icons/tipopadraobranco.svg' : 'img/icons/tipopadraoazul.svg';
+                }
+
+                if (tipoBotao === 'empresarial') {
+                    icone.src = ativo ? 'img/icons/tipoempresabranco.svg' : 'img/icons/tipoempresaazul.svg';
+                }
+            }
+        });
+
+        atualizarCamposCadastroPorTipo(tipoCadastro);
+
+        if (cadastroForm) {
+            cadastroForm.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+    }
+
+    function resetarTipoCadastro() {
+        tipoCadastroSelecionado = '';
+
+        if (cadastroTipoInput) {
+            cadastroTipoInput.value = '';
+        }
+
+        if (cadastroEscolhaContinuarButton) {
+            cadastroEscolhaContinuarButton.disabled = true;
+        }
+
+        botoesTipoCadastro.forEach(function (botao) {
+            botao.classList.remove('inicio-login__tipo-card--ativo');
+            botao.setAttribute('aria-pressed', 'false');
+        });
+
+        atualizarCamposCadastroPorTipo('');
+
+        if (cadastroForm) {
+            cadastroForm.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+    }
+
+    function prepararTipoCadastroPadrao() {
+        selecionarTipoCadastro('padrao');
+
+        if (cadastroEscolhaContinuarButton) {
+            cadastroEscolhaContinuarButton.disabled = false;
+        }
+    }
 
     function mostrarPainel(nomePainel) {
         const proximoPainel = document.querySelector('[data-form-panel="' + nomePainel + '"]');
@@ -53,9 +154,34 @@ document.addEventListener('DOMContentLoaded', function () {
     alternadores.forEach(function (link) {
         link.addEventListener('click', function (event) {
             event.preventDefault();
-            mostrarPainel(link.getAttribute('data-toggle-form'));
+            var proximoPainel = link.getAttribute('data-toggle-form');
+
+            if (proximoPainel === 'cadastro-tipo' && link.hasAttribute('data-abrir-cadastro')) {
+                prepararTipoCadastroPadrao();
+            }
+
+            mostrarPainel(proximoPainel);
         });
     });
+
+    if (botoesTipoCadastro.length) {
+        botoesTipoCadastro.forEach(function (botaoTipo) {
+            botaoTipo.addEventListener('click', function () {
+                var tipo = botaoTipo.getAttribute('data-cadastro-tipo');
+                selecionarTipoCadastro(tipo);
+            });
+        });
+    }
+
+    if (cadastroEscolhaContinuarButton) {
+        cadastroEscolhaContinuarButton.addEventListener('click', function () {
+            if (!tipoCadastroSelecionado) {
+                return;
+            }
+
+            mostrarPainel('cadastro');
+        });
+    }
 
     botoesSenha.forEach(function (botao) {
         const campo = botao.closest('.inicio-login__campo-senha');

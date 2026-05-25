@@ -9,6 +9,8 @@ document.addEventListener('DOMContentLoaded', function () {
 	var emailInput = document.getElementById('cadastro-email');
 	var senhaInput = document.getElementById('cadastro-senha');
 	var confirmarSenhaInput = document.getElementById('cadastro-confirmar-senha');
+	var tipoCadastroInput = document.getElementById('cadastro-tipo');
+	var cnpjInput = document.getElementById('cadastro-cnpj');
 	var botaoCadastro = document.getElementById('cadastro-continuar') || cadastroForm.querySelector('button[type="submit"]');
 
 	if (!nomeInput || !emailInput || !senhaInput || !confirmarSenhaInput || !botaoCadastro) {
@@ -55,6 +57,10 @@ document.addEventListener('DOMContentLoaded', function () {
 		feedback.classList.add('inicio-login__mensagem--oculta');
 	}
 
+	function limparCnpj(valor) {
+		return String(valor || '').replace(/\D/g, '');
+	}
+
 	var textoOriginalBotao = botaoCadastro.innerHTML;
 
 	cadastroForm.addEventListener('submit', async function (e) {
@@ -76,17 +82,34 @@ document.addEventListener('DOMContentLoaded', function () {
 			return;
 		}
 
+		var tipoCadastro = String(tipoCadastroInput ? tipoCadastroInput.value : '').toLowerCase();
+		var cadastroEmpresarial = tipoCadastro === 'empresarial';
+		var cnpjLimpo = limparCnpj(cnpjInput ? cnpjInput.value : '');
+
+		if (cadastroEmpresarial && cnpjLimpo === '') {
+			exibirMensagem('Informe o CNPJ para criar conta empresarial.', 'erro');
+			return;
+		}
+
 		var dados = {
 			nome: nomeInput.value.trim(),
 			email: emailInput.value.trim(),
 			senha: senhaInput.value
 		};
 
+		if (cadastroEmpresarial) {
+			dados.cnpj = cnpjLimpo;
+		}
+
+		var endpointCadastro = cadastroEmpresarial
+			? '/usuarios/criar-conta-empresa'
+			: '/usuarios';
+
 		botaoCadastro.disabled = true;
 		botaoCadastro.innerHTML = '<div class="loader"></div>';
 
 		try {
-			var response = await fetch(ip_api + '/usuarios', {
+			var response = await fetch(ip_api + endpointCadastro, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -97,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function () {
 			var data = await response.json();
 
 			if (response.ok) {
-				exibirMensagem('Conta criada com sucesso!', 'sucesso');
+				exibirMensagem(cadastroEmpresarial ? 'Conta empresarial criada com sucesso!' : 'Conta criada com sucesso!', 'sucesso');
 				cadastroForm.reset();
 				var linkLogin = document.querySelector('[data-toggle-form="login"]');
 				if (linkLogin) {

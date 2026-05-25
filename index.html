@@ -33,56 +33,46 @@
             <!-- JS vai inserir os posts aqui -->
         </section>
 
-        <!-- Modal continua igual -->
         <div class="post-modal" id="postModal" hidden>
-            <div class="post-modal__overlay"></div>
-            <div class="post-modal__content">
-                <div class="post-modal__image">
-                    <img id="modalPostImg" src="" alt="">
-                </div>
+            <button type="button" class="post-modal__overlay" aria-label="Fechar modal"></button>
 
-                <div class="post-modal__info">
-                    <div class="post-modal__top">
-                        <h2 id="modalPostTitulo"></h2>
+            <div class="post-modal__content" role="dialog" aria-modal="true" aria-labelledby="modalPostTitulo">
+                <button type="button" class="post-modal__close" aria-label="Fechar modal">×</button>
 
-                        <div class="post-modal__actions">
-                            <button type="button" class="post-modal__icon-btn" id="modalLike" aria-label="Curtir">👍</button>
-                            <button type="button" class="post-modal__icon-btn" id="modalFavorite" aria-label="Favoritar">☆</button>
-                            <button type="button" class="post-modal__icon-btn" id="modalShare" aria-label="Compartilhar">
-                                <img class="post-modal__icon-image" src="img/icons/Share.svg" alt="">
-                            </button>
+                <header class="post-modal__header">
+                    <div class="post-modal__identity">
+                        <img id="modalAuthorAvatar" class="post-modal__avatar" src="img/userProfile.png" alt="Autor do post">
+
+                        <div class="post-modal__identity-text">
+                            <h2 id="modalPostTitulo">Título do projeto</h2>
+                            <p id="modalAuthorName">Nome do autor</p>
                         </div>
-
-                        <button type="button" class="post-modal__close" aria-label="Fechar modal">×</button>
                     </div>
 
-                    <div class="post-modal__author">
-                        <span id="modalAuthorName"></span>
+                    <div class="post-modal__actions" aria-label="Ações do post">
+                        <button type="button" class="post-modal__icon-btn" id="modalShare" aria-label="Compartilhar">
+                            <img class="post-modal__icon-image" src="img/icons/Share.svg" alt="">
+                        </button>
+
+                        <button type="button" class="post-modal__icon-btn" id="modalLike" aria-label="Curtir">
+                            <img class="post-modal__icon-image" src="img/icons/like.svg" alt="">
+                        </button>
+
+                        <button type="button" class="post-modal__icon-btn" id="modalFavorite" aria-label="Salvar">
+                            <img class="post-modal__icon-image" src="img/icons/favoritos.svg" alt="">
+                        </button>
+
+                        <button type="button" class="post-modal__icon-btn" id="modalInfo" aria-label="Informações">
+                            <img class="post-modal__icon-image" src="img/icons/ajuda.svg" alt="">
+                        </button>
+
+                        <button type="button" class="post-modal__icon-btn" id="modalComments" aria-label="Detalhes do post">
+                            <img class="post-modal__icon-image" src="img/icons/email.svg" alt="">
+                        </button>
                     </div>
+                </header>
 
-                    <p class="post-modal__description" id="modalDescription"></p>
-
-                    <div class="post-modal__stats">
-                        <span id="modalAprovacao"></span>
-                        <span id="modalLikes"></span>
-                    </div>
-
-                    <section class="post-modal__comments" aria-label="Comentários do post">
-                        <h3>Comentários</h3>
-
-                        <div class="post-modal__comment-input">
-                            <input id="commentInput" type="text" placeholder="Adicione um comentário...">
-                            <button id="sendComment" type="button">Enviar</button>
-                        </div>
-
-                        <div class="post-modal__reply-target" id="replyTarget" hidden>
-                            <span id="replyTargetText">Respondendo comentário</span>
-                            <button type="button" id="cancelReply">Cancelar</button>
-                        </div>
-
-                        <div class="post-modal__comments-list" id="commentsList"></div>
-                    </section>
-                </div>
+                <div class="post-modal__gallery" id="modalGallery" aria-label="Galeria do projeto"></div>
             </div>
         </div>
 

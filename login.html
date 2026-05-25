@@ -25,8 +25,8 @@
 
                 <div class="inicio-login__painel inicio-login__painel--ativo" data-form-panel="login">
                     <h2>Fazer Login</h2>
-                    <p>Ainda nao possui uma conta? <a href="#" data-toggle-form="cadastro"
-                            class="link_fake">cadastrar</a></p>
+                        <p>Ainda nao possui uma conta? <a href="#" data-toggle-form="cadastro-tipo"
+                            class="link_fake" data-abrir-cadastro>cadastrar</a></p>
 
                     <form class="inicio-login__form" action="/login" method="post">
                         <label for="email">Email:</label>
@@ -58,13 +58,55 @@
                     </form>
                 </div>
 
+                <div class="inicio-login__painel" data-form-panel="cadastro-tipo" hidden>
+                    <h2>Cadastro</h2>
+                    <p>Qual tipo de usuario voce se identifica?</p>
+
+                    <div class="inicio-login__tipos" role="group" aria-label="Selecione o tipo de cadastro">
+                        <button type="button" class="inicio-login__tipo-card" data-cadastro-tipo="padrao"
+                            aria-pressed="false">
+                            <span class="inicio-login__tipo-icone">
+                                <img src="img/icons/tipopadraoazul.svg" alt="">
+                            </span>
+                            <span class="inicio-login__tipo-label">Padrao</span>
+                        </button>
+
+                        <button type="button" class="inicio-login__tipo-card" data-cadastro-tipo="empresarial"
+                            aria-pressed="false">
+                            <span class="inicio-login__tipo-icone">
+                                <img src="img/icons/tipoempresaazul.svg" alt="">
+                            </span>
+                            <span class="inicio-login__tipo-label">Empresarial</span>
+                        </button>
+                    </div>
+
+                    <button type="button" class="inicio-login__continuar" id="cadastro-escolha-continuar" disabled>
+                        Continuar
+                    </button>
+
+                    <p class="inicio-login__tipo-voltar">Ja possui uma conta? <a href="#" data-toggle-form="login"
+                            class="link_fake">Entrar</a></p>
+                </div>
+
                 <div class="inicio-login__painel" data-form-panel="cadastro" hidden>
                     <h2>Cadastro</h2>
                     <p>Ja possui uma conta? <a href="#" data-toggle-form="login" class="link_fake">Entrar</a></p>
 
                     <form class="inicio-login__form" action="/cadastrar" method="post" id="cadastro-form">
-                        <label for="cadastro-nome">Nome:</label>
-                        <input type="text" id="cadastro-nome" name="nome" required>
+                        <input type="hidden" id="cadastro-tipo" name="tipo_usuario" value="">
+
+                        <div class="inicio-login__dupla-campo">
+                            <div>
+                                <label for="cadastro-nome">Nome:</label>
+                                <input type="text" id="cadastro-nome" name="nome" required>
+                            </div>
+
+                            <div id="cadastro-cnpj-grupo" hidden>
+                                <label for="cadastro-cnpj">CNPJ:</label>
+                                <input type="text" id="cadastro-cnpj" name="cnpj" inputmode="numeric"
+                                    autocomplete="off">
+                            </div>
+                        </div>
 
                         <label for="cadastro-email">Email:</label>
                         <input type="email" id="cadastro-email" name="email" required>
