@@ -1,11 +1,15 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Adicionar Projeto</title>
     <link rel="stylesheet" href="css/global.css">
+    <link rel="shortcut icon" href="img/favicon.png" type="image/x-icon">
+
 </head>
+
 <body data-active-nav="explorar">
     <header class="cabecalho"></header>
 
@@ -14,74 +18,58 @@
             <div class="adicionar-projeto__layout">
                 <section class="adicionar-projeto__main" aria-label="Formulário do projeto">
                     <section class="adicionar-projeto__panel adicionar-projeto__hero">
-                        <input class="adicionar-projeto__hero-input" type="file" id="imagemProjetoInput" accept="image/*">
-                        <input class="adicionar-projeto__hero-input" type="file" id="videoProjetoInput" accept="video/*">
+                        <input class="adicionar-projeto__hero-input" type="file" id="imagemProjetoInput"
+                            accept="image/*" multiple>
 
                         <div class="adicionar-projeto__hero-content" id="imagemProjetoEmptyState">
-                            <div class="adicionar-projeto__hero-title">Adicionar imagem ou vídeo</div>
+                            <div class="adicionar-projeto__hero-title">Adicionar imagens</div>
                             <div class="adicionar-projeto__hero-grid">
-                                <button class="adicionar-projeto__hero-action" type="button" aria-label="Adicionar imagem" id="botaoAdicionarImagem">
+                                <label class="adicionar-projeto__hero-action" for="imagemProjetoInput"
+                                    aria-label="Adicionar imagem" id="botaoAdicionarImagem">
                                     <img src="img/icons/addfotobranco.svg" alt="Imagem">
-                                </button>
-                                <button class="adicionar-projeto__hero-action" type="button" aria-label="Adicionar vídeo" id="botaoAdicionarVideo">
-                                    <img src="img/icons/addvideobranco.svg" alt="Vídeo">
-                                </button>
+                                </label>
                             </div>
                             <div class="adicionar-projeto__hero-hint">Ou arraste e solte aqui</div>
                         </div>
 
-                        <div class="adicionar-projeto__hero-preview" id="imagemProjetoPreview" hidden>
-                            <div class="adicionar-projeto__hero-preview-media" id="imagemProjetoPreviewMedia">
-                                <img id="imagemProjetoPreviewImg" src="" alt="Pré-visualização da imagem do projeto" hidden>
-                                <video id="imagemProjetoPreviewVideo" controls playsinline hidden></video>
-                            </div>
-                            <div class="adicionar-projeto__hero-preview-actions">
-                                <button class="adicionar-projeto__hero-preview-button" type="button" id="botaoEditarImagem">
-                                    <img src="img/icons/lapisbranco.svg" alt="">
-                                    <span>Editar</span>
-                                </button>
-                                <button class="adicionar-projeto__hero-preview-button adicionar-projeto__hero-preview-button--danger" type="button" id="botaoExcluirImagem">
-                                    <img src="img/icons/lixeirabranca.svg" alt="">
-                                    <span>Excluir</span>
-                                </button>
-                            </div>
-                        </div>
+                        <div class="adicionar-projeto__hero-previews" id="imagemProjetoPreviews" hidden></div>
                     </section>
 
-                    <div class="adicionar-projeto__panel adicionar-projeto__media-card">
+                    <label class="adicionar-projeto__panel adicionar-projeto__media-card" for="imagemProjetoInput"
+                        id="adicionarMidiaCard" aria-label="Adicionar mais imagens" hidden>
                         <div class="adicionar-projeto__media-card-content">
-                            <h2 class="adicionar-projeto__media-card-title">Adicionar mais imagens ou vídeos</h2>
+                            <h2 class="adicionar-projeto__media-card-title">Adicionar mais imagens</h2>
                             <div class="adicionar-projeto__media-card-actions">
-                                <button class="adicionar-projeto__media-card-button" type="button" id="botaoAdicionarImagemCard" aria-label="Adicionar imagem">
-                                    <img src="img/icons/addfotobranco.svg" alt="">
-                                </button>
-                                <button class="adicionar-projeto__media-card-button" type="button" id="botaoAdicionarVideoCard" aria-label="Adicionar vídeo">
-                                    <img src="img/icons/addvideobranco.svg" alt="">
-                                </button>
+                                <img src="img/icons/addfotobranco.svg" alt="">
                             </div>
                         </div>
-                    </div>
+                    </label>
 
                     <div class="adicionar-projeto__panel adicionar-projeto__section adicionar-projeto__title-section">
-                        <input class="adicionar-projeto__title-input" type="text" id="tituloProjeto" placeholder="Título do projeto">
+                        <input class="adicionar-projeto__title-input" type="text" id="tituloProjeto"
+                            placeholder="Título do projeto">
                     </div>
 
                     <section class="adicionar-projeto__panel adicionar-projeto__section">
                         <h2 class="adicionar-projeto__section-title">Detalhes do projeto</h2>
-                        <textarea class="adicionar-projeto__text-area" id="detalhesProjeto" rows="5" maxlength="1000" placeholder="Descreva seu projeto..."></textarea>
+                        <textarea class="adicionar-projeto__text-area" id="detalhesProjeto" rows="5" maxlength="1000"
+                            placeholder="Descreva seu projeto..."></textarea>
                         <div class="adicionar-projeto__counter" aria-live="polite">
                             <span id="detalhesProjetoCounter">0</span>/1000
                         </div>
                     </section>
 
-                    <section class="adicionar-projeto__panel adicionar-projeto__section adicionar-projeto__section--categorias">
-                        <h2 class="adicionar-projeto__section-title adicionar-projeto__section-title--large">Categorias</h2>
+                    <section
+                        class="adicionar-projeto__panel adicionar-projeto__section adicionar-projeto__section--categorias">
+                        <h2 class="adicionar-projeto__section-title adicionar-projeto__section-title--large">Categorias
+                        </h2>
                         <div class="adicionar-projeto__chips" id="chips-categorias"></div>
 
                         <div class="adicionar-projeto__section-spacer"></div>
 
                         <div class="adicionar-projeto__search-block">
-                            <h2 class="adicionar-projeto__section-title adicionar-projeto__section-title--medium">Pesquisar</h2>
+                            <h2 class="adicionar-projeto__section-title adicionar-projeto__section-title--medium">
+                                Pesquisar</h2>
                             <div class="adicionar-projeto__search-box">
                                 <img src="img/icons/lupapreta.svg" alt="Buscar">
                                 <input type="text" placeholder="Pesquisar categorias">
@@ -91,8 +79,10 @@
                         <div class="adicionar-projeto__section-spacer adicionar-projeto__section-spacer--large"></div>
 
                         <div class="adicionar-projeto__tools-block">
-                            <h2 class="adicionar-projeto__section-title adicionar-projeto__section-title--medium">Ferramentas</h2>
-                            <div class="adicionar-projeto__chips adicionar-projeto__chips--tools" id="chips-ferramentas"></div>
+                            <h2 class="adicionar-projeto__section-title adicionar-projeto__section-title--medium">
+                                Ferramentas</h2>
+                            <div class="adicionar-projeto__chips adicionar-projeto__chips--tools"
+                                id="chips-ferramentas"></div>
                         </div>
                     </section>
                 </section>
@@ -105,7 +95,8 @@
 
                         <div class="adicionar-projeto__stack-gap">
                             <div>
-                                <label class="adicionar-projeto__field-label" for="visibilidade">Status de visibilidade:</label>
+                                <label class="adicionar-projeto__field-label" for="visibilidade">Status de
+                                    visibilidade:</label>
                                 <select class="adicionar-projeto__select" id="visibilidade">
                                     <option>Não publicado</option>
                                     <option>Público</option>
@@ -137,13 +128,18 @@
 
                     <section class="adicionar-projeto__panel adicionar-projeto__sidebar-card">
                         <h2 class="adicionar-projeto__sidebar-title">Capa do projeto:</h2>
-                        <div class="adicionar-projeto__cover-dropzone">
-                            <div>
+                        <input class="adicionar-projeto__cover-input" type="file" id="capaProjetoInput" accept="image/*" hidden>
+                        <div class="adicionar-projeto__cover-dropzone" id="capaProjetoDropzone" tabindex="0" role="button" aria-label="Adicionar capa do projeto">
+                            <div class="adicionar-projeto__cover-placeholder" id="capaProjetoPlaceholder">
                                 <img src="img/icons/capaprojetopreto.svg" alt="Adicionar capa">
                                 <p>Arraste e solte</p>
                             </div>
+                            <div class="adicionar-projeto__cover-preview" id="capaProjetoPreview" hidden>
+                                <img id="capaProjetoPreviewImg" src="" alt="Pré-visualização da capa do projeto">
+                            </div>
                         </div>
-                        <button class="adicionar-projeto__add-button" type="button"><span><img src="img/icons/setaparacimapreta.svg" alt=""></span> Adicionar</button>
+                        <button class="adicionar-projeto__add-button" type="button" id="botaoAdicionarCapa"><span><img
+                                    src="img/icons/setaparacimapreta.svg" alt=""></span> Adicionar</button>
                     </section>
 
                     <section class="adicionar-projeto__panel adicionar-projeto__sidebar-card">
@@ -162,12 +158,14 @@
 
                     <section class="adicionar-projeto__panel adicionar-projeto__sidebar-card">
                         <h2 class="adicionar-projeto__sidebar-title">Albums</h2>
-                        <button class="adicionar-projeto__add-button adicionar-projeto__small-action" type="button">＋ Adicionar</button>
+                        <button class="adicionar-projeto__add-button adicionar-projeto__small-action" type="button">＋
+                            Adicionar</button>
                     </section>
 
                     <section class="adicionar-projeto__panel adicionar-projeto__sidebar-card">
                         <h2 class="adicionar-projeto__sidebar-title">Colaboradores</h2>
-                        <button class="adicionar-projeto__add-button adicionar-projeto__small-action" type="button">＋ Adicionar</button>
+                        <button class="adicionar-projeto__add-button adicionar-projeto__small-action" type="button">＋
+                            Adicionar</button>
                     </section>
                 </aside>
             </div>
@@ -178,5 +176,7 @@
     <script src="js/header.js"></script>
     <script src="js/usuario_logado.js"></script>
     <script src="js/adicionarprojeto.js"></script>
+    <script src="js/conexao_com_api/inserir_projeto.js"></script>
 </body>
+
 </html>
