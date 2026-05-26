@@ -62,19 +62,19 @@ function montarHeader() {
             </button>
 
             <div class="messagesDropdownMenu" id="messagesMenu" hidden>
-                <div class="messagesDropdownTitle">Caixa de mensagem</div>
+                <div class="messagesDropdownTitle" data-i18n="messagesTitle">Caixa de mensagem</div>
 
                 <div class="messagesDropdownList">
                     <div class="notificationCard">
                         <img class="notificationAvatar" src="img/favicon.png" alt="">
                         <div class="notificationContent">
-                            <strong>Bem-vindo ao seek!</strong>
-                            <p>Seja bem-vindo a nossa plataforma voltada para artistas visuais. Aqui você encontrará tudo tipo de arte visual, fotografias, desenhos digitais, logotipos branding, etc. Esperamos que gostem da nossa plataforma!</p>
+                            <strong data-i18n="welcomeTitle">Bem-vindo ao seek!</strong>
+                            <p data-i18n="welcomeMessage">Seja bem-vindo a nossa plataforma voltada para artistas visuais. Aqui você encontrará tudo tipo de arte visual, fotografias, desenhos digitais, logotipos branding, etc. Esperamos que gostem da nossa plataforma!</p>
                         </div>
                     </div>
                 </div>
 
-                <button type="button" class="notificationsCTA">Ver todas as mensagens</button>
+                <button type="button" class="notificationsCTA" data-i18n="messagesAllButton">Ver todas as mensagens</button>
             </div>
         </div>
 
@@ -86,15 +86,15 @@ function montarHeader() {
 
             <div class="notificationsDropdownMenu" id="notificationsMenu" hidden>
                 <div class="notificationsDropdownHeader">
-                    <div class="notificationsDropdownTitle">Caixa de notificação</div>
-                    <button type="button" class="notificationsClearAllButton" id="notificationsClearAllButton">Excluir todas</button>
+                    <div class="notificationsDropdownTitle" data-i18n="notificationsTitle">Caixa de notificação</div>
+                    <button type="button" class="notificationsClearAllButton" id="notificationsClearAllButton" data-i18n="notificationsClearAll">Excluir todas</button>
                 </div>
 
                 <div class="notificationsDropdownList" id="notificationsList">
-                    <p class="notificationsEmpty">Carregando notificações...</p>
+                    <p class="notificationsEmpty" data-i18n="notificationsEmpty">Carregando notificações...</p>
                 </div>
 
-                <button type="button" class="notificationsCTA" id="notificationsReloadButton">Atualizar notificações</button>
+                <button type="button" class="notificationsCTA" id="notificationsReloadButton" data-i18n="notificationsReload">Atualizar notificações</button>
             </div>
         </div>
 
@@ -109,11 +109,11 @@ function montarHeader() {
                 <div class="perfilDropdownTop">
                     <img src="img/userProfilepreto.png" alt="">
                     <div class="perfilDropdownInfo">
-                        <strong>Nome do usuário</strong>
+                        <strong data-i18n="profileName">Nome do usuário</strong>
                         <div class="perfilDropdownLinks">
-                            <a href="usuario.html" type="button">Ver perfil</a>
+                            <a href="usuario.html" type="button" data-i18n="profileView">Ver perfil</a>
                             <span>•</span>
-                            <button type="button">Editar perfil</button>
+                            <button type="button" data-i18n="profileEdit">Editar perfil</button>
                         </div>
                     </div>
                 </div>
@@ -121,19 +121,19 @@ function montarHeader() {
                 <div class="perfilDropdownGroup">
                     <button type="button" class="perfilDropdownItem">
                         <img src="img/icons/favoritos.svg" alt="">
-                        <span>Salvos</span>
+                        <span data-i18n="saved">Salvos</span>
                     </button>
                     <button type="button" class="perfilDropdownItem">
                         <img src="img/icons/like.svg" alt="">
-                        <span>Favoritos</span>
+                        <span data-i18n="favorites">Favoritos</span>
                     </button>
                     <button type="button" class="perfilDropdownItem">
                         <img src="img/icons/cursos.svg" alt="">
-                        <span>Cursos inscritos</span>
+                        <span data-i18n="coursesEnrolled">Cursos inscritos</span>
                     </button>
                     <button type="button" class="perfilDropdownItem">
                         <img src="img/icons/vagas.svg" alt="">
-                        <span>Minhas vagas</span>
+                        <span data-i18n="myJobs">Minhas vagas</span>
                     </button>
                 </div>
 
@@ -142,11 +142,11 @@ function montarHeader() {
                 <div class="perfilDropdownGroup">
                     <button type="button" class="perfilDropdownItem">
                         <img src="img/icons/favoritos.svg" alt="">
-                        <span>Meus projetos</span>
+                        <span data-i18n="myProjects">Meus projetos</span>
                     </button>
                     <button type="button" class="perfilDropdownItem">
                         <img src="img/icons/meuscursos.svg" alt="">
-                        <span>Meus cursos</span>
+                        <span data-i18n="myCourses">Meus cursos</span>
                     </button>
                 </div>
 
@@ -155,11 +155,11 @@ function montarHeader() {
                 <div class="perfilDropdownGroup">
                     <button type="button" class="perfilDropdownItem">
                         <img src="img/icons/config.svg" alt="">
-                        <span>Configurações</span>
+                        <span data-i18n="settings">Configurações</span>
                     </button>
                     <button type="button" class="perfilDropdownItem">
                         <img src="img/icons/sair.svg" alt="">
-                        <span>Sair</span>
+                        <span data-i18n="logout">Sair</span>
                     </button>
                 </div>
             </div>
@@ -174,36 +174,35 @@ function montarHeader() {
                 <div class="optionsDropdownGroup">
                     <button type="button" class="optionsDropdownItem">
                         <img src="img/icons/termos.svg" alt="">
-                        <span>Termos de uso</span>
+                        <span data-i18n="termsOfUse">Termos de uso</span>
                     </button>
                     <button type="button" class="optionsDropdownItem">
                         <img src="img/icons/privacidade.svg" alt="">
-                        <span>Privacidade</span>
+                        <span data-i18n="privacy">Privacidade</span>
                     </button>
                     <button type="button" class="optionsDropdownItem">
                         <img src="img/icons/sobrenos.svg" alt="">
-                        <span>Sobre nós</span>
+                        <span data-i18n="aboutUs">Sobre nós</span>
                     </button>
                     <button type="button" class="optionsDropdownItem">
                         <img src="img/icons/ajuda.svg" alt="">
-                        <span>Ajuda</span>
+                        <span data-i18n="help">Ajuda</span>
                     </button>
                 </div>
 
-                <div class="optionsDropdownDivider"></div>
 
                 <div class="optionsDropdownGroup">
                     <button type="button" class="optionsDropdownItem">
                         <img src="img/icons/instagram.svg" alt="">
-                        <span>Instagram</span>
+                        <span data-i18n="instagram">Instagram</span>
                     </button>
                     <button type="button" class="optionsDropdownItem">
                         <img src="img/icons/email.svg" alt="">
-                        <span>Email</span>
+                        <span data-i18n="email">Email</span>
                     </button>
                     <button type="button" class="optionsDropdownItem">
                         <span class="optionsDropdownBrand">Bē</span>
-                        <span>Behance</span>
+                        <span data-i18n="behance">Behance</span>
                     </button>
                 </div>
             </div>
