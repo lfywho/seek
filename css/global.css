@@ -4,6 +4,16 @@
     --azulC: #635eec;
     --fundoEscuro: #0a1017;
     --textoClaro: #f6f8fb;
+
+    --ModoEscuroBase: #1F1F1F;
+    --ModoEscuroFilt: #131313;
+    --ModoEscuroMesc: #656565;
+    --ModoEscuroMesc2: #555555;
+
+
+    --ModoEscuroFontV: #5AB3FF;
+    --ModoEscuroFontC: #E197FF;
+
 }
 
 /* RESET */
@@ -22,6 +32,56 @@ a {
 body {
     background: #f5f5f5;
     color: #0f0f0f;
+}
+
+/* INICIO MODO ESCURO */
+
+.modo-escuro{
+  background-color: var(--ModoEscuroBase);
+  color: var(--textoClaro);
+}
+
+.modo-escuro a {
+  color: var(--textoClaro);
+}
+
+.modo-escuro img {
+    filter: brightness(0.95);
+}
+
+.modo-escuro .categories-carousel{
+    background-color: var(--ModoEscuroMesc2);
+}
+
+.modo-escuro .conteudo {
+    background-color: var(--ModoEscuroBase);
+}
+
+.modo-escuro .vagas-filtros, .modo-escuro .filtro-opcao , .modo-escuro .filtro-duracao-label, .modo-escuro .vaga-card p,.modo-escuro .vaga-card span, .modo-escuro .notificationContent strong, .modo-escuro .notificationContent p, .modo-escuro .perfilDropdownMenu a, .modo-escuro .messagesDropdownMenu a, .modo-escuro .notificationsDropdownMenu a, .modo-escuro .perfilDropdownInfo strong, .modo-escuro .perfilDropdownItem,.modo-escuro .optionsDropdownItem{
+   color: var(--textoClaro);
+}
+
+.modo-escuro .vaga-card{
+    background-color: var(--modo-escuroFilt);
+}
+
+.modo-escuro .vaga-card:hover{
+    background-color: var(--ModoEscuroMesc);
+}
+
+.modo-escuro .perfilDropdownMenu, .modo-escuro .messagesDropdownMenu, .modo-escuro .notificationsDropdownMenu, .modo-escuro .optionsDropdownMenu{
+    background-color: var(--ModoEscuroFilt);
+    color: var(--textoClaro);
+}
+
+.modo-escuro .messagesDropdownList{
+    background-color: var(--ModoEscuroMesc1);
+    color: var(--textoClaro);
+}   
+
+.modo-escuro .notificationCard{
+    background-color: var(--ModoEscuroMesc2);
+    color: var(--textoClaro);
 }
 
 /* INICIO LOGIN */
