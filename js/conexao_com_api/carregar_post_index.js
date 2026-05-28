@@ -5,6 +5,10 @@ document.addEventListener('DOMContentLoaded', function () {
 	var modalAuthorName = document.getElementById('modalAuthorName');
 	var modalAuthorAvatar = document.getElementById('modalAuthorAvatar');
 	var modalGallery = document.getElementById('modalGallery');
+	var modalSidebarAuthorName = document.getElementById('modalSidebarAuthorName');
+	var modalSidebarAuthorAvatar = document.getElementById('modalSidebarAuthorAvatar');
+	var modalSidebarGallery = document.getElementById('modalSidebarGallery');
+	var modalSidebarProjects = document.getElementById('modalSidebarProjects');
 	var modalLikeButton = document.getElementById('modalLike');
 	var modalFavoriteButton = document.getElementById('modalFavorite');
 	var modalShareButton = document.getElementById('modalShare');
@@ -12,13 +16,196 @@ document.addEventListener('DOMContentLoaded', function () {
 	var modalCommentsButton = document.getElementById('modalComments');
 	var modalCloseButton = document.querySelector('.post-modal__close');
 	var modalOverlay = document.querySelector('.post-modal__overlay');
+	var commentsList = document.getElementById('commentsList');
+	var commentInput = document.getElementById('commentInput');
+	var sendCommentButton = document.getElementById('sendComment');
+	var replyTarget = document.getElementById('replyTarget');
+	var replyTargetText = document.getElementById('replyTargetText');
+	var cancelReplyButton = document.getElementById('cancelReply');
 	var loggedUser = typeof getUsuarioLogado === 'function' ? getUsuarioLogado() : null;
 	var postsCache = [];
 	var postState = {};
 	var POST_ID_QUERY_KEY = 'postId';
+	var replyState = null;
 
 	if (!feedContainer || !modal || !modalTitle || !modalAuthorName || !modalAuthorAvatar || !modalGallery || !modalLikeButton || !modalFavoriteButton || !modalShareButton || !modalCloseButton || !modalOverlay) {
 		return;
+	}
+
+	function getCurrentUserName() {
+		if (loggedUser && loggedUser.nome) {
+			return loggedUser.nome;
+		}
+		return 'Você';
+	}
+
+	function hideReplyTarget() {
+		replyState = null;
+		if (!replyTarget) {
+			return;
+		}
+		replyTarget.hidden = true;
+		if (replyTargetText) {
+			replyTargetText.textContent = '';
+		}
+		if (commentInput) {
+			commentInput.placeholder = 'Adicione um comentário...';
+		}
+	}
+
+	function showReplyTarget(commentId, userName) {
+		replyState = commentId;
+		if (!replyTarget) {
+			return;
+		}
+		if (replyTargetText) {
+			replyTargetText.textContent = 'Respondendo ' + userName;
+		}
+		replyTarget.hidden = false;
+		if (commentInput) {
+			commentInput.placeholder = 'Escreva sua resposta...';
+			commentInput.focus();
+		}
+	}
+
+	function renderComments(postId) {
+		if (!commentsList) {
+			return;
+		}
+
+		var state = postState[postId];
+		if (!state) {
+			commentsList.innerHTML = '';
+			return;
+		}
+
+		var comments = Array.isArray(state.comments) ? state.comments : [];
+		commentsList.innerHTML = '';
+
+		if (!comments.length) {
+			var empty = document.createElement('p');
+			empty.className = 'post-modal__comments-empty';
+			empty.textContent = 'Nenhum comentário ainda';
+			commentsList.appendChild(empty);
+			return;
+		}
+
+		comments.forEach(function (comment) {
+			var wrapper = document.createElement('div');
+			wrapper.className = 'post-modal__comment';
+
+			var row = document.createElement('div');
+			row.className = 'post-modal__comment-row';
+
+			var avatar = document.createElement('div');
+			avatar.className = 'post-modal__comment-avatar';
+			avatar.setAttribute('aria-hidden', 'true');
+
+			var body = document.createElement('div');
+			body.className = 'post-modal__comment-body';
+
+			var user = document.createElement('div');
+			user.className = 'post-modal__comment-user';
+			user.textContent = comment.user || 'Usuário';
+
+			var text = document.createElement('div');
+			text.className = 'post-modal__comment-text';
+			text.textContent = comment.text || '';
+
+			var replyBtn = document.createElement('button');
+			replyBtn.type = 'button';
+			replyBtn.className = 'post-modal__comment-reply';
+			replyBtn.textContent = 'Responder';
+			replyBtn.addEventListener('click', function () {
+				showReplyTarget(comment.id, comment.user || 'Usuário');
+			});
+
+			body.appendChild(user);
+			body.appendChild(text);
+			body.appendChild(replyBtn);
+
+			row.appendChild(avatar);
+			row.appendChild(body);
+			wrapper.appendChild(row);
+
+			if (Array.isArray(comment.replies) && comment.replies.length) {
+				var repliesWrapper = document.createElement('div');
+				repliesWrapper.className = 'post-modal__replies';
+
+				comment.replies.forEach(function (reply) {
+					var replyDiv = document.createElement('div');
+					replyDiv.className = 'post-modal__reply';
+
+					var replyRow = document.createElement('div');
+					replyRow.className = 'post-modal__comment-row';
+
+					var replyAvatar = document.createElement('div');
+					replyAvatar.className = 'post-modal__comment-avatar';
+					replyAvatar.setAttribute('aria-hidden', 'true');
+
+					var replyBody = document.createElement('div');
+					replyBody.className = 'post-modal__comment-body';
+
+					var replyUser = document.createElement('div');
+					replyUser.className = 'post-modal__comment-user';
+					replyUser.textContent = reply.user || 'Usuário';
+
+					var replyText = document.createElement('div');
+					replyText.className = 'post-modal__comment-text';
+					replyText.textContent = reply.text || '';
+
+					replyBody.appendChild(replyUser);
+					replyBody.appendChild(replyText);
+					replyRow.appendChild(replyAvatar);
+					replyRow.appendChild(replyBody);
+					replyDiv.appendChild(replyRow);
+					repliesWrapper.appendChild(replyDiv);
+				});
+
+				wrapper.appendChild(repliesWrapper);
+			}
+
+			commentsList.appendChild(wrapper);
+		});
+	}
+
+	function addComment(postId, rawText) {
+		var state = postState[postId];
+		if (!state) {
+			return;
+		}
+
+		var text = (rawText || '').trim();
+		if (!text) {
+			return;
+		}
+
+		state.comments = Array.isArray(state.comments) ? state.comments : [];
+
+		if (replyState) {
+			var target = state.comments.find(function (item) {
+				return item.id === replyState;
+			});
+
+			if (target) {
+				target.replies = Array.isArray(target.replies) ? target.replies : [];
+				target.replies.push({
+					user: getCurrentUserName(),
+					text: text
+				});
+			}
+
+			hideReplyTarget();
+		} else {
+			state.comments.push({
+				id: 'c-' + Date.now(),
+				user: getCurrentUserName(),
+				text: text,
+				replies: []
+			});
+		}
+
+		renderComments(postId);
 	}
 
 	function formatDate(value) {
@@ -156,8 +343,37 @@ document.addEventListener('DOMContentLoaded', function () {
 		return figure;
 	}
 
+	function createSidebarThumb(src, altText) {
+		var thumb = document.createElement('div');
+		thumb.className = 'post-modal__sidebar-thumb';
+
+		if (src) {
+			var image = document.createElement('img');
+			image.src = src;
+			image.alt = altText || '';
+			thumb.appendChild(image);
+		}
+
+		return thumb;
+	}
+
+	function renderSidebarThumbs(container, images, titlePrefix) {
+		if (!container) {
+			return;
+		}
+
+		var list = Array.isArray(images) ? images.filter(Boolean) : [];
+		container.innerHTML = '';
+
+		var max = 3;
+		for (var index = 0; index < max; index += 1) {
+			var src = list[index] || '';
+			container.appendChild(createSidebarThumb(src, (titlePrefix || 'Imagem') + ' ' + (index + 1)));
+		}
+	}
+
 	function renderGallery(post) {
-		var images = getPostImages(post).slice(0, 6);
+		var images = getPostImages(post);
 
 		if (!images.length) {
 			images = ['img/logo.png'];
@@ -169,6 +385,9 @@ document.addEventListener('DOMContentLoaded', function () {
 		for (var index = 0; index < images.length; index += 1) {
 			modalGallery.appendChild(createGalleryTile(images[index], (post.titulo || 'Projeto') + ' - imagem ' + (index + 1)));
 		}
+
+		renderSidebarThumbs(modalSidebarGallery, images, 'Galeria');
+		renderSidebarThumbs(modalSidebarProjects, images, 'Projeto');
 	}
 
 	function setModalContent(post) {
@@ -177,6 +396,13 @@ document.addEventListener('DOMContentLoaded', function () {
 		modalAuthorName.textContent = getPostAuthor(post);
 		modalAuthorAvatar.src = getPostAuthorPhoto(post);
 		modalAuthorAvatar.alt = getPostAuthor(post);
+		if (modalSidebarAuthorName) {
+			modalSidebarAuthorName.textContent = getPostAuthor(post);
+		}
+		if (modalSidebarAuthorAvatar) {
+			modalSidebarAuthorAvatar.src = getPostAuthorPhoto(post);
+			modalSidebarAuthorAvatar.alt = getPostAuthor(post);
+		}
 		renderGallery(post);
 	}
 
@@ -292,6 +518,10 @@ document.addEventListener('DOMContentLoaded', function () {
 	function closeModal() {
 		modal.hidden = true;
 		document.body.style.overflow = '';
+		hideReplyTarget();
+		if (commentInput) {
+			commentInput.value = '';
+		}
 		clearPostIdFromUrl();
 	}
 
@@ -332,9 +562,19 @@ document.addEventListener('DOMContentLoaded', function () {
 			postState[post.id] = {
 				liked: false,
 				favorite: false,
-				totalLikes: Number(post.total_likes) || 0
+				totalLikes: Number(post.total_likes) || 0,
+				comments: []
 			};
 		}
+		if (!Array.isArray(postState[post.id].comments)) {
+			postState[post.id].comments = [];
+		}
+
+		hideReplyTarget();
+		if (commentInput) {
+			commentInput.value = '';
+		}
+		renderComments(post.id);
 
 		openModal();
 		modalLikeButton.disabled = !loggedUser;
@@ -348,6 +588,30 @@ document.addEventListener('DOMContentLoaded', function () {
 			updateLikeButton(post.id);
 			updateFavoriteButton(post.id);
 		}
+	}
+
+	if (sendCommentButton && commentInput) {
+		sendCommentButton.addEventListener('click', function () {
+			var postId = Number(modal.dataset.currentPostId);
+			if (!postId) {
+				return;
+			}
+			addComment(postId, commentInput.value);
+			commentInput.value = '';
+		});
+
+		commentInput.addEventListener('keydown', function (event) {
+			if (event.key === 'Enter' && !event.shiftKey) {
+				event.preventDefault();
+				sendCommentButton.click();
+			}
+		});
+	}
+
+	if (cancelReplyButton) {
+		cancelReplyButton.addEventListener('click', function () {
+			hideReplyTarget();
+		});
 	}
 
 	async function openPostFromUrlIfPresent() {

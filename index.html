@@ -37,7 +37,6 @@
             <button type="button" class="post-modal__overlay" aria-label="Fechar modal"></button>
 
             <div class="post-modal__content" role="dialog" aria-modal="true" aria-labelledby="modalPostTitulo">
-                <button type="button" class="post-modal__close" aria-label="Fechar modal">×</button>
 
                 <header class="post-modal__header">
                     <div class="post-modal__identity">
@@ -69,10 +68,76 @@
                         <button type="button" class="post-modal__icon-btn" id="modalComments" aria-label="Detalhes do post">
                             <img class="post-modal__icon-image" src="img/icons/email.svg" alt="">
                         </button>
+
+                        <button type="button" class="post-modal__close" aria-label="Fechar modal">×</button>
                     </div>
                 </header>
 
                 <div class="post-modal__gallery" id="modalGallery" aria-label="Galeria do projeto"></div>
+
+                <div class="post-modal__body">
+                    <section class="post-modal__comments" aria-label="Comentários">
+                        <h3 class="post-modal__comments-title">Comentários</h3>
+
+                        <div class="post-modal__reply-target" id="replyTarget" hidden>
+                            <span id="replyTargetText">Respondendo</span>
+                            <button type="button" class="post-modal__reply-cancel" id="cancelReply">Cancelar</button>
+                        </div>
+
+                        <div class="post-modal__comments-list" id="commentsList" aria-live="polite"></div>
+
+                        <div class="post-modal__comment-form" aria-label="Adicionar comentário">
+                            <textarea id="commentInput" class="post-modal__comment-input" rows="2" placeholder="Adicione um comentário..."></textarea>
+                            <button type="button" id="sendComment" class="post-modal__comment-send">Enviar</button>
+                        </div>
+                    </section>
+
+                    <aside class="post-modal__sidebar" aria-label="Informações do autor">
+                        <div class="post-modal__sidebar-card post-modal__sidebar-author">
+                            <div class="post-modal__sidebar-author-top">
+                                <img id="modalSidebarAuthorAvatar" class="post-modal__sidebar-avatar" src="img/userProfile.png" alt="Autor do post">
+                                <div class="post-modal__sidebar-author-text">
+                                    <strong id="modalSidebarAuthorName">Nome do Autor</strong>
+                                    <span class="post-modal__sidebar-author-subtitle">O local onde mora</span>
+                                </div>
+                            </div>
+                            <div class="post-modal__sidebar-author-actions">
+                                <button type="button" class="post-modal__sidebar-btn post-modal__sidebar-btn--primary">Seguir</button>
+                                <button type="button" class="post-modal__sidebar-btn">Contratar</button>
+                            </div>
+                        </div>
+
+                        <div class="post-modal__sidebar-card">
+                            <h3 class="post-modal__sidebar-title">Galeria</h3>
+                            <div class="post-modal__sidebar-thumbs" id="modalSidebarGallery" aria-label="Miniaturas da galeria"></div>
+                        </div>
+
+                        <div class="post-modal__sidebar-card">
+                            <h3 class="post-modal__sidebar-title">Projetos</h3>
+                            <div class="post-modal__sidebar-thumbs" id="modalSidebarProjects" aria-label="Miniaturas de projetos"></div>
+                        </div>
+
+                        <div class="post-modal__sidebar-card">
+                            <h3 class="post-modal__sidebar-title">Ferramentas</h3>
+                            <div class="post-modal__sidebar-chips" id="modalSidebarTools" aria-label="Ferramentas">
+                                <span class="post-modal__chip">Photoshop</span>
+                                <span class="post-modal__chip">Illustrator</span>
+                                <span class="post-modal__chip">InDesign</span>
+                                <span class="post-modal__chip">Canva</span>
+                            </div>
+                        </div>
+
+                        <div class="post-modal__sidebar-card">
+                            <h3 class="post-modal__sidebar-title">Categorias</h3>
+                            <div class="post-modal__sidebar-chips" aria-label="Categorias">
+                                <span class="post-modal__chip">Design</span>
+                                <span class="post-modal__chip">3D Design</span>
+                                <span class="post-modal__chip">Logotipo</span>
+                                <span class="post-modal__chip">Branding</span>
+                            </div>
+                        </div>
+                    </aside>
+                </div>
             </div>
         </div>
 
