@@ -68,6 +68,110 @@ document.addEventListener('DOMContentLoaded', function () {
 		}
 	}
 
+	function openUserProfile(userId) {
+		if (!userId) {
+			return;
+		}
+
+		window.location.href = 'usuario.html?id=' + encodeURIComponent(userId);
+	}
+
+	function normalizeComment(comment) {
+		var replies = Array.isArray(comment && (comment.respostas || comment.replies))
+			? (comment.respostas || comment.replies)
+			: [];
+
+		return {
+			id: comment && comment.id != null ? comment.id : 'c-' + Date.now(),
+			userId: comment && comment.user_id != null ? comment.user_id : comment && comment.userId != null ? comment.userId : '',
+			user: comment && comment.nome ? comment.nome : comment && comment.user ? comment.user : 'Usuário',
+			photo: comment && comment.foto ? comment.foto : comment && comment.photo ? comment.photo : 'img/userProfile.png',
+			text: comment && comment.comentario ? comment.comentario : comment && comment.text ? comment.text : '',
+			replies: replies.map(normalizeComment)
+		};
+	}
+
+	function makeProfileTrigger(element, userId, userName) {
+		if (!element || !userId) {
+			return;
+		}
+
+		element.style.cursor = 'pointer';
+		element.setAttribute('role', 'link');
+		element.setAttribute('tabindex', '0');
+		element.setAttribute('aria-label', 'Abrir perfil de ' + (userName || 'usuário'));
+		element.addEventListener('click', function () {
+			openUserProfile(userId);
+		});
+		element.addEventListener('keydown', function (event) {
+			if (event.key === 'Enter' || event.key === ' ') {
+				event.preventDefault();
+				openUserProfile(userId);
+			}
+		});
+	}
+
+	function createCommentNode(comment, isReply) {
+		var wrapper = document.createElement('div');
+		wrapper.className = isReply ? 'post-modal__reply' : 'post-modal__comment';
+
+		var row = document.createElement('div');
+		row.className = 'post-modal__comment-row';
+
+		var avatar = document.createElement('div');
+		avatar.className = 'post-modal__comment-avatar';
+		avatar.setAttribute('aria-hidden', 'true');
+		if (comment.photo) {
+			avatar.style.backgroundImage = 'url("' + String(comment.photo).replace(/"/g, '\\"') + '")';
+			avatar.style.backgroundSize = 'cover';
+			avatar.style.backgroundPosition = 'center';
+			avatar.style.backgroundRepeat = 'no-repeat';
+		}
+
+		var body = document.createElement('div');
+		body.className = 'post-modal__comment-body';
+
+		var user = document.createElement('div');
+		user.className = 'post-modal__comment-user';
+		user.textContent = comment.user || 'Usuário';
+
+		var text = document.createElement('div');
+		text.className = 'post-modal__comment-text';
+		text.textContent = comment.text || '';
+
+		makeProfileTrigger(avatar, comment.userId, comment.user);
+		makeProfileTrigger(user, comment.userId, comment.user);
+
+		var replyBtn = document.createElement('button');
+		replyBtn.type = 'button';
+		replyBtn.className = 'post-modal__comment-reply';
+		replyBtn.textContent = 'Responder';
+		replyBtn.addEventListener('click', function () {
+			showReplyTarget(comment.id, comment.user || 'Usuário');
+		});
+
+		body.appendChild(user);
+		body.appendChild(text);
+		body.appendChild(replyBtn);
+
+		row.appendChild(avatar);
+		row.appendChild(body);
+		wrapper.appendChild(row);
+
+		if (Array.isArray(comment.replies) && comment.replies.length) {
+			var repliesWrapper = document.createElement('div');
+			repliesWrapper.className = 'post-modal__replies';
+
+			comment.replies.forEach(function (reply) {
+				repliesWrapper.appendChild(createCommentNode(reply, true));
+			});
+
+			wrapper.appendChild(repliesWrapper);
+		}
+
+		return wrapper;
+	}
+
 	function renderComments(postId) {
 		if (!commentsList) {
 			return;
@@ -76,6 +180,16 @@ document.addEventListener('DOMContentLoaded', function () {
 		var state = postState[postId];
 		if (!state) {
 			commentsList.innerHTML = '';
+			return;
+		}
+
+		if (state.commentsLoading) {
+			commentsList.innerHTML = '<p class="post-modal__comments-empty">Carregando comentários...</p>';
+			return;
+		}
+
+		if (state.commentsError) {
+			commentsList.innerHTML = '<p class="post-modal__comments-empty">' + state.commentsError + '</p>';
 			return;
 		}
 
@@ -91,121 +205,73 @@ document.addEventListener('DOMContentLoaded', function () {
 		}
 
 		comments.forEach(function (comment) {
-			var wrapper = document.createElement('div');
-			wrapper.className = 'post-modal__comment';
-
-			var row = document.createElement('div');
-			row.className = 'post-modal__comment-row';
-
-			var avatar = document.createElement('div');
-			avatar.className = 'post-modal__comment-avatar';
-			avatar.setAttribute('aria-hidden', 'true');
-
-			var body = document.createElement('div');
-			body.className = 'post-modal__comment-body';
-
-			var user = document.createElement('div');
-			user.className = 'post-modal__comment-user';
-			user.textContent = comment.user || 'Usuário';
-
-			var text = document.createElement('div');
-			text.className = 'post-modal__comment-text';
-			text.textContent = comment.text || '';
-
-			var replyBtn = document.createElement('button');
-			replyBtn.type = 'button';
-			replyBtn.className = 'post-modal__comment-reply';
-			replyBtn.textContent = 'Responder';
-			replyBtn.addEventListener('click', function () {
-				showReplyTarget(comment.id, comment.user || 'Usuário');
-			});
-
-			body.appendChild(user);
-			body.appendChild(text);
-			body.appendChild(replyBtn);
-
-			row.appendChild(avatar);
-			row.appendChild(body);
-			wrapper.appendChild(row);
-
-			if (Array.isArray(comment.replies) && comment.replies.length) {
-				var repliesWrapper = document.createElement('div');
-				repliesWrapper.className = 'post-modal__replies';
-
-				comment.replies.forEach(function (reply) {
-					var replyDiv = document.createElement('div');
-					replyDiv.className = 'post-modal__reply';
-
-					var replyRow = document.createElement('div');
-					replyRow.className = 'post-modal__comment-row';
-
-					var replyAvatar = document.createElement('div');
-					replyAvatar.className = 'post-modal__comment-avatar';
-					replyAvatar.setAttribute('aria-hidden', 'true');
-
-					var replyBody = document.createElement('div');
-					replyBody.className = 'post-modal__comment-body';
-
-					var replyUser = document.createElement('div');
-					replyUser.className = 'post-modal__comment-user';
-					replyUser.textContent = reply.user || 'Usuário';
-
-					var replyText = document.createElement('div');
-					replyText.className = 'post-modal__comment-text';
-					replyText.textContent = reply.text || '';
-
-					replyBody.appendChild(replyUser);
-					replyBody.appendChild(replyText);
-					replyRow.appendChild(replyAvatar);
-					replyRow.appendChild(replyBody);
-					replyDiv.appendChild(replyRow);
-					repliesWrapper.appendChild(replyDiv);
-				});
-
-				wrapper.appendChild(repliesWrapper);
-			}
-
-			commentsList.appendChild(wrapper);
+			commentsList.appendChild(createCommentNode(comment, false));
 		});
 	}
 
-	function addComment(postId, rawText) {
+	async function loadComments(postId) {
+		var state = postState[postId];
+		if (!state) {
+			return;
+		}
+
+		state.commentsLoading = true;
+		state.commentsError = '';
+		renderComments(postId);
+
+		try {
+			var response = await fetch(ip_api + '/comentarios/' + encodeURIComponent(postId));
+			if (!response.ok) {
+				throw new Error('Falha ao carregar comentarios');
+			}
+
+			var data = await response.json();
+			state.comments = Array.isArray(data) ? data.map(normalizeComment) : [];
+		} catch (error) {
+			state.comments = [];
+			state.commentsError = 'Nao foi possivel carregar os comentarios.';
+		} finally {
+			state.commentsLoading = false;
+			renderComments(postId);
+		}
+	}
+
+	async function submitComment(postId, rawText) {
 		var state = postState[postId];
 		if (!state) {
 			return;
 		}
 
 		var text = (rawText || '').trim();
-		if (!text) {
+		if (!text || !loggedUser || !loggedUser.id) {
 			return;
 		}
 
-		state.comments = Array.isArray(state.comments) ? state.comments : [];
+		var endpoint = replyState
+			? '/comentarios/' + encodeURIComponent(postId) + '/responder/' + encodeURIComponent(replyState)
+			: '/comentarios/' + encodeURIComponent(postId);
 
-		if (replyState) {
-			var target = state.comments.find(function (item) {
-				return item.id === replyState;
-			});
+		var response = await fetch(ip_api + endpoint, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				idusuario: String(loggedUser.id),
+				conteudo: text
+			})
+		});
 
-			if (target) {
-				target.replies = Array.isArray(target.replies) ? target.replies : [];
-				target.replies.push({
-					user: getCurrentUserName(),
-					text: text
-				});
-			}
-
-			hideReplyTarget();
-		} else {
-			state.comments.push({
-				id: 'c-' + Date.now(),
-				user: getCurrentUserName(),
-				text: text,
-				replies: []
-			});
+		if (!response.ok) {
+			throw new Error('Falha ao enviar comentario');
 		}
 
-		renderComments(postId);
+		hideReplyTarget();
+		if (commentInput) {
+			commentInput.value = '';
+		}
+
+		await loadComments(postId);
 	}
 
 	function formatDate(value) {
@@ -563,7 +629,9 @@ document.addEventListener('DOMContentLoaded', function () {
 				liked: false,
 				favorite: false,
 				totalLikes: Number(post.total_likes) || 0,
-				comments: []
+				comments: [],
+				commentsLoading: false,
+				commentsError: ''
 			};
 		}
 		if (!Array.isArray(postState[post.id].comments)) {
@@ -574,10 +642,13 @@ document.addEventListener('DOMContentLoaded', function () {
 		if (commentInput) {
 			commentInput.value = '';
 		}
-		renderComments(post.id);
 
 		openModal();
 		modalLikeButton.disabled = !loggedUser;
+		if (sendCommentButton) {
+			sendCommentButton.disabled = !loggedUser || !loggedUser.id;
+		}
+		await loadComments(post.id);
 
 		try {
 			postState[post.id].liked = !!(await loadLikeStatus(post.id));
@@ -591,13 +662,17 @@ document.addEventListener('DOMContentLoaded', function () {
 	}
 
 	if (sendCommentButton && commentInput) {
-		sendCommentButton.addEventListener('click', function () {
+		sendCommentButton.addEventListener('click', async function () {
 			var postId = Number(modal.dataset.currentPostId);
 			if (!postId) {
 				return;
 			}
-			addComment(postId, commentInput.value);
-			commentInput.value = '';
+
+			try {
+				await submitComment(postId, commentInput.value);
+			} catch (error) {
+				alert('Nao foi possivel enviar o comentario.');
+			}
 		});
 
 		commentInput.addEventListener('keydown', function (event) {
