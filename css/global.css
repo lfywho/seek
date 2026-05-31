@@ -37,7 +37,7 @@ body {
 
 /* INICIO MODO ESCURO */
 
-.modo-escuro, .modo-escuro .adicionar-projeto{
+.modo-escuro, .modo-escuro .adicionar-projeto, .modo-escuro .usuario-layout, .modo-escuro .usuario-page{
   background-color: var(--ModoEscuroBase);
   color: var(--textoClaro);
 }
@@ -58,16 +58,17 @@ body {
     background-color: var(--ModoEscuroBase);
 }
 
-.modo-escuro .vagas-filtros, .modo-escuro .filtro-opcao , .modo-escuro .filtro-duracao-label, .modo-escuro .vaga-card p,.modo-escuro .vaga-card span, .modo-escuro .notificationContent strong, .modo-escuro .notificationContent p, .modo-escuro .perfilDropdownMenu a, .modo-escuro .messagesDropdownMenu a, .modo-escuro .notificationsDropdownMenu a, .modo-escuro .perfilDropdownInfo strong, .modo-escuro .perfilDropdownItem,.modo-escuro .optionsDropdownItem, .modo-escuro .adicionar-projeto__hero-hint , .modo-escuro .adicionar-projeto__hero-title, .modo-escuro .adicionar-projeto__media-card-title , .modo-escuro .adicionar-projeto__field-label, .modo-escuro .adicionar-projeto__section-title, .modo-escuro .adicionar-projeto__field-label{
+.modo-escuro .vagas-filtros, .modo-escuro .filtro-opcao , .modo-escuro .filtro-duracao-label, .modo-escuro .vaga-card p,.modo-escuro .vaga-card span, .modo-escuro .notificationContent strong, .modo-escuro .notificationContent p, .modo-escuro .perfilDropdownMenu a, .modo-escuro .messagesDropdownMenu a, .modo-escuro .notificationsDropdownMenu a, .modo-escuro .perfilDropdownInfo strong, .modo-escuro .perfilDropdownItem,.modo-escuro .optionsDropdownItem, .modo-escuro .adicionar-projeto__hero-hint , .modo-escuro .adicionar-projeto__hero-title, .modo-escuro .adicionar-projeto__media-card-title , .modo-escuro .adicionar-projeto__field-label, .modo-escuro .adicionar-projeto__section-title, .modo-escuro .adicionar-projeto__field-label, .modo-escuro .usuario-profile-card__header h1, .modo-escuro .usuario-profile-card__header p, .modo-escuro .usuario-profile-card__body p, .modo-escuro .usuario-profile-card__description{
    color: var(--textoClaro);
 }
 
-.modo-escuro .vaga-card{
-    background-color: var(--modo-escuroFilt);
+
+.modo-escuro .adicionar-projeto__hero, .modo-escuro .adicionar-projeto__media-card, .modo-escuro .adicionar-projeto__panel ,.modo-escuro .vaga-card, .modo-escuro .usuario-profile-card__body{
+    background-color: var(--ModoEscuroFilt2);
 }
 
-.modo-escuro .adicionar-projeto__hero, .modo-escuro .adicionar-projeto__media-card, .modo-escuro .adicionar-projeto__panel{
-    background-color: var(--ModoEscuroFilt2);
+.modo-escuro .vaga-card{
+    border-color: var(--ModoEscuroMesc2);
 }
 
 .modo-escuro .vaga-card:hover, .modo-escuro .adicionar-projeto__cover-placeholder, .modo-escuro .adicionar-projeto__title-input , .modo-escuro .adicionar-projeto__text-area{
@@ -85,7 +86,7 @@ body {
     color: var(--textoClaro);
 }   
 
-.modo-escuro .notificationCard, .modo-escuro {
+.modo-escuro .notificationCard, .modo-escuro .usuario-btn--secondary, .modo-escuro .usuario-profile-card__social-links a{
     background-color: var(--ModoEscuroMesc2);
     color: var(--textoClaro);
 }
@@ -3486,8 +3487,13 @@ body.usuario-relacionamentos-aberto {
 
 /* PERFIL USUARIO */
 
-body.usuario-page {
+.usuario-page {
     background: #f4f4f4;
+    height: 100vh;
+}
+
+.modo-escuro.usuario-page {
+    background: var(--ModoEscuroBase);
 }
 
 .usuario-layout {
