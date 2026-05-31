@@ -4074,3 +4074,187 @@ body.usuario-page {
         gap: 18px;
     }
 }
+
+/* SOBRE NÓS */
+
+.conteudo-sobrenos {
+    height: auto;
+    min-height: calc(100vh - 70px);
+}
+
+.sobrenos-container {
+    width: min(1100px, 100%);
+    margin: 0 auto;
+}
+
+.sobrenos-hero {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 28px;
+    align-items: center;
+    padding: 4px 0 28px;
+    border-bottom: 1px solid #ececec;
+}
+
+.sobrenos-hero__title {
+    font-size: 30px;
+    font-weight: 800;
+    color: var(--azul);
+    margin-bottom: 10px;
+}
+
+.sobrenos-hero__description {
+    font-size: 13px;
+    line-height: 1.55;
+    color: #222;
+    max-width: 62ch;
+    margin-bottom: 10px;
+}
+
+.sobrenos-hero__description:last-child {
+    margin-bottom: 0;
+}
+
+.sobrenos-hero__art img {
+    width: min(460px, 100%);
+    height: auto;
+    display: block;
+    margin-left: auto;
+}
+
+.sobrenos-section {
+    padding: 24px 0;
+}
+
+.sobrenos-section__title {
+    font-size: 34px;
+    font-weight: 800;
+    color: #111;
+    margin-bottom: 18px;
+}
+
+.sobrenos-team {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 26px 46px;
+}
+
+.sobrenos-member {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.sobrenos-member__avatar {
+    width: 92px;
+    height: 92px;
+    border-radius: 999px;
+    background: #e7e7e7;
+    border: 1px solid #dfdfdf;
+    flex: 0 0 92px;
+}
+
+.sobrenos-member__name {
+    font-size: 22px;
+    line-height: 1.05;
+    margin-bottom: 6px;
+    color: #111;
+}
+
+.sobrenos-member__bio {
+    font-size: 14px;
+    line-height: 1.35;
+    color: #222;
+}
+
+.sobrenos-contact {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 18px;
+    align-items: start;
+}
+
+.sobrenos-contact__text {
+    font-size: 13px;
+    line-height: 1.5;
+    color: #333;
+    max-width: 70ch;
+}
+
+.sobrenos-contact__links {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.sobrenos-contact__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    color: #111;
+}
+
+.sobrenos-contact__link img {
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+}
+
+.sobrenos-contact__link:hover {
+    color: var(--azul);
+}
+
+.modo-escuro .sobrenos-hero {
+    border-bottom-color: rgba(255, 255, 255, 0.14);
+}
+
+.modo-escuro .sobrenos-section__title,
+.modo-escuro .sobrenos-member__name {
+    color: var(--textoClaro);
+}
+
+.modo-escuro .sobrenos-hero__description,
+.modo-escuro .sobrenos-member__bio,
+.modo-escuro .sobrenos-contact__text {
+    color: var(--textoClaro);
+}
+
+.modo-escuro .sobrenos-member__avatar {
+    background: var(--ModoEscuroMesc2);
+    border-color: rgba(255, 255, 255, 0.18);
+}
+
+@media (max-width: 900px) {
+    .sobrenos-hero {
+        grid-template-columns: 1fr;
+    }
+
+    .sobrenos-hero__art img {
+        margin: 0;
+    }
+
+    .sobrenos-team {
+        grid-template-columns: 1fr;
+    }
+
+    .sobrenos-contact {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 520px) {
+    .sobrenos-section__title {
+        font-size: 30px;
+    }
+
+    .sobrenos-member__avatar {
+        width: 78px;
+        height: 78px;
+        flex-basis: 78px;
+    }
+
+    .sobrenos-member__name {
+        font-size: 20px;
+    }
+}

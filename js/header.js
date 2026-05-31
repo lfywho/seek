@@ -172,10 +172,12 @@ function montarHeader() {
                         <img src="img/icons/privacidade.svg" alt="">
                         <span data-i18n="privacy">Privacidade</span>
                     </button>
-                    <button type="button" class="optionsDropdownItem">
-                        <img src="img/icons/sobrenos.svg" alt="">
-                        <span data-i18n="aboutUs">Sobre nós</span>
-                    </button>
+                    <a href="sobrenos.html">
+                        <button type="button" class="optionsDropdownItem">
+                            <img src="img/icons/sobrenos.svg" alt="">
+                            <span data-i18n="aboutUs">Sobre nós</span>
+                        </button>
+                    </a>
                     <button type="button" class="optionsDropdownItem">
                         <img src="img/icons/ajuda.svg" alt="">
                         <span data-i18n="help">Ajuda</span>
