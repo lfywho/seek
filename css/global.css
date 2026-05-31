@@ -4097,14 +4097,14 @@ body.usuario-page {
 }
 
 .sobrenos-hero__title {
-    font-size: 30px;
+    font-size: clamp(28px, 3.1vw, 34px);
     font-weight: 800;
     color: var(--azul);
     margin-bottom: 10px;
 }
 
 .sobrenos-hero__description {
-    font-size: 13px;
+    font-size: clamp(13px, 1.35vw, 15px);
     line-height: 1.55;
     color: #222;
     max-width: 62ch;
@@ -4116,7 +4116,7 @@ body.usuario-page {
 }
 
 .sobrenos-hero__art img {
-    width: min(460px, 100%);
+    width: min(420px, 100%);
     height: auto;
     display: block;
     margin-left: auto;
@@ -4127,7 +4127,7 @@ body.usuario-page {
 }
 
 .sobrenos-section__title {
-    font-size: 34px;
+    font-size: clamp(28px, 3.2vw, 38px);
     font-weight: 800;
     color: #111;
     margin-bottom: 18px;
@@ -4155,14 +4155,14 @@ body.usuario-page {
 }
 
 .sobrenos-member__name {
-    font-size: 22px;
+    font-size: clamp(20px, 2.1vw, 26px);
     line-height: 1.05;
     margin-bottom: 6px;
     color: #111;
 }
 
 .sobrenos-member__bio {
-    font-size: 14px;
+    font-size: clamp(14px, 1.45vw, 16px);
     line-height: 1.35;
     color: #222;
 }
@@ -4175,7 +4175,7 @@ body.usuario-page {
 }
 
 .sobrenos-contact__text {
-    font-size: 13px;
+    font-size: clamp(13px, 1.35vw, 15px);
     line-height: 1.5;
     color: #333;
     max-width: 70ch;
@@ -4256,5 +4256,91 @@ body.usuario-page {
 
     .sobrenos-member__name {
         font-size: 20px;
+    }
+}
+
+/* AJUDA */
+
+.conteudo-ajuda {
+    height: auto;
+    min-height: calc(100vh - 70px);
+}
+
+.ajuda-container {
+    width: min(1100px, 100%);
+    margin: 0 auto;
+}
+
+.ajuda-title {
+    font-size: clamp(28px, 3.2vw, 36px);
+    font-weight: 800;
+    color: var(--azul);
+    margin: 4px 0 26px;
+}
+
+.ajuda-section {
+    display: grid;
+    grid-template-columns: 1fr minmax(240px, 420px);
+    gap: 34px;
+    align-items: start;
+    padding: 10px 0 34px;
+}
+
+.ajuda-section:last-child {
+    padding-bottom: 0;
+}
+
+.ajuda-section__text h2 {
+    font-size: clamp(24px, 2.7vw, 32px);
+    font-weight: 800;
+    color: #111;
+    margin-bottom: 10px;
+}
+
+.ajuda-section__text p {
+    font-size: clamp(13px, 1.35vw, 15px);
+    line-height: 1.55;
+    color: #222;
+    max-width: 74ch;
+    margin-bottom: 10px;
+}
+
+.ajuda-section__text p:last-child {
+    margin-bottom: 0;
+}
+
+.ajuda-section__art img {
+    width: min(360px, 100%);
+    height: auto;
+    display: block;
+    margin-left: auto;
+}
+
+.modo-escuro .ajuda-section__text h2 {
+    color: var(--textoClaro);
+}
+
+.modo-escuro .ajuda-section__text p {
+    color: var(--textoClaro);
+}
+
+@media (max-width: 900px) {
+    .ajuda-section {
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
+
+    .ajuda-section__art img {
+        margin: 8px auto 0;
+    }
+}
+
+@media (max-width: 520px) {
+    .ajuda-title {
+        font-size: clamp(26px, 7vw, 30px);
+    }
+
+    .ajuda-section__text h2 {
+        font-size: clamp(22px, 6.2vw, 26px);
     }
 }

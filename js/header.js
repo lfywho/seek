@@ -178,26 +178,34 @@ function montarHeader() {
                             <span data-i18n="aboutUs">Sobre nós</span>
                         </button>
                     </a>
-                    <button type="button" class="optionsDropdownItem">
-                        <img src="img/icons/ajuda.svg" alt="">
-                        <span data-i18n="help">Ajuda</span>
-                    </button>
+                    <a href="ajuda.html">
+                        <button type="button" class="optionsDropdownItem">
+                            <img src="img/icons/ajuda.svg" alt="">
+                            <span data-i18n="help">Ajuda</span>
+                        </button>
+                    </a>
                 </div>
 
 
                 <div class="optionsDropdownGroup">
-                    <button type="button" class="optionsDropdownItem">
-                        <img src="img/icons/instagram.svg" alt="">
-                        <span data-i18n="instagram">Instagram</span>
-                    </button>
-                    <button type="button" class="optionsDropdownItem">
-                        <img src="img/icons/email.svg" alt="">
-                        <span data-i18n="email">Email</span>
-                    </button>
-                    <button type="button" class="optionsDropdownItem">
-                        <span class="optionsDropdownBrand">Bē</span>
-                        <span data-i18n="behance">Behance</span>
-                    </button>
+                    <a href="https://www.instagram.com/seek_brasil" target="_blank" rel="noopener noreferrer">
+                        <button type="button" class="optionsDropdownItem">
+                            <img src="img/icons/instagram.svg" alt="">
+                            <span data-i18n="instagram">Instagram</span>
+                        </button>
+                    </a>
+                    <a href="mailto:seek.arts.ink@gmail.com">
+                        <button type="button" class="optionsDropdownItem">
+                            <img src="img/icons/email.svg" alt="">
+                            <span data-i18n="email">Email</span>
+                        </button>
+                    </a>
+                    <!--<a href="https://www.behance.net/seek" target="_blank" rel="noopener noreferrer">
+                        <button type="button" class="optionsDropdownItem">
+                            <span class="optionsDropdownBrand">Bē</span>
+                            <span data-i18n="behance">Behance</span>
+                        </button> -->
+                    </a>
                 </div>
             </div>
         </div>
