@@ -320,6 +320,25 @@ body {
 
 /* ADICIONAR PROJETO */
 
+.adcProjeto {
+    background: rgb(99, 99, 238);
+    height: 52px;
+    width: 52px;
+    border-radius: 50%;
+    border: none;
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    cursor: pointer;
+    transition: background 0.18s ease, transform 0.18s ease;
+}
+
+.adcProjeto:hover {
+    background: rgb(82, 82, 238);
+    transform: translateY(-2px);
+    
+}
+
 .adicionar-projeto {
     min-height: 100vh;
     background: #ffffff;
@@ -2897,6 +2916,50 @@ body.usuario-relacionamentos-aberto {
 .post-modal__close:hover {
     background: #0946d4;
     transform: scale(1.05);
+}
+
+.post-modal__nav {
+    position: fixed;
+    top: 50%;
+    right: calc((100vw - min(1240px, 98vw)) / 2 + 14px);
+    transform: translateY(-50%);
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.post-modal__nav-btn {
+    width: 42px;
+    height: 42px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--azul);
+    color: #fff;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.post-modal__nav-btn:hover {
+    background: var(--azulC);
+    transform: scale(1.05);
+}
+
+.post-modal__nav-btn:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+}
+
+@media (max-width: 360px) {
+    .post-modal__nav-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+    }
 }
 
 .post-modal__header {

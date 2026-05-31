@@ -36,6 +36,11 @@
         <div class="post-modal" id="postModal" hidden>
             <button type="button" class="post-modal__overlay" aria-label="Fechar modal"></button>
 
+            <div class="post-modal__nav" aria-label="Navegação do modal">
+                <button type="button" class="post-modal__nav-btn" id="modalScrollUp" aria-label="Voltar ao topo">▲</button>
+                <button type="button" class="post-modal__nav-btn" id="modalScrollDown" aria-label="Ir para comentários">▼</button>
+            </div>
+
             <div class="post-modal__content" role="dialog" aria-modal="true" aria-labelledby="modalPostTitulo">
 
                 <header class="post-modal__header">
@@ -140,6 +145,12 @@
                 </div>
             </div>
         </div>
+
+        <a href="adicionarprojeto.html" target="_blank">
+            <button class="adcProjeto" aria-label="Adicionar novo projeto">
+                <img src="img/icons/list-plus.svg" alt="Adicionar projeto">
+            </button>
+        </a>
 
     </main>
 

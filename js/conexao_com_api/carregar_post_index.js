@@ -16,6 +16,10 @@ document.addEventListener('DOMContentLoaded', function () {
 	var modalCommentsButton = document.getElementById('modalComments');
 	var modalCloseButton = document.querySelector('.post-modal__close');
 	var modalOverlay = document.querySelector('.post-modal__overlay');
+	var modalScrollUpButton = document.getElementById('modalScrollUp');
+	var modalScrollDownButton = document.getElementById('modalScrollDown');
+	var modalHeader = document.querySelector('.post-modal__header');
+	var modalCommentsSection = document.querySelector('.post-modal__comments');
 	var commentsList = document.getElementById('commentsList');
 	var commentInput = document.getElementById('commentInput');
 	var sendCommentButton = document.getElementById('sendComment');
@@ -24,12 +28,33 @@ document.addEventListener('DOMContentLoaded', function () {
 	var cancelReplyButton = document.getElementById('cancelReply');
 	var loggedUser = typeof getUsuarioLogado === 'function' ? getUsuarioLogado() : null;
 	var postsCache = [];
+	var postsById = {};
 	var postState = {};
 	var POST_ID_QUERY_KEY = 'postId';
 	var replyState = null;
 
-	if (!feedContainer || !modal || !modalTitle || !modalAuthorName || !modalAuthorAvatar || !modalGallery || !modalLikeButton || !modalFavoriteButton || !modalShareButton || !modalCloseButton || !modalOverlay) {
+	// O modal pode ser reutilizado em outras páginas (ex.: perfil) que nao tem feed.
+	if (!modal || !modalTitle || !modalAuthorName || !modalAuthorAvatar || !modalGallery || !modalLikeButton || !modalFavoriteButton || !modalShareButton || !modalCloseButton || !modalOverlay) {
 		return;
+	}
+
+	function rememberPost(post) {
+		if (!post || post.id == null) {
+			return;
+		}
+
+		var numericId = Number(post.id);
+		if (!numericId) {
+			return;
+		}
+
+		postsById[numericId] = post;
+		for (var index = 0; index < postsCache.length; index += 1) {
+			if (Number(postsCache[index].id) === numericId) {
+				return;
+			}
+		}
+		postsCache.push(post);
 	}
 
 	function getCurrentUserName() {
@@ -579,6 +604,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	function openModal() {
 		modal.hidden = false;
 		document.body.style.overflow = 'hidden';
+		modal.scrollTop = 0;
 	}
 
 	function closeModal() {
@@ -615,6 +641,8 @@ document.addEventListener('DOMContentLoaded', function () {
 	}
 
 	async function openPost(post, options) {
+		rememberPost(post);
+
 		var config = options || {};
 		var shouldSyncUrl = config.syncUrl !== false;
 
@@ -742,7 +770,7 @@ document.addEventListener('DOMContentLoaded', function () {
 			return;
 		}
 
-		var post = postsCache.find(function (item) {
+		var post = postsById[postId] || postsCache.find(function (item) {
 			return Number(item.id) === postId;
 		});
 
@@ -786,6 +814,10 @@ document.addEventListener('DOMContentLoaded', function () {
 			}
 
 			postsCache = await response.json();
+			postsById = {};
+			postsCache.forEach(function (post) {
+				rememberPost(post);
+			});
 			renderFeed(postsCache);
 			await openPostFromUrlIfPresent();
 		} catch (error) {
@@ -814,7 +846,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	if (modalInfoButton) {
 		modalInfoButton.addEventListener('click', function () {
 			var postId = Number(modal.dataset.currentPostId);
-			var post = postsCache.find(function (item) {
+			var post = postsById[postId] || postsCache.find(function (item) {
 				return Number(item.id) === postId;
 			});
 
@@ -829,7 +861,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	if (modalCommentsButton) {
 		modalCommentsButton.addEventListener('click', function () {
 			var postId = Number(modal.dataset.currentPostId);
-			var post = postsCache.find(function (item) {
+			var post = postsById[postId] || postsCache.find(function (item) {
 				return Number(item.id) === postId;
 			});
 
@@ -851,5 +883,38 @@ document.addEventListener('DOMContentLoaded', function () {
 		}
 	});
 
-	loadPosts();
+	function scrollModalToElement(targetElement) {
+		if (!targetElement) {
+			return;
+		}
+
+		var modalRect = modal.getBoundingClientRect();
+		var targetRect = targetElement.getBoundingClientRect();
+		var targetTop = targetRect.top - modalRect.top + modal.scrollTop;
+		modal.scrollTo({
+			top: Math.max(0, targetTop),
+			behavior: 'smooth'
+		});
+	}
+
+	if (modalScrollUpButton) {
+		modalScrollUpButton.addEventListener('click', function () {
+			scrollModalToElement(modalHeader || modal);
+		});
+	}
+
+	if (modalScrollDownButton) {
+		modalScrollDownButton.addEventListener('click', function () {
+			scrollModalToElement(modalCommentsSection || commentsList);
+		});
+	}
+
+	// Exposto para outras paginas (ex.: usuario.html) reutilizarem o mesmo modal.
+	window.seekOpenPostModal = function (post, options) {
+		return openPost(post, options);
+	};
+
+	if (feedContainer) {
+		loadPosts();
+	}
 });

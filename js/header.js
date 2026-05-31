@@ -17,8 +17,8 @@ function montarHeader() {
 
     <nav class="navegarPaginas">
         ${buildNavItem('explorar', 'Explorar', 'index.html')}
-        ${buildNavItem('aprender', 'Aprender', 'cursos.html')}
         ${buildNavItem('vagas', 'Vagas', 'vagas.html')}
+        ${buildNavItem('criar', 'Criar', 'adicionarprojeto.html')}
     </nav>
 
     <div class="inputPesquisaWrapper">
@@ -128,10 +128,6 @@ function montarHeader() {
                         <span data-i18n="favorites">Favoritos</span>
                     </button>
                     <button type="button" class="perfilDropdownItem">
-                        <img src="img/icons/cursos.svg" alt="">
-                        <span data-i18n="coursesEnrolled">Cursos inscritos</span>
-                    </button>
-                    <button type="button" class="perfilDropdownItem">
                         <img src="img/icons/vagas.svg" alt="">
                         <span data-i18n="myJobs">Minhas vagas</span>
                     </button>
@@ -143,10 +139,6 @@ function montarHeader() {
                     <button type="button" class="perfilDropdownItem">
                         <img src="img/icons/favoritos.svg" alt="">
                         <span data-i18n="myProjects">Meus projetos</span>
-                    </button>
-                    <button type="button" class="perfilDropdownItem">
-                        <img src="img/icons/meuscursos.svg" alt="">
-                        <span data-i18n="myCourses">Meus cursos</span>
                     </button>
                 </div>
 

@@ -99,9 +99,129 @@
         </section>
     </main>
 
+    <div class="post-modal" id="postModal" hidden>
+        <button type="button" class="post-modal__overlay" aria-label="Fechar modal"></button>
+
+        <div class="post-modal__nav" aria-label="Navegação do modal">
+            <button type="button" class="post-modal__nav-btn" id="modalScrollUp" aria-label="Voltar ao topo">▲</button>
+            <button type="button" class="post-modal__nav-btn" id="modalScrollDown" aria-label="Ir para comentários">▼</button>
+        </div>
+
+        <div class="post-modal__content" role="dialog" aria-modal="true" aria-labelledby="modalPostTitulo">
+
+            <header class="post-modal__header">
+                <div class="post-modal__identity">
+                    <img id="modalAuthorAvatar" class="post-modal__avatar" src="img/userProfile.png" alt="Autor do post">
+
+                    <div class="post-modal__identity-text">
+                        <h2 id="modalPostTitulo">Título do projeto</h2>
+                        <p id="modalAuthorName">Nome do autor</p>
+                    </div>
+                </div>
+
+                <div class="post-modal__actions" aria-label="Ações do post">
+                    <button type="button" class="post-modal__icon-btn" id="modalShare" aria-label="Compartilhar">
+                        <img class="post-modal__icon-image" src="img/icons/Share.svg" alt="">
+                    </button>
+
+                    <button type="button" class="post-modal__icon-btn" id="modalLike" aria-label="Curtir">
+                        <img class="post-modal__icon-image" src="img/icons/like.svg" alt="">
+                    </button>
+
+                    <button type="button" class="post-modal__icon-btn" id="modalFavorite" aria-label="Salvar">
+                        <img class="post-modal__icon-image" src="img/icons/favoritos.svg" alt="">
+                    </button>
+
+                    <button type="button" class="post-modal__icon-btn" id="modalInfo" aria-label="Informações">
+                        <img class="post-modal__icon-image" src="img/icons/ajuda.svg" alt="">
+                    </button>
+
+                    <button type="button" class="post-modal__icon-btn" id="modalComments" aria-label="Detalhes do post">
+                        <img class="post-modal__icon-image" src="img/icons/email.svg" alt="">
+                    </button>
+
+                    <button type="button" class="post-modal__close" aria-label="Fechar modal">×</button>
+                </div>
+            </header>
+
+            <div class="post-modal__gallery" id="modalGallery" aria-label="Galeria do projeto"></div>
+
+            <div class="post-modal__body">
+                <section class="post-modal__comments" aria-label="Comentários">
+                    <h3 class="post-modal__comments-title">Comentários</h3>
+
+                    <div class="post-modal__reply-target" id="replyTarget" hidden>
+                        <span id="replyTargetText">Respondendo</span>
+                        <button type="button" class="post-modal__reply-cancel" id="cancelReply">Cancelar</button>
+                    </div>
+
+                    <div class="post-modal__comments-list" id="commentsList" aria-live="polite"></div>
+
+                    <div class="post-modal__comment-form" aria-label="Adicionar comentário">
+                        <textarea id="commentInput" class="post-modal__comment-input" rows="2" placeholder="Adicione um comentário..."></textarea>
+                        <button type="button" id="sendComment" class="post-modal__comment-send">Enviar</button>
+                    </div>
+                </section>
+
+                <aside class="post-modal__sidebar" aria-label="Informações do autor">
+                    <div class="post-modal__sidebar-card post-modal__sidebar-author">
+                        <div class="post-modal__sidebar-author-top">
+                            <img id="modalSidebarAuthorAvatar" class="post-modal__sidebar-avatar" src="img/userProfile.png" alt="Autor do post">
+                            <div class="post-modal__sidebar-author-text">
+                                <strong id="modalSidebarAuthorName">Nome do Autor</strong>
+                                <span class="post-modal__sidebar-author-subtitle">O local onde mora</span>
+                            </div>
+                        </div>
+                        <div class="post-modal__sidebar-author-actions">
+                            <button type="button" class="post-modal__sidebar-btn post-modal__sidebar-btn--primary">Seguir</button>
+                            <button type="button" class="post-modal__sidebar-btn">Contratar</button>
+                        </div>
+                    </div>
+
+                    <div class="post-modal__sidebar-card">
+                        <h3 class="post-modal__sidebar-title">Galeria</h3>
+                        <div class="post-modal__sidebar-thumbs" id="modalSidebarGallery" aria-label="Miniaturas da galeria"></div>
+                    </div>
+
+                    <div class="post-modal__sidebar-card">
+                        <h3 class="post-modal__sidebar-title">Projetos</h3>
+                        <div class="post-modal__sidebar-thumbs" id="modalSidebarProjects" aria-label="Miniaturas de projetos"></div>
+                    </div>
+
+                    <div class="post-modal__sidebar-card">
+                        <h3 class="post-modal__sidebar-title">Ferramentas</h3>
+                        <div class="post-modal__sidebar-chips" id="modalSidebarTools" aria-label="Ferramentas">
+                            <span class="post-modal__chip">Photoshop</span>
+                            <span class="post-modal__chip">Illustrator</span>
+                            <span class="post-modal__chip">InDesign</span>
+                            <span class="post-modal__chip">Canva</span>
+                        </div>
+                    </div>
+
+                    <div class="post-modal__sidebar-card">
+                        <h3 class="post-modal__sidebar-title">Categorias</h3>
+                        <div class="post-modal__sidebar-chips" aria-label="Categorias">
+                            <span class="post-modal__chip">Design</span>
+                            <span class="post-modal__chip">3D Design</span>
+                            <span class="post-modal__chip">Logotipo</span>
+                            <span class="post-modal__chip">Branding</span>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </div>
+
+    <a href="adicionarprojeto.html" target="_blank">
+        <button class="adcProjeto" aria-label="Adicionar novo projeto">
+            <img src="img/icons/list-plus.svg" alt="Adicionar projeto">
+        </button>
+    </a>
+
 </body>
 
 <script src="js/ambiente.js"></script>
+<script src="js/conexao_com_api/carregar_post_index.js"></script>
 <script src="js/header.js"></script>
 <script src="js/usuario_logado.js"></script>
 <script src="js/conexao_com_api/carregar_usuario.js"></script>

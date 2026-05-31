@@ -357,6 +357,29 @@ document.addEventListener('DOMContentLoaded', function () {
         var article = document.createElement('article');
         article.className = 'feedCard';
         article.dataset.postId = String(post.id);
+
+        article.tabIndex = 0;
+        article.setAttribute('role', 'button');
+        article.setAttribute('aria-label', 'Abrir post ' + (post.titulo || ''));
+
+        function openPostModalFromProfile() {
+            if (typeof window.seekOpenPostModal !== 'function') {
+                return;
+            }
+            window.seekOpenPostModal(post);
+        }
+
+        article.addEventListener('click', function () {
+            openPostModalFromProfile();
+        });
+
+        article.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                openPostModalFromProfile();
+            }
+        });
+
         article.innerHTML =
             '<div class="feedImg">' +
             '<img src="' + getPostImage(post) + '" alt="' + (post.titulo || 'Post') + '">' +
