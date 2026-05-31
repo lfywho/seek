@@ -7,6 +7,7 @@
 
     --ModoEscuroBase: #1F1F1F;
     --ModoEscuroFilt: #131313;
+    --ModoEscuroFilt2: #111111;
     --ModoEscuroMesc: #656565;
     --ModoEscuroMesc2: #555555;
 
@@ -36,12 +37,12 @@ body {
 
 /* INICIO MODO ESCURO */
 
-.modo-escuro{
+.modo-escuro, .modo-escuro .adicionar-projeto{
   background-color: var(--ModoEscuroBase);
   color: var(--textoClaro);
 }
 
-.modo-escuro a {
+.modo-escuro a, .modo-escuro .adicionar-projeto__page-heading{
   color: var(--textoClaro);
 }
 
@@ -57,7 +58,7 @@ body {
     background-color: var(--ModoEscuroBase);
 }
 
-.modo-escuro .vagas-filtros, .modo-escuro .filtro-opcao , .modo-escuro .filtro-duracao-label, .modo-escuro .vaga-card p,.modo-escuro .vaga-card span, .modo-escuro .notificationContent strong, .modo-escuro .notificationContent p, .modo-escuro .perfilDropdownMenu a, .modo-escuro .messagesDropdownMenu a, .modo-escuro .notificationsDropdownMenu a, .modo-escuro .perfilDropdownInfo strong, .modo-escuro .perfilDropdownItem,.modo-escuro .optionsDropdownItem{
+.modo-escuro .vagas-filtros, .modo-escuro .filtro-opcao , .modo-escuro .filtro-duracao-label, .modo-escuro .vaga-card p,.modo-escuro .vaga-card span, .modo-escuro .notificationContent strong, .modo-escuro .notificationContent p, .modo-escuro .perfilDropdownMenu a, .modo-escuro .messagesDropdownMenu a, .modo-escuro .notificationsDropdownMenu a, .modo-escuro .perfilDropdownInfo strong, .modo-escuro .perfilDropdownItem,.modo-escuro .optionsDropdownItem, .modo-escuro .adicionar-projeto__hero-hint , .modo-escuro .adicionar-projeto__hero-title, .modo-escuro .adicionar-projeto__media-card-title , .modo-escuro .adicionar-projeto__field-label, .modo-escuro .adicionar-projeto__section-title, .modo-escuro .adicionar-projeto__field-label{
    color: var(--textoClaro);
 }
 
@@ -65,8 +66,13 @@ body {
     background-color: var(--modo-escuroFilt);
 }
 
-.modo-escuro .vaga-card:hover{
+.modo-escuro .adicionar-projeto__hero, .modo-escuro .adicionar-projeto__media-card, .modo-escuro .adicionar-projeto__panel{
+    background-color: var(--ModoEscuroFilt2);
+}
+
+.modo-escuro .vaga-card:hover, .modo-escuro .adicionar-projeto__cover-placeholder, .modo-escuro .adicionar-projeto__title-input , .modo-escuro .adicionar-projeto__text-area{
     background-color: var(--ModoEscuroMesc);
+    border-color: var(--ModoEscuroMesc);
 }
 
 .modo-escuro .perfilDropdownMenu, .modo-escuro .messagesDropdownMenu, .modo-escuro .notificationsDropdownMenu, .modo-escuro .optionsDropdownMenu{
@@ -75,15 +81,25 @@ body {
 }
 
 .modo-escuro .messagesDropdownList{
-    background-color: var(--ModoEscuroMesc1);
+    background-color: var(--ModoEscuroMesc);
     color: var(--textoClaro);
 }   
 
-.modo-escuro .notificationCard{
+.modo-escuro .notificationCard, .modo-escuro {
     background-color: var(--ModoEscuroMesc2);
     color: var(--textoClaro);
 }
 
+.modo-escuro .adicionar-projeto__chip.is-active{
+    background-color: var(--ModoEscuroMesc);
+    color: var(--ModoEscuroFontV);
+}
+
+.modo-escuro .adicionar-projeto__chip, .modo-escuro .adicionar-projeto__search-box, .modo-escuro .adicionar-projeto__select, .modo-escuro .adicionar-projeto__sidebar-button, .modo-escuro .adicionar-projeto__add-button, .modo-escuro .adicionar-projeto__radio-option{
+    background-color: var(--ModoEscuroMesc2);
+   color: var(--textoClaro);
+   border-color: var(--ModoEscuroMesc);
+}
 /* INICIO LOGIN */
 
 .inicio-login {
