@@ -5000,6 +5000,104 @@ body.vaga-page.vaga-page--v2{
     margin-top: 6px;
 }
 
+.configuracoes {
+  display: flex;       
+  width: 100%;
+  min-height: 100vh;      
+}
+
+/* Perfil */
+.perfil {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.perfil img {
+  width: 80px;              /* aumenta o tamanho da foto */
+  height: 80px;
+  border-radius: 50%;       /* deixa a imagem redonda */
+  border: 2px solid #ddd;   /* adiciona uma borda leve */
+  margin-bottom: 10px;
+}
+
+.perfil p {
+  margin: 3px 0;
+  color: #333;
+}
+
+.perfil p strong {
+  font-size: 16px;
+}
+
+/* Menu lateral */
+.Direita {
+  width: 250px;           
+  background: #fff;
+  border-right: 1px solid #ddd;
+  padding: 20px;
+}
+
+.Direita ul {
+  list-style: none;
+  padding: 0;
+}
+
+.Direita ul li {
+  margin: 15px 0;
+}
+
+.Direita ul li a {
+  text-decoration: none;
+  color: #333;
+  font-weight: bold;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.Direita ul li a:hover {
+  color: #0077cc;         
+}
+
+/* Área de conteúdo */
+.Esquerda {
+  flex: 1;                
+  padding: 30px;
+  background: #fff;
+}
+
+.Esquerda > div {
+  display: none;
+}
+
+.Esquerda > div.active {
+  display: block;
+}
+
+.privacidadeHeader p strong {
+  font-size: 20px;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.privacidadeHeader p {
+  margin: 0 0 15px 0;
+  color: #555;
+}
+
+.Esquerda p strong {
+  font-size: 16px;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.Esquerda p {
+  margin: 10px 0;
+  line-height: 1.4;
+}
+
+
 @media (max-width: 980px){
     .vaga-v2{
         width: min(1240px, calc(100% - 28px));

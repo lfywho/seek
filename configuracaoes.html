@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seek - Configurações</title>
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="shortcut icon" href="img/favicon.png" type="image/x-icon">
+</head>
+<body>
+
+  <header class="cabecalho"></header>
+
+  <main class="configuracoes">
+
+    <section class="Direita">
+      <div><p><strong>Configurações</strong></p></div>
+
+      <div class="perfil">
+        <img src="img/userProfilepreto.png" alt="Perfil" width="80">
+        <p><strong>Nome do usuário</strong></p>
+        <p>São Paulo - Matão</p>
+      </div>
+
+      <ul>
+        <li><a onclick="mostrar('privacidade')">Privacidade</a></li>
+        <li><a onclick="mostrar('notificações')">Notificações</a></li>
+        <li><a onclick="mostrar('acessibilidade')">Acessibilidade</a></li>
+        <li><a onclick="mostrar('email-senha')">Email e senha</a></li>
+        <li><a onclick="mostrar('minhas-informações')">Minhas informações</a></li>
+      </ul>
+    </section>
+
+    <section class="Esquerda">
+  <!-- PRIVACIDADE -->
+  <div class="privacidade active">
+    <div class="privacidadeHeader">
+      <p><strong>Privacidade</strong></p>
+      <p>Nesta aba você poderá editar suas preferências de quem pode acessar seus conteúdos.</p>
+    </div>
+
+    <p><strong>Quem pode ver seu perfil?</strong><br>Define se sua conta aparece na barra de pesquisa.<br><em>Todos</em></p>
+    <p><strong>Quem pode ver seus posts?</strong><br>Define quem visualiza seus posts.<br><em>Todos</em></p>
+    <p><strong>Quem pode comentar?</strong><br>Define quem pode adicionar comentários nos seus posts.<br><em>Todos</em></p>
+    <p><strong>Usuários bloqueados</strong><br>Mostra as pessoas que você bloqueou.</p>
+    <p><strong>Palavras bloqueadas</strong><br>Mostra as palavras que você bloqueou, para ninguém utilizar elas no seu perfil.</p>
+  </div>
+
+  <!-- NOTIFICAÇÕES -->
+  <div class="notificações">
+    <div class="notificacoesHeader">
+      <p><strong>Notificações</strong></p>
+      <p>Aqui você pode gerenciar suas preferências de notificações.</p>
+    </div>
+
+    <p><strong>Receber notificações por email</strong><br>Ative ou desative alertas enviados para seu email.</p>
+    <p><strong>Notificações na plataforma</strong><br>Controle se deseja receber alertas dentro do site.</p>
+    <p><strong>Resumo semanal</strong><br>Receba um resumo das atividades por semana.</p>
+  </div>
+
+  <!-- ACESSIBILIDADE -->
+  <div class="acessibilidade">
+    <div class="acessibilidadeHeader">
+      <p><strong>Acessibilidade</strong></p>
+      <p>Ajuste as configurações para melhorar sua experiência de navegação.</p>
+    </div>
+
+    <p><strong>Tamanho das fontes</strong><br>Selecione o tamanho do texto exibido.</p>
+    <p><strong>Ativar barra de acessibilidade</strong><br>Exibe uma barra com recursos de acessibilidade.<br><em>Ativado</em></p>
+    <p><strong>Alto contraste</strong><br>Melhora a visibilidade com cores fortes.<br><em>Ativado</em></p>
+  </div>
+
+  <!-- EMAIL E SENHA -->
+  <div class="email-senha">
+    <div class="emailSenhaHeader">
+      <p><strong>Email e Senha</strong></p>
+      <p>Nesta aba você pode alterar seu email, sua senha e ativar o fator de duas etapas.</p>
+    </div>
+
+    <p><strong>Email</strong><br>Altere o seu email de cadastro.<br><em>placeholder_do_email_atual</em></p>
+    <p><strong>Senha atual</strong><br>Digite sua senha atual para confirmar alterações.</p>
+    <p><strong>Nova senha</strong><br>Defina uma nova senha para sua conta.</p>
+    <p><strong>Ativar fator de duas etapas</strong><br>Adicione uma camada extra de segurança.</p>
+    <button>Confirmar</button>
+  </div>
+
+  <!-- MINHAS INFORMAÇÕES -->
+  <div class="minhas-informações">
+    <div class="informacoesHeader">
+      <p><strong>Minhas Informações</strong></p>
+      <p>Aqui você pode revisar e atualizar suas informações pessoais.</p>
+    </div>
+
+    <p><strong>Foto de perfil</strong><br>Envie ou altere sua foto de perfil.</p>
+    <p><strong>Foto do banner</strong><br>Personalize o banner do seu perfil.</p>
+    <p><strong>Nome de usuário</strong><br>Edite seu nome público.</p>
+    <p><strong>@username</strong><br>Defina ou altere seu identificador único.</p>
+    <p><strong>Biografia</strong><br>Adicione uma descrição sobre você.</p>
+  </div>
+</section>
+
+  </main>
+
+  <script src="js/ambiente.js"></script>
+  <script src="js/conexao_com_api/carregar_post_index.js"></script>
+  <script src="js/header.js"></script>
+  <script src="js/usuario_logado.js"></script>
+  <script src="js/Acessibilidade/traducao.js"></script>
+  <script src="js/Acessibilidade/ModoEscuro.js"></script>
+  <script src="js/configura.js"></script>
+</body>
+</html>
