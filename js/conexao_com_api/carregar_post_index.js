@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	var modalGallery = document.getElementById('modalGallery');
 	var modalSidebarAuthorName = document.getElementById('modalSidebarAuthorName');
 	var modalSidebarAuthorAvatar = document.getElementById('modalSidebarAuthorAvatar');
+	var modalSidebarFollowButton = document.getElementById('modalSidebarFollowButton');
 	var modalSidebarGallery = document.getElementById('modalSidebarGallery');
 	var modalSidebarProjects = document.getElementById('modalSidebarProjects');
 	var modalLikeButton = document.getElementById('modalLike');
@@ -384,6 +385,102 @@ document.addEventListener('DOMContentLoaded', function () {
 		return post.user && post.user.foto ? post.user.foto : 'img/userProfile.png';
 	}
 
+	function getPostAuthorId(post) {
+		if (!post) {
+			return null;
+		}
+
+		if (post.user && post.user.id != null) {
+			return post.user.id;
+		}
+
+		if (post.id_usuario != null) {
+			return post.id_usuario;
+		}
+
+		if (post.user_id != null) {
+			return post.user_id;
+		}
+
+		if (post.idUsuario != null) {
+			return post.idUsuario;
+		}
+
+		return null;
+	}
+
+	function esconderBotaoSeguirModal(esconder) {
+		if (!modalSidebarFollowButton) {
+			return;
+		}
+
+		modalSidebarFollowButton.style.display = esconder ? 'none' : '';
+	}
+
+	function atualizarBotaoSeguirModal(estaSeguindo) {
+		if (!modalSidebarFollowButton) {
+			return;
+		}
+
+		modalSidebarFollowButton.textContent = estaSeguindo ? 'Deixar de seguir' : 'Seguir';
+		modalSidebarFollowButton.classList.toggle('is-following', !!estaSeguindo);
+		modalSidebarFollowButton.setAttribute('aria-pressed', estaSeguindo ? 'true' : 'false');
+	}
+
+	async function verificarSeSegueAutor(idLogado, idAutor) {
+		var response = await fetch(ip_api + '/usuarios/verificarsesegue/' + encodeURIComponent(idLogado) + '/' + encodeURIComponent(idAutor));
+
+		if (!response.ok) {
+			throw new Error('Falha ao verificar se segue o usuario');
+		}
+
+		var data = await response.json();
+		return !!(data && data.segue);
+	}
+
+	async function alternarSeguimentoAutor(idLogado, idAutor) {
+		var response = await fetch(ip_api + '/usuarios/seguir-usuario/' + encodeURIComponent(idLogado) + '/' + encodeURIComponent(idAutor), {
+			method: 'POST'
+		});
+
+		if (!response.ok) {
+			throw new Error('Falha ao alternar seguimento');
+		}
+
+		return response.json();
+	}
+
+	async function inicializarBotaoSeguirModal(post) {
+		if (!modalSidebarFollowButton) {
+			return;
+		}
+
+		var idAutor = getPostAuthorId(post);
+
+		if (!loggedUser || !loggedUser.id || !idAutor) {
+			esconderBotaoSeguirModal(true);
+			return;
+		}
+
+		if (String(loggedUser.id) === String(idAutor)) {
+			esconderBotaoSeguirModal(true);
+			return;
+		}
+
+		esconderBotaoSeguirModal(false);
+		modalSidebarFollowButton.disabled = true;
+
+		try {
+			var estaSeguindo = await verificarSeSegueAutor(loggedUser.id, idAutor);
+			atualizarBotaoSeguirModal(estaSeguindo);
+		} catch (error) {
+			console.error(error);
+			atualizarBotaoSeguirModal(false);
+		} finally {
+			modalSidebarFollowButton.disabled = false;
+		}
+	}
+
 	function getPostIdFromUrl() {
 		var params = new URLSearchParams(window.location.search);
 		var rawValue = params.get(POST_ID_QUERY_KEY);
@@ -651,6 +748,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		}
 
 		setModalContent(post);
+		await inicializarBotaoSeguirModal(post);
 
 		if (!postState[post.id]) {
 			postState[post.id] = {
@@ -687,6 +785,36 @@ document.addEventListener('DOMContentLoaded', function () {
 			updateLikeButton(post.id);
 			updateFavoriteButton(post.id);
 		}
+	}
+
+	if (modalSidebarFollowButton) {
+		modalSidebarFollowButton.addEventListener('click', async function () {
+			var postId = Number(modal.dataset.currentPostId);
+			var post = postsById[postId] || postsCache.find(function (item) {
+				return Number(item.id) === postId;
+			});
+
+			if (!post || !loggedUser || !loggedUser.id) {
+				return;
+			}
+
+			var idAutor = getPostAuthorId(post);
+			if (!idAutor || String(loggedUser.id) === String(idAutor)) {
+				return;
+			}
+
+			modalSidebarFollowButton.disabled = true;
+
+			try {
+				var resposta = await alternarSeguimentoAutor(loggedUser.id, idAutor);
+				var estaSeguindo = !!(resposta && resposta.seguindo);
+				atualizarBotaoSeguirModal(estaSeguindo);
+			} catch (error) {
+				console.error(error);
+			} finally {
+				modalSidebarFollowButton.disabled = false;
+			}
+		});
 	}
 
 	if (sendCommentButton && commentInput) {

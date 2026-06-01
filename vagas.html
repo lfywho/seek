@@ -27,162 +27,35 @@
     <main class="conteudo conteudo-vagas">
         <section class="vagas-layout" aria-label="Catálogo de vagas">
             <aside class="vagas-filtros" aria-label="Filtros de vagas">
-                <h2>Tipo de Vaga</h2>
-                <label class="filtro-opcao"><input type="radio" name="tipo-vaga" checked>Todos</label>
-                <label class="filtro-opcao"><input type="radio" name="tipo-vaga">Curso</label>
-                <label class="filtro-opcao"><input type="radio" name="tipo-vaga">Profissão</label>
+                <h2>Localização da Vaga</h2>
+                <label class="filtro-opcao"><input type="radio" name="localizacao-vaga" checked>Todos</label>
+                <label class="filtro-opcao"><input type="radio" name="localizacao-vaga">Remoto</label>
+                <label class="filtro-opcao"><input type="radio" name="localizacao-vaga">Presencial</label>
 
                 <h2>Tempo de postagem</h2>
-                <p class="filtro-duracao-label">1 a <span id="vagasTempoMax">20</span> <span
-                        id="vagasTempoUnidade">dias</span></p>
+                <p class="filtro-duracao-label">1 a <span id="vagasTempoMax">20</span> <span id="vagasTempoUnidade">dias</span></p>
 
                 <div class="filtro-opcao-linha">
-                    <label class="filtro-opcao filtro-opcao--inline"><input type="radio" name="tempo-postagem"
-                            value="horas">Horas</label>
-                    <label class="filtro-opcao filtro-opcao--inline"><input type="radio" name="tempo-postagem"
-                            value="dias" checked>Dias</label>
+                    <label class="filtro-opcao filtro-opcao--inline"><input type="radio" name="tempo-postagem" value="hoje">Hoje</label>
+                    <label class="filtro-opcao filtro-opcao--inline"><input type="radio" name="tempo-postagem" value="semana">Semana</label>
+                    <label class="filtro-opcao filtro-opcao--inline"><input type="radio" name="tempo-postagem" value="mes">Mês</label>
+                </div>
+
+                <div class="filtro-opcao-linha">
+                    <label class="filtro-opcao filtro-opcao--inline"><input type="radio" name="tempo-postagem" value="ano">Ano</label>
+                    <label class="filtro-opcao filtro-opcao--inline"><input type="radio" name="tempo-postagem" value="dias" checked>Dias</label>
                 </div>
 
                 <div class="filtro-range-wrap">
-                    <input type="range" min="1" max="20" value="10" class="filtro-range" id="vagasTempoRange"
-                        aria-label="Filtrar por tempo de postagem">
+                    <input type="range" min="1" max="365" value="7" class="filtro-range" id="vagasTempoRange" aria-label="Filtrar por tempo de postagem">
                 </div>
 
                 <h2>Categorias</h2>
-                <label class="filtro-opcao"><input type="checkbox">3D</label>
-                <label class="filtro-opcao"><input type="checkbox">Adobe Photoshop</label>
-                <label class="filtro-opcao"><input type="checkbox">Design gráfico</label>
-                <label class="filtro-opcao"><input type="checkbox">UI/UX Design</label>
-                <label class="filtro-opcao"><input type="checkbox">Adobe Illustrator</label>
+                <p class="filtro-duracao-label" id="vagasCategoriasStatus" aria-live="polite">Carregando categorias...</p>
+                <div id="vagasCategoriasList" aria-label="Categorias mais utilizadas"></div>
             </aside>
 
-            <section class="vagas-grid" aria-label="Vagas em destaque">
-                <article class="vaga-card">
-                    <div class="vaga-card__topo">
-                        <span class="vaga-card__chip">Design gráfico</span>
-                        <span class="vaga-card__tempo">Há 5 horas</span>
-                    </div>
-                    <h3>Título da vaga</h3>
-                    <div class="vaga-card__meta">
-                        <span class="vaga-card__autor"><img src="img/userProfilepreto.png" alt=""
-                                aria-hidden="true">Nome do autor</span>
-                        <span class="vaga-card__local"><img src="img/icons/local.svg" alt=""
-                                aria-hidden="true">chiquichiqui,Bahia</span>
-                    </div>
-                    <p>Uma descrição breve do que se trata a vaga em questão, tendo suas principais informações
-                        necessárias para o usuário poder se interessar</p>
-                    <div class="vaga-card__rodape">
-                        <span class="vaga-card__salario">R$ 1000 - 1500 mês</span>
-                        <span class="vaga-card__views">3,5mil <img src="img/icons/olho.svg" alt=""
-                                aria-hidden="true"></span>
-                    </div>
-                </article>
-
-                <article class="vaga-card">
-                    <div class="vaga-card__topo">
-                        <span class="vaga-card__chip">Design gráfico</span>
-                        <span class="vaga-card__tempo">Há 5 horas</span>
-                    </div>
-                    <h3>Título da vaga</h3>
-                    <div class="vaga-card__meta">
-                        <span class="vaga-card__autor"><img src="img/userProfilepreto.png" alt=""
-                                aria-hidden="true">Nome do autor</span>
-                        <span class="vaga-card__local"><img src="img/icons/local.svg" alt=""
-                                aria-hidden="true">chiquichiqui,Bahia</span>
-                    </div>
-                    <p>Uma descrição breve do que se trata a vaga em questão, tendo suas principais informações
-                        necessárias para o usuário poder se interessar</p>
-                    <div class="vaga-card__rodape">
-                        <span class="vaga-card__salario">R$ 1000 - 1500 mês</span>
-                        <span class="vaga-card__views">3,5mil <img src="img/icons/olho.svg" alt=""
-                                aria-hidden="true"></span>
-                    </div>
-                </article>
-
-                <article class="vaga-card">
-                    <div class="vaga-card__topo">
-                        <span class="vaga-card__chip">Design gráfico</span>
-                        <span class="vaga-card__tempo">Há 5 horas</span>
-                    </div>
-                    <h3>Título da vaga</h3>
-                    <div class="vaga-card__meta">
-                        <span class="vaga-card__autor"><img src="img/userProfilepreto.png" alt=""
-                                aria-hidden="true">Nome do autor</span>
-                        <span class="vaga-card__local"><img src="img/icons/local.svg" alt=""
-                                aria-hidden="true">chiquichiqui,Bahia</span>
-                    </div>
-                    <p>Uma descrição breve do que se trata a vaga em questão, tendo suas principais informações
-                        necessárias para o usuário poder se interessar</p>
-                    <div class="vaga-card__rodape">
-                        <span class="vaga-card__salario">R$ 1000 - 1500 mês</span>
-                        <span class="vaga-card__views">3,5mil <img src="img/icons/olho.svg" alt=""
-                                aria-hidden="true"></span>
-                    </div>
-                </article>
-
-                <article class="vaga-card">
-                    <div class="vaga-card__topo">
-                        <span class="vaga-card__chip">Design gráfico</span>
-                        <span class="vaga-card__tempo">Há 5 horas</span>
-                    </div>
-                    <h3>Título da vaga</h3>
-                    <div class="vaga-card__meta">
-                        <span class="vaga-card__autor"><img src="img/userProfilepreto.png" alt=""
-                                aria-hidden="true">Nome do autor</span>
-                        <span class="vaga-card__local"><img src="img/icons/local.svg" alt=""
-                                aria-hidden="true">chiquichiqui,Bahia</span>
-                    </div>
-                    <p>Uma descrição breve do que se trata a vaga em questão, tendo suas principais informações
-                        necessárias para o usuário poder se interessar</p>
-                    <div class="vaga-card__rodape">
-                        <span class="vaga-card__salario">R$ 1000 - 1500 mês</span>
-                        <span class="vaga-card__views">3,5mil <img src="img/icons/olho.svg" alt=""
-                                aria-hidden="true"></span>
-                    </div>
-                </article>
-
-                <article class="vaga-card">
-                    <div class="vaga-card__topo">
-                        <span class="vaga-card__chip">Design gráfico</span>
-                        <span class="vaga-card__tempo">Há 5 horas</span>
-                    </div>
-                    <h3>Título da vaga</h3>
-                    <div class="vaga-card__meta">
-                        <span class="vaga-card__autor"><img src="img/userProfilepreto.png" alt=""
-                                aria-hidden="true">Nome do autor</span>
-                        <span class="vaga-card__local"><img src="img/icons/local.svg" alt=""
-                                aria-hidden="true">chiquichiqui,Bahia</span>
-                    </div>
-                    <p>Uma descrição breve do que se trata a vaga em questão, tendo suas principais informações
-                        necessárias para o usuário poder se interessar</p>
-                    <div class="vaga-card__rodape">
-                        <span class="vaga-card__salario">R$ 1000 - 1500 mês</span>
-                        <span class="vaga-card__views">3,5mil <img src="img/icons/olho.svg" alt=""
-                                aria-hidden="true"></span>
-                    </div>
-                </article>
-
-                <article class="vaga-card">
-                    <div class="vaga-card__topo">
-                        <span class="vaga-card__chip">Design gráfico</span>
-                        <span class="vaga-card__tempo">Há 5 horas</span>
-                    </div>
-                    <h3>Título da vaga</h3>
-                    <div class="vaga-card__meta">
-                        <span class="vaga-card__autor"><img src="img/userProfilepreto.png" alt=""
-                                aria-hidden="true">Nome do autor</span>
-                        <span class="vaga-card__local"><img src="img/icons/local.svg" alt=""
-                                aria-hidden="true">chiquichiqui,Bahia</span>
-                    </div>
-                    <p>Uma descrição breve do que se trata a vaga em questão, tendo suas principais informações
-                        necessárias para o usuário poder se interessar</p>
-                    <div class="vaga-card__rodape">
-                        <span class="vaga-card__salario">R$ 1000 - 1500 mês</span>
-                        <span class="vaga-card__views">3,5mil <img src="img/icons/olho.svg" alt=""
-                                aria-hidden="true"></span>
-                    </div>
-                </article>
-            </section>
+            <section class="vagas-grid" aria-label="Vagas em destaque" id="vagasGrid"></section>
         </section>
     </main>
 
@@ -230,6 +103,7 @@
 
     <script src="js/header.js"></script>
     <script src="js/usuario_logado.js"></script>
+    <script src="js/conexao_com_api/carregar_vagas.js"></script>
     <script src="js/cursos-carousel.js"></script>
     <script src="js/vagas-filtros.js"></script>
     <script src="js/Acessibilidade/traducao.js"></script>
