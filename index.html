@@ -146,12 +146,6 @@
             </div>
         </div>
 
-        <a href="adicionarprojeto.html" target="_blank">
-            <button class="adcProjeto" aria-label="Adicionar novo projeto">
-                <img src="img/icons/list-plus.svg" alt="Adicionar projeto">
-            </button>
-        </a>
-
     </main>
 
     <div id="dark-mode-wrapper" style="position:fixed;bottom:16px;right:16px;z-index:999;">
@@ -172,6 +166,46 @@
     <script src="js/usuario_logado.js"></script>
     <script src="js/Acessibilidade/traducao.js"></script>
     <script src="js/Acessibilidade/ModoEscuro.js"></script>
+
+    <!-- FAB: criar (post + vaga) -->
+    <div class="fab" data-open="false" aria-label="Criar">
+        
+        <div class="fab__menu" role="menu" aria-label="Opções de criação">
+            <a class="fab__item" role="menuitem" href="adicionarprojeto.html" title="Adicionar post">
+                <img src="img/icons/addfotobranco.svg" alt="Adicionar post">
+            </a>
+            <a class="fab__item" role="menuitem" href="adicionarvaga.html" title="Adicionar vaga">
+                <img src="img/icons/foguetepreto.svg" alt="Adicionar vaga">
+            </a>
+        </div>
+        <button class="fab__main" type="button" aria-haspopup="menu" aria-expanded="false" title="Criar">
+            +
+        </button>
+    </div>
+
+    <script>
+        // FAB toggle (sem arquivo novo)
+        (function () {
+            const fab = document.querySelector('.fab');
+            const main = document.querySelector('.fab__main');
+            if (!fab || !main) return;
+
+            const setOpen = (open) => {
+                fab.dataset.open = open ? 'true' : 'false';
+                main.setAttribute('aria-expanded', open ? 'true' : 'false');
+            };
+
+            main.addEventListener('click', () => setOpen(fab.dataset.open !== 'true'));
+
+            document.addEventListener('click', (e) => {
+                if (!fab.contains(e.target)) setOpen(false);
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') setOpen(false);
+            });
+        })();
+    </script>
 
 </body>
 

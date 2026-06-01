@@ -186,6 +186,46 @@
         </section>
     </main>
 
+    <!-- FAB: criar (post + vaga) -->
+    <div class="fab" data-open="false" aria-label="Criar">
+        <button class="fab__main" type="button" aria-haspopup="menu" aria-expanded="false" title="Criar">
+            +
+        </button>
+
+        <div class="fab__menu" role="menu" aria-label="Opções de criação">
+            <a class="fab__item" role="menuitem" href="adicionarprojeto.html" title="Adicionar post">
+                <img src="img/icons/addfotobranco.svg" alt="Adicionar post">
+            </a>
+            <a class="fab__item" role="menuitem" href="adicionarvaga.html" title="Adicionar vaga">
+                <img src="img/icons/foguetepreto.svg" alt="Adicionar vaga">
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // FAB toggle (sem arquivo novo)
+        (function () {
+            const fab = document.querySelector('.fab');
+            const main = document.querySelector('.fab__main');
+            if (!fab || !main) return;
+
+            const setOpen = (open) => {
+                fab.dataset.open = open ? 'true' : 'false';
+                main.setAttribute('aria-expanded', open ? 'true' : 'false');
+            };
+
+            main.addEventListener('click', () => setOpen(fab.dataset.open !== 'true'));
+
+            document.addEventListener('click', (e) => {
+                if (!fab.contains(e.target)) setOpen(false);
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') setOpen(false);
+            });
+        })();
+    </script>
+
     <script src="js/ambiente.js"></script>
 
     <script src="js/header.js"></script>
@@ -193,7 +233,7 @@
     <script src="js/cursos-carousel.js"></script>
     <script src="js/vagas-filtros.js"></script>
     <script src="js/Acessibilidade/traducao.js"></script>
-    <script src="js/Acessibilidade/ModoEscuro.js"></script> 
+    <script src="js/Acessibilidade/ModoEscuro.js"></script>
 
 </body>
 

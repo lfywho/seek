@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Adicionar Vaga</title>
+    <link rel="stylesheet" href="css/global.css" />
+    <link rel="shortcut icon" href="img/favicon.png" type="image/x-icon" />
+</head>
+
+<body data-active-nav="criar" id="todo">
+    <header class="cabecalho"></header>
+
+    <main class="adicionar-projeto adicionar-vaga">
+        <div class="adicionar-projeto__page">
+            <div class="adicionar-projeto__layout">
+                <section class="adicionar-projeto__main" aria-label="Formulário da vaga">
+                    <section class="adicionar-projeto__panel adicionar-projeto__section adicionar-projeto__title-section">
+                        <input
+                            class="adicionar-projeto__title-input"
+                            type="text"
+                            id="tituloVaga"
+                            placeholder="Título da vaga"
+                            autocomplete="off"
+                        />
+                    </section>
+
+                    <section class="adicionar-projeto__panel adicionar-projeto__section">
+                        <h2 class="adicionar-projeto__section-title">Descrição da vaga</h2>
+                        <textarea
+                            class="adicionar-projeto__text-area"
+                            id="descricaoVaga"
+                            rows="6"
+                            maxlength="1500"
+                            placeholder="Descreva responsabilidades, requisitos e benefícios..."
+                        ></textarea>
+                        <div class="adicionar-projeto__counter" aria-live="polite">
+                            <span id="descricaoVagaCounter">0</span>/1500
+                        </div>
+                    </section>
+
+                    <section class="adicionar-projeto__panel adicionar-projeto__section adicionar-projeto__section--categorias">
+                        <h2 class="adicionar-projeto__section-title adicionar-projeto__section-title--large">Categorias
+                        </h2>
+
+                        <!-- valor selecionado (para enviar depois) -->
+                        <input type="hidden" id="categoriaVaga" name="categoriaVaga" value="" />
+
+                        <div class="adicionar-projeto__chips" id="chips-categorias-vaga"></div>
+
+                        <div class="adicionar-projeto__section-spacer"></div>
+
+                        <div class="adicionar-projeto__search-block">
+                            <h2 class="adicionar-projeto__section-title adicionar-projeto__section-title--medium">Pesquisar
+                            </h2>
+                            <div class="adicionar-projeto__search-box">
+                                <img src="img/icons/lupapreta.svg" alt="Buscar">
+                                <input type="text" id="pesquisaCategoriaVaga" placeholder="Pesquisar categorias" autocomplete="off">
+                            </div>
+                        </div>
+                    </section>
+                </section>
+
+                <aside class="adicionar-projeto__sidebar" aria-label="Configurações da vaga">
+                    <h1 class="adicionar-projeto__page-heading">Configurações</h1>
+
+                    <section class="adicionar-projeto__panel adicionar-projeto__sidebar-card">
+                        <h2 class="adicionar-projeto__sidebar-title">Link da vaga</h2>
+                        <label class="adicionar-projeto__field-label" for="linkVaga">URL</label>
+                        <input
+                            class="adicionar-projeto__text-input"
+                            type="url"
+                            id="linkVaga"
+                            placeholder="https://..."
+                            inputmode="url"
+                            autocomplete="off"
+                        />
+                        <p class="adicionar-projeto__helper">
+                            Informe um link externo (página da vaga, formulário ou site da empresa).
+                        </p>
+                    </section>
+
+                    <section class="adicionar-projeto__panel adicionar-projeto__sidebar-card">
+                        <h2 class="adicionar-projeto__sidebar-title">Visibilidade:</h2>
+
+                        <div class="adicionar-projeto__stack-gap">
+                            <div>
+                                <label class="adicionar-projeto__field-label" for="visibilidadeVaga">Status de visibilidade:</label>
+                                <select class="adicionar-projeto__select" id="visibilidadeVaga">
+                                    <option>Não publicado</option>
+                                    <option>Público</option>
+                                    <option>Privado</option>
+                                </select>
+                            </div>
+
+                            <button class="adicionar-projeto__sidebar-button" type="button" id="salvarRascunhoVaga">
+                                <img src="img/icons/salvarpreto.svg" alt="" />
+                                <span>Salvar Rascunho</span>
+                            </button>
+
+                            <button class="adicionar-projeto__sidebar-button" type="button" id="publicarVaga">
+                                <img src="img/icons/foguetepreto.svg" alt="" />
+                                <span>Publicar</span>
+                            </button>
+                        </div>
+                    </section>
+                </aside>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/ambiente.js"></script>
+    <script src="js/header.js"></script>
+    <script src="js/usuario_logado.js"></script>
+    <script src="js/Acessibilidade/ModoEscuro.js"></script>
+
+    <script>
+        // Contador simples (sem criar novo arquivo)
+        (function () {
+            const el = document.getElementById('descricaoVaga');
+            const counter = document.getElementById('descricaoVagaCounter');
+            if (!el || !counter) return;
+
+            const update = () => (counter.textContent = String(el.value.length));
+            el.addEventListener('input', update);
+            update();
+        })();
+
+        // Categorias (chips + pesquisar) - seleção única
+        (function () {
+            const categorias = [
+                'Design', 'Ilustração', 'Rascunhos', '3D Design', 'HQ', 'UI/UX', 'Branding',
+                'Logotipo', 'Marca', 'Pintura Digital', 'Arte Digital', 'Arte', 'Arte Tradicional',
+                'Escultura', 'Ensaio Fotográfico', 'Foto', 'Moda', 'Design de Moda', 'Animação', 'Redes sociais'
+            ];
+
+            const chipsWrap = document.getElementById('chips-categorias-vaga');
+            const inputBusca = document.getElementById('pesquisaCategoriaVaga');
+            const categoriaHidden = document.getElementById('categoriaVaga');
+            if (!chipsWrap || !inputBusca || !categoriaHidden) return;
+
+            let selecionada = '';
+
+            function render(list) {
+                chipsWrap.innerHTML = '';
+                list.forEach((nome) => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'adicionar-projeto__chip' + (nome === selecionada ? ' is-active' : '');
+                    btn.textContent = nome;
+                    btn.addEventListener('click', () => {
+                        selecionada = (selecionada === nome) ? '' : nome; // toggle
+                        categoriaHidden.value = selecionada;
+                        render(filtrar(inputBusca.value));
+                    });
+                    chipsWrap.appendChild(btn);
+                });
+            }
+
+            function filtrar(query) {
+                const q = (query || '').trim().toLowerCase();
+                if (!q) return categorias;
+                return categorias.filter((c) => c.toLowerCase().includes(q));
+            }
+
+            inputBusca.addEventListener('input', () => render(filtrar(inputBusca.value)));
+
+            render(categorias);
+        })();
+
+        // FAB toggle (sem arquivo novo)
+        (function () {
+            const fab = document.querySelector('.fab');
+            const main = document.querySelector('.fab__main');
+            if (!fab || !main) return;
+
+            const setOpen = (open) => {
+                fab.dataset.open = open ? 'true' : 'false';
+                main.setAttribute('aria-expanded', open ? 'true' : 'false');
+            };
+
+            main.addEventListener('click', () => setOpen(fab.dataset.open !== 'true'));
+
+            document.addEventListener('click', (e) => {
+                if (!fab.contains(e.target)) setOpen(false);
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') setOpen(false);
+            });
+        })();
+    </script>
+</body>
+
+</html>
