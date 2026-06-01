@@ -7,98 +7,302 @@
   <link rel="stylesheet" href="css/global.css">
   <link rel="shortcut icon" href="img/favicon.png" type="image/x-icon">
 </head>
-<body>
+<body id="todo">
 
   <header class="cabecalho"></header>
 
   <main class="configuracoes">
 
-    <section class="Direita">
-      <div><p><strong>Configurações</strong></p></div>
+    <aside class="configuracoes__sidebar Direita">
+      <div class="sidebar__panel">
+        <div class="sidebar__heading">
+          <p>CONFIGURAÇÕES</p>
+        </div>
 
-      <div class="perfil">
-        <img src="img/userProfilepreto.png" alt="Perfil" width="80">
-        <p><strong>Nome do usuário</strong></p>
-        <p>São Paulo - Matão</p>
+        <div class="perfil sidebar__perfil">
+          <img src="img/userProfilepreto.png" alt="Perfil">
+          <p><strong>Nome do usuário</strong></p>
+          <span>São Paulo - Matão</span>
+        </div>
+
+        <nav class="sidebar__menu">
+          <ul>
+            <li class="sidebar__menu-item active"><a onclick="mostrar('privacidade', this)"><img src="img/icons/privacidade.svg" alt=""> <span>Privacidade</span></a></li>
+            <li class="sidebar__menu-item"><a onclick="mostrar('notificações', this)"><img src="img/icons/email.svg" alt=""> <span>Notificações</span></a></li>
+            <li class="sidebar__menu-item"><a onclick="mostrar('acessibilidade', this)"><img src="img/icons/usuario.svg" alt=""> <span>Acessibilidade</span></a></li>
+            <li class="sidebar__menu-item"><a onclick="mostrar('email-senha', this)"><img src="img/icons/email.svg" alt=""> <span>Email e senha</span></a></li>
+            <li class="sidebar__menu-item"><a onclick="mostrar('minhas-informações', this)"><img src="img/icons/config.svg" alt=""> <span>Minhas informações</span></a></li>
+          </ul>
+        </nav>
+      </div>
+    </aside>
+
+    <section class="configuracoes__content Esquerda">
+
+      <div class="tab-panel privacidade active">
+        <div class="panel-header panel-header--grey">
+          <p class="panel-title"><strong>Privacidade</strong></p>
+          <p class="panel-description">Nesta aba você poderá editar suas preferências de quem pode acessar seus conteúdos.</p>
+        </div>
+
+        <div class="panel-section">
+          <div class="panel-row panel-row--split">
+            <div>
+              <strong>Quem pode ver seu perfil?</strong>
+              <span>Define se sua conta aparece na barra de pesquisa.</span>
+            </div>
+            <div class="select-pill">
+              <select aria-label="Quem pode ver seu perfil">
+                <option value="todos" selected>Todos</option>
+                <option value="amigos">Apenas amigos</option>
+                <option value="somente_eu">Somente eu</option>
+              </select>
+            </div>
+          </div>
+          <div class="panel-row panel-row--split">
+            <div>
+              <strong>Quem pode ver seus posts?</strong>
+              <span>Define quem visualiza seus posts.</span>
+            </div>
+            <div class="select-pill">
+              <select aria-label="Quem pode ver seus posts">
+                <option value="todos" selected>Todos</option>
+                <option value="amigos">Apenas amigos</option>
+                <option value="somente_eu">Somente eu</option>
+              </select>
+            </div>
+          </div>
+          <div class="panel-row panel-row--split">
+            <div>
+              <strong>Quem pode comentar?</strong>
+              <span>Define quem pode adicionar comentários nos seus posts.</span>
+            </div>
+            <div class="select-pill">
+              <select aria-label="Quem pode comentar">
+                <option value="todos" selected>Todos</option>
+                <option value="amigos">Apenas amigos</option>
+                <option value="somente_eu">Somente eu</option>
+              </select>
+            </div>
+          </div>
+          <div class="panel-row panel-row--split panel-row--action">
+            <div>
+              <strong>Usuários bloqueados</strong>
+              <span>Mostra as pessoas que você bloqueou.</span>
+            </div>
+            <div class="dropdown" data-dropdown="bloqueados">
+              <button class="dropdown-toggle" type="button" aria-expanded="false">▼</button>
+              <div class="dropdown-menu" role="menu">
+                <div class="dropdown-item">Ver bloqueados</div>
+                <div class="dropdown-item">Adicionar bloqueado</div>
+              </div>
+            </div>
+          </div>
+          <div class="panel-row panel-row--split panel-row--action">
+            <div>
+              <strong>Palavras bloqueadas</strong>
+              <span>Mostra as palavras que você bloqueou, para ninguém utilizar elas no seu perfil.</span>
+            </div>
+            <div class="dropdown" data-dropdown="palavras">
+              <button class="dropdown-toggle" type="button" aria-expanded="false">▼</button>
+              <div class="dropdown-menu" role="menu">
+                <div class="dropdown-item">Ver palavras bloqueadas</div>
+                <div class="dropdown-item">Adicionar palavra</div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <ul>
-        <li><a onclick="mostrar('privacidade')">Privacidade</a></li>
-        <li><a onclick="mostrar('notificações')">Notificações</a></li>
-        <li><a onclick="mostrar('acessibilidade')">Acessibilidade</a></li>
-        <li><a onclick="mostrar('email-senha')">Email e senha</a></li>
-        <li><a onclick="mostrar('minhas-informações')">Minhas informações</a></li>
-      </ul>
+      <div class="tab-panel notificações">
+        <div class="panel-header panel-header--grey">
+          <p class="panel-title"><strong>Notificações</strong></p>
+          <p class="panel-description">Nesta aba você gerencia quais avisos você deseja receber ou silenciar.</p>
+        </div>
+
+        <div class="panel-section">
+          <div class="panel-row panel-row--split">
+            <div>
+              <strong>Nova curtidas</strong>
+              <span>Ative ou desative as notificações de novas curtidas.</span>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" checked>
+              <span></span>
+            </label>
+          </div>
+          <div class="panel-row panel-row--split">
+            <div>
+              <strong>Novos seguidores</strong>
+              <span>Ative ou desative as notificações de novos seguidores.</span>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" checked>
+              <span></span>
+            </label>
+          </div>
+          <div class="panel-row panel-row--split">
+            <div>
+              <strong>Ligar ou desligar as notificações</strong>
+              <span>Tira completamente as notificações.</span>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" checked>
+              <span></span>
+            </label>
+          </div>
+          <div class="panel-row panel-row--split panel-row--action">
+            <div>
+              <strong>Silenciar notificações</strong>
+              <span>Você define quanto tempo vai ficar sem notificações.</span>
+            </div>
+            <div class="dropdown" data-dropdown="silenciar">
+              <button class="dropdown-toggle" type="button" aria-expanded="false">▼</button>
+              <div class="dropdown-menu" role="menu">
+                <div class="dropdown-item" data-value="1h">Silenciar por 1 hora</div>
+                <div class="dropdown-item" data-value="1d">Silenciar por 1 dia</div>
+                <div class="dropdown-item" data-value="1w">Silenciar por 1 semana</div>
+                <div class="dropdown-item" data-value="1m">Silenciar por 1 mês</div>
+                <div class="dropdown-item" data-value="1y">Silenciar por 1 ano</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel acessibilidade">
+        <div class="panel-header panel-header--grey">
+          <p class="panel-title"><strong>Acessibilidade</strong></p>
+          <p class="panel-description">Nesta aba você pode alterar as configurações para deixar sua experiência no site mais acessível.</p>
+        </div>
+
+        <div class="panel-section">
+          <div class="panel-row panel-row--split">
+            <div>
+              <strong>Tamanho das fontes</strong>
+              <span>Você pode alterar o tamanho da fonte do site.</span>
+            </div>
+            <button type="button" class="button button--pill">Aa+1.0</button>
+          </div>
+          <div class="panel-row panel-row--split">
+            <div>
+              <strong>Ativar barra de acessibilidade</strong>
+              <span>Ativa ou desativa a barra de acessibilidade.</span>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" checked>
+              <span></span>
+            </label>
+          </div>
+          <div class="panel-row panel-row--split">
+            <div>
+              <strong>Alto contraste</strong>
+              <span>Ativa o modo alto contraste.</span>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" checked>
+              <span></span>
+            </label>
+          </div>
+          <div class="panel-row panel-row--split">
+            <div>
+              <strong>Modo escuro</strong>
+              <span>Alterne o modo escuro para o tema do site.</span>
+            </div>
+            <button id="btnModoEscuro" class="button button--pill" type="button" aria-pressed="false" aria-label="Alternar modo escuro" onclick="window.modoEscuro && window.modoEscuro.toggle()">Alternar Modo Escuro</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel email-senha">
+        <div class="panel-header panel-header--grey">
+          <p class="panel-title"><strong>Email e senha</strong></p>
+          <p class="panel-description">Nesta aba você pode alterar seu email, sua senha, e ativar o fator de duas etapas.</p>
+        </div>
+
+        <div class="panel-form">
+          <div class="field-group field-group--stack">
+            <span>E-mail</span>
+            <p class="field-note">Altera o seu e-mail de cadastro.</p>
+            <input type="email" placeholder="placeholder_do_email_atual_em_cinza">
+          </div>
+
+          <div class="field-group field-group--stack">
+            <span>Senha atual</span>
+            <p class="field-note">Onde fica sua senha atual.</p>
+            <input type="password" placeholder="•••••••••••••">
+          </div>
+
+          <div class="field-group field-group--stack">
+            <span>Alterar senha</span>
+            <p class="field-note">Altera sua senha atual.</p>
+            <input type="password" placeholder="•••••••••••••">
+          </div>
+
+          <div class="field-group field-group--control">
+            <div>
+              <span>Ativar fator de duas etapas</span>
+              <p class="field-note">Ativa ou desativa a autenticação extra.</p>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" checked>
+              <span></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="panel-actions">
+          <button type="button" class="button button--primary">Confirmar</button>
+        </div>
+      </div>
+
+      <div class="tab-panel minhas-informações">
+        <div class="panel-header panel-header--grey">
+          <p class="panel-title"><strong>Minhas Informações</strong></p>
+          <p class="panel-description">Aqui você pode revisar e atualizar suas informações pessoais.</p>
+        </div>
+
+        <div class="panel-form">
+          <div class="field-group field-group--file">
+            <div>
+              <span>Foto de perfil</span>
+              <p class="field-note">Envie ou altere sua foto de perfil.</p>
+            </div>
+            <label class="file-action">
+              <input type="file" accept="image/*">
+              <img src="img/icons/usuario.svg" alt="Selecionar foto">
+            </label>
+          </div>
+
+          <div class="field-group field-group--file">
+            <div>
+              <span>Foto do banner</span>
+              <p class="field-note">Personalize o banner do seu perfil.</p>
+            </div>
+            <label class="file-action">
+              <input type="file" accept="image/*">
+              <img src="img/icons/capaprojetopreto.svg" alt="Selecionar banner">
+            </label>
+          </div>
+
+          <div class="field-group field-group--stack">
+            <span>Nome de usuário</span>
+            <input type="text" placeholder="placeholder_de_usuario_atual_em_cinza">
+          </div>
+
+          <div class="field-group field-group--stack">
+            <span>@username</span>
+            <input type="text" placeholder="@placeholder_de_usuario_atual_em_cinza">
+          </div>
+
+          <div class="field-group field-group--stack">
+            <span>Biografia</span>
+            <textarea rows="4" placeholder="Uma pequena descrição sobre você, o que você faz e com o que você trabalha, sua jornada acadêmica, etc..."></textarea>
+          </div>
+        </div>
+      </div>
+
     </section>
-
-    <section class="Esquerda">
-  <!-- PRIVACIDADE -->
-  <div class="privacidade active">
-    <div class="privacidadeHeader">
-      <p><strong>Privacidade</strong></p>
-      <p>Nesta aba você poderá editar suas preferências de quem pode acessar seus conteúdos.</p>
-    </div>
-
-    <p><strong>Quem pode ver seu perfil?</strong><br>Define se sua conta aparece na barra de pesquisa.<br><em>Todos</em></p>
-    <p><strong>Quem pode ver seus posts?</strong><br>Define quem visualiza seus posts.<br><em>Todos</em></p>
-    <p><strong>Quem pode comentar?</strong><br>Define quem pode adicionar comentários nos seus posts.<br><em>Todos</em></p>
-    <p><strong>Usuários bloqueados</strong><br>Mostra as pessoas que você bloqueou.</p>
-    <p><strong>Palavras bloqueadas</strong><br>Mostra as palavras que você bloqueou, para ninguém utilizar elas no seu perfil.</p>
-  </div>
-
-  <!-- NOTIFICAÇÕES -->
-  <div class="notificações">
-    <div class="notificacoesHeader">
-      <p><strong>Notificações</strong></p>
-      <p>Aqui você pode gerenciar suas preferências de notificações.</p>
-    </div>
-
-    <p><strong>Receber notificações por email</strong><br>Ative ou desative alertas enviados para seu email.</p>
-    <p><strong>Notificações na plataforma</strong><br>Controle se deseja receber alertas dentro do site.</p>
-    <p><strong>Resumo semanal</strong><br>Receba um resumo das atividades por semana.</p>
-  </div>
-
-  <!-- ACESSIBILIDADE -->
-  <div class="acessibilidade">
-    <div class="acessibilidadeHeader">
-      <p><strong>Acessibilidade</strong></p>
-      <p>Ajuste as configurações para melhorar sua experiência de navegação.</p>
-    </div>
-
-    <p><strong>Tamanho das fontes</strong><br>Selecione o tamanho do texto exibido.</p>
-    <p><strong>Ativar barra de acessibilidade</strong><br>Exibe uma barra com recursos de acessibilidade.<br><em>Ativado</em></p>
-    <p><strong>Alto contraste</strong><br>Melhora a visibilidade com cores fortes.<br><em>Ativado</em></p>
-  </div>
-
-  <!-- EMAIL E SENHA -->
-  <div class="email-senha">
-    <div class="emailSenhaHeader">
-      <p><strong>Email e Senha</strong></p>
-      <p>Nesta aba você pode alterar seu email, sua senha e ativar o fator de duas etapas.</p>
-    </div>
-
-    <p><strong>Email</strong><br>Altere o seu email de cadastro.<br><em>placeholder_do_email_atual</em></p>
-    <p><strong>Senha atual</strong><br>Digite sua senha atual para confirmar alterações.</p>
-    <p><strong>Nova senha</strong><br>Defina uma nova senha para sua conta.</p>
-    <p><strong>Ativar fator de duas etapas</strong><br>Adicione uma camada extra de segurança.</p>
-    <button>Confirmar</button>
-  </div>
-
-  <!-- MINHAS INFORMAÇÕES -->
-  <div class="minhas-informações">
-    <div class="informacoesHeader">
-      <p><strong>Minhas Informações</strong></p>
-      <p>Aqui você pode revisar e atualizar suas informações pessoais.</p>
-    </div>
-
-    <p><strong>Foto de perfil</strong><br>Envie ou altere sua foto de perfil.</p>
-    <p><strong>Foto do banner</strong><br>Personalize o banner do seu perfil.</p>
-    <p><strong>Nome de usuário</strong><br>Edite seu nome público.</p>
-    <p><strong>@username</strong><br>Defina ou altere seu identificador único.</p>
-    <p><strong>Biografia</strong><br>Adicione uma descrição sobre você.</p>
-  </div>
-</section>
-
   </main>
 
   <script src="js/ambiente.js"></script>
