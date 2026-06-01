@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const replyTarget = document.getElementById('replyTarget');
     const replyTargetText = document.getElementById('replyTargetText');
     const cancelReplyBtn = document.getElementById('cancelReply');
+    const favoriteBtn = document.getElementById('modalFavorite');
     let replyState = null;
     
     // Posts data - deve vir do servidor, mas por enquanto fixo aqui
@@ -94,18 +95,18 @@ document.addEventListener('DOMContentLoaded', function () {
     function updatePostButtons(postId) {
         const state = postState[postId];
         const likeBtn = document.getElementById('modalLike');
-        const favoriteBtn = document.getElementById('modalFavorite');
-
         if (state.liked) {
             likeBtn.classList.add('active');
         } else {
             likeBtn.classList.remove('active');
         }
 
-        if (state.favorited) {
-            favoriteBtn.classList.add('active');
-        } else {
-            favoriteBtn.classList.remove('active');
+        if (favoriteBtn) {
+            if (state.favorited) {
+                favoriteBtn.classList.add('active');
+            } else {
+                favoriteBtn.classList.remove('active');
+            }
         }
     }
 
@@ -210,13 +211,16 @@ document.addEventListener('DOMContentLoaded', function () {
         updatePostButtons(postId);
     });
 
-    // Favorite button
-    document.getElementById('modalFavorite').addEventListener('click', function () {
-        const postId = modal.dataset.currentPostId;
-        const state = postState[postId];
-        state.favorited = !state.favorited;
-        updatePostButtons(postId);
-    });
+    // Favorite button (opcional)
+    if (favoriteBtn) {
+        favoriteBtn.addEventListener('click', function () {
+            const postId = modal.dataset.currentPostId;
+            const state = postState[postId];
+            if (!state) return;
+            state.favorited = !state.favorited;
+            updatePostButtons(postId);
+        });
+    }
 
     // Comment input
     sendCommentBtn.addEventListener('click', function () {

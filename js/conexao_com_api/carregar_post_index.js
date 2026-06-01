@@ -35,7 +35,9 @@ document.addEventListener('DOMContentLoaded', function () {
 	var replyState = null;
 
 	// O modal pode ser reutilizado em outras páginas (ex.: perfil) que nao tem feed.
-	if (!modal || !modalTitle || !modalAuthorName || !modalAuthorAvatar || !modalGallery || !modalLikeButton || !modalFavoriteButton || !modalShareButton || !modalCloseButton || !modalOverlay) {
+	// Nem todos os botoes sao obrigatorios em todas as paginas (ex.: favorito pode estar ausente),
+	// portanto checamos apenas os elementos essenciais.
+	if (!modal || !modalTitle || !modalAuthorName || !modalAuthorAvatar || !modalGallery || !modalLikeButton || !modalShareButton || !modalCloseButton || !modalOverlay) {
 		return;
 	}
 
@@ -611,6 +613,10 @@ document.addEventListener('DOMContentLoaded', function () {
 			return;
 		}
 
+		if (!modalFavoriteButton) {
+			return;
+		}
+
 		modalFavoriteButton.classList.toggle('active', !!state.favorite);
 		modalFavoriteButton.setAttribute('aria-pressed', state.favorite ? 'true' : 'false');
 	}
@@ -957,15 +963,17 @@ document.addEventListener('DOMContentLoaded', function () {
 		toggleLike();
 	});
 
-	modalFavoriteButton.addEventListener('click', function () {
-		var postId = Number(modal.dataset.currentPostId);
-		if (!postState[postId]) {
-			return;
-		}
+	if (modalFavoriteButton) {
+		modalFavoriteButton.addEventListener('click', function () {
+			var postId = Number(modal.dataset.currentPostId);
+			if (!postState[postId]) {
+				return;
+			}
 
-		postState[postId].favorite = !postState[postId].favorite;
-		updateFavoriteButton(postId);
-	});
+			postState[postId].favorite = !postState[postId].favorite;
+			updateFavoriteButton(postId);
+		});
+	}
 
 	modalShareButton.addEventListener('click', function () {
 		shareCurrentPost();
