@@ -145,10 +145,10 @@ function montarHeader() {
                 <div class="perfilDropdownDivider"></div>
 
                 <div class="perfilDropdownGroup">
-                    <button type="button" class="perfilDropdownItem">
+                    <a href="configuracaoes.html" class="perfilDropdownItem">
                         <img src="img/icons/config.svg" alt="">
                         <span data-i18n="settings">Configurações</span>
-                    </button>
+                    </a>
                     <button type="button" class="perfilDropdownItem">
                         <img src="img/icons/sair.svg" alt="">
                         <span data-i18n="logout">Sair</span>
