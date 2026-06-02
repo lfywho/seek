@@ -20,17 +20,17 @@
         </div>
 
         <div class="perfil sidebar__perfil">
-          <img src="img/userProfilepreto.png" alt="Perfil">
-          <p><strong>Nome do usuário</strong></p>
-          <span>São Paulo - Matão</span>
+          <img id="configuracoesPerfilFoto" src="img/userProfilepreto.png" alt="Perfil">
+          <p><strong id="configuracoesPerfilNome">Nome do usuário</strong></p>
+          <span id="configuracoesPerfilLocalizacao">São Paulo - Matão</span>
         </div>
 
         <nav class="sidebar__menu">
           <ul>
-            <li class="sidebar__menu-item active"><a onclick="mostrar('privacidade', this)"><img src="img/icons/privacidade.svg" alt=""> <span>Privacidade</span></a></li>
-            <li class="sidebar__menu-item"><a onclick="mostrar('notificações', this)"><img src="img/icons/email.svg" alt=""> <span>Notificações</span></a></li>
+            <!-- <li class="sidebar__menu-item active"><a onclick="mostrar('privacidade', this)"><img src="img/icons/privacidade.svg" alt=""> <span>Privacidade</span></a></li> -->
+            <li class="sidebar__menu-item active"><a onclick="mostrar('notificações', this)"><img src="img/icons/email.svg" alt=""> <span>Notificações</span></a></li>
             <li class="sidebar__menu-item"><a onclick="mostrar('acessibilidade', this)"><img src="img/icons/usuario.svg" alt=""> <span>Acessibilidade</span></a></li>
-            <li class="sidebar__menu-item"><a onclick="mostrar('email-senha', this)"><img src="img/icons/email.svg" alt=""> <span>Email e senha</span></a></li>
+            <!-- <li class="sidebar__menu-item"><a onclick="mostrar('email-senha', this)"><img src="img/icons/email.svg" alt=""> <span>Email e senha</span></a></li> -->
             <li class="sidebar__menu-item"><a onclick="mostrar('minhas-informações', this)"><img src="img/icons/config.svg" alt=""> <span>Minhas informações</span></a></li>
           </ul>
         </nav>
@@ -39,7 +39,7 @@
 
     <section class="configuracoes__content Esquerda">
 
-      <div class="tab-panel privacidade active">
+      <!-- <div class="tab-panel privacidade active">
         <div class="panel-header panel-header--grey">
           <p class="panel-title"><strong>Privacidade</strong></p>
           <p class="panel-description">Nesta aba você poderá editar suas preferências de quem pode acessar seus conteúdos.</p>
@@ -112,61 +112,16 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
 
-      <div class="tab-panel notificações">
+      <div class="tab-panel notificações active">
         <div class="panel-header panel-header--grey">
           <p class="panel-title"><strong>Notificações</strong></p>
           <p class="panel-description">Nesta aba você gerencia quais avisos você deseja receber ou silenciar.</p>
         </div>
 
-        <div class="panel-section">
-          <div class="panel-row panel-row--split">
-            <div>
-              <strong>Nova curtidas</strong>
-              <span>Ative ou desative as notificações de novas curtidas.</span>
-            </div>
-            <label class="toggle">
-              <input type="checkbox" checked>
-              <span></span>
-            </label>
-          </div>
-          <div class="panel-row panel-row--split">
-            <div>
-              <strong>Novos seguidores</strong>
-              <span>Ative ou desative as notificações de novos seguidores.</span>
-            </div>
-            <label class="toggle">
-              <input type="checkbox" checked>
-              <span></span>
-            </label>
-          </div>
-          <div class="panel-row panel-row--split">
-            <div>
-              <strong>Ligar ou desligar as notificações</strong>
-              <span>Tira completamente as notificações.</span>
-            </div>
-            <label class="toggle">
-              <input type="checkbox" checked>
-              <span></span>
-            </label>
-          </div>
-          <div class="panel-row panel-row--split panel-row--action">
-            <div>
-              <strong>Silenciar notificações</strong>
-              <span>Você define quanto tempo vai ficar sem notificações.</span>
-            </div>
-            <div class="dropdown" data-dropdown="silenciar">
-              <button class="dropdown-toggle" type="button" aria-expanded="false">▼</button>
-              <div class="dropdown-menu" role="menu">
-                <div class="dropdown-item" data-value="1h">Silenciar por 1 hora</div>
-                <div class="dropdown-item" data-value="1d">Silenciar por 1 dia</div>
-                <div class="dropdown-item" data-value="1w">Silenciar por 1 semana</div>
-                <div class="dropdown-item" data-value="1m">Silenciar por 1 mês</div>
-                <div class="dropdown-item" data-value="1y">Silenciar por 1 ano</div>
-              </div>
-            </div>
-          </div>
+        <div id="configuracoesNotificacoesLista" class="panel-section">
+          <p class="field-note">Carregando preferências de notificações...</p>
         </div>
       </div>
 
@@ -214,7 +169,7 @@
         </div>
       </div>
 
-      <div class="tab-panel email-senha">
+      <!-- <div class="tab-panel email-senha">
         <div class="panel-header panel-header--grey">
           <p class="panel-title"><strong>Email e senha</strong></p>
           <p class="panel-description">Nesta aba você pode alterar seu email, sua senha, e ativar o fator de duas etapas.</p>
@@ -254,7 +209,7 @@
         <div class="panel-actions">
           <button type="button" class="button button--primary">Confirmar</button>
         </div>
-      </div>
+      </div> -->
 
       <div class="tab-panel minhas-informações">
         <div class="panel-header panel-header--grey">
@@ -269,7 +224,7 @@
               <p class="field-note">Envie ou altere sua foto de perfil.</p>
             </div>
             <label class="file-action">
-              <input type="file" accept="image/*">
+              <input id="configuracoesFotoInput" type="file" accept="image/*">
               <img src="img/icons/usuario.svg" alt="Selecionar foto">
             </label>
           </div>
@@ -280,25 +235,30 @@
               <p class="field-note">Personalize o banner do seu perfil.</p>
             </div>
             <label class="file-action">
-              <input type="file" accept="image/*">
+              <input id="configuracoesBannerInput" type="file" accept="image/*">
               <img src="img/icons/capaprojetopreto.svg" alt="Selecionar banner">
             </label>
           </div>
 
           <div class="field-group field-group--stack">
             <span>Nome de usuário</span>
-            <input type="text" placeholder="placeholder_de_usuario_atual_em_cinza">
+            <input id="configuracoesNomeInput" type="text" placeholder="placeholder_de_usuario_atual_em_cinza">
           </div>
 
           <div class="field-group field-group--stack">
             <span>@username</span>
-            <input type="text" placeholder="@placeholder_de_usuario_atual_em_cinza">
+            <input id="configuracoesUsernameInput" type="text" placeholder="@placeholder_de_usuario_atual_em_cinza">
           </div>
 
           <div class="field-group field-group--stack">
             <span>Biografia</span>
-            <textarea rows="4" placeholder="Uma pequena descrição sobre você, o que você faz e com o que você trabalha, sua jornada acadêmica, etc..."></textarea>
+            <textarea id="configuracoesDescricaoInput" rows="4" placeholder="Uma pequena descrição sobre você, o que você faz e com o que você trabalha, sua jornada acadêmica, etc..."></textarea>
           </div>
+        </div>
+
+        <div class="panel-actions">
+          <button id="configuracoesSalvarInformacoes" type="button" class="button button--primary">Salvar</button>
+          <p id="configuracoesInformacoesFeedback" class="field-note" aria-live="polite"></p>
         </div>
       </div>
 
@@ -309,6 +269,7 @@
   <script src="js/conexao_com_api/carregar_post_index.js"></script>
   <script src="js/header.js"></script>
   <script src="js/usuario_logado.js"></script>
+  <script src="js/conexao_com_api/carregar_configuracoes.js"></script>
   <script src="js/Acessibilidade/traducao.js"></script>
   <script src="js/Acessibilidade/ModoEscuro.js"></script>
   <script src="js/configura.js"></script>
