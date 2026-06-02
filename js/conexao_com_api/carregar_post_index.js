@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	var modalShareButton = document.getElementById('modalShare');
 	var modalInfoButton = document.getElementById('modalInfo');
 	var modalCommentsButton = document.getElementById('modalComments');
+	var modalLikeCount = document.getElementById('modalLikeCount');
 	var modalCloseButton = document.querySelector('.post-modal__close');
 	var modalOverlay = document.querySelector('.post-modal__overlay');
 	var modalScrollUpButton = document.getElementById('modalScrollUp');
@@ -39,6 +40,25 @@ document.addEventListener('DOMContentLoaded', function () {
 	// portanto checamos apenas os elementos essenciais.
 	if (!modal || !modalTitle || !modalAuthorName || !modalAuthorAvatar || !modalGallery || !modalLikeButton || !modalShareButton || !modalCloseButton || !modalOverlay) {
 		return;
+	}
+
+	function ensureLikeCountElement() {
+		if (modalLikeCount) {
+			return modalLikeCount;
+		}
+
+		modalLikeCount = document.createElement('span');
+		modalLikeCount.id = 'modalLikeCount';
+		modalLikeCount.className = 'post-modal__like-count';
+		modalLikeCount.textContent = '0';
+
+		var wrapper = document.createElement('div');
+		wrapper.className = 'post-modal__like-action';
+		modalLikeButton.parentNode.insertBefore(wrapper, modalLikeButton);
+		wrapper.appendChild(modalLikeButton);
+		wrapper.appendChild(modalLikeCount);
+
+		return modalLikeCount;
 	}
 
 	function rememberPost(post) {
@@ -605,6 +625,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		modalLikeButton.classList.toggle('active', !!state.liked);
 		modalLikeButton.setAttribute('aria-pressed', state.liked ? 'true' : 'false');
 		modalLikeButton.title = state.totalLikes + ' curtidas';
+		ensureLikeCountElement().textContent = String(state.totalLikes);
 	}
 
 	function updateFavoriteButton(postId) {
