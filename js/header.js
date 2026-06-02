@@ -118,7 +118,7 @@ function montarHeader() {
                     </div>
                 </div>
 
-                <div class="perfilDropdownGroup">
+                <!-- <div class="perfilDropdownGroup">
                     <button type="button" class="perfilDropdownItem">
                         <img src="img/icons/favoritos.svg" alt="">
                         <span data-i18n="saved">Salvos</span>
@@ -140,9 +140,9 @@ function montarHeader() {
                         <img src="img/icons/favoritos.svg" alt="">
                         <span data-i18n="myProjects">Meus projetos</span>
                     </button>
-                </div>
+                </div> -->
 
-                <div class="perfilDropdownDivider"></div>
+                <div class="perfilDropdownDivider"></div> 
 
                 <div class="perfilDropdownGroup">
                     <a href="configuracaoes.html" class="perfilDropdownItem">
@@ -164,14 +164,14 @@ function montarHeader() {
 
             <div class="optionsDropdownMenu" id="optionsMenu" hidden>
                 <div class="optionsDropdownGroup">
-                    <button type="button" class="optionsDropdownItem">
+                    <!-- <button type="button" class="optionsDropdownItem">
                         <img src="img/icons/termos.svg" alt="">
                         <span data-i18n="termsOfUse">Termos de uso</span>
                     </button>
                     <button type="button" class="optionsDropdownItem">
                         <img src="img/icons/privacidade.svg" alt="">
                         <span data-i18n="privacy">Privacidade</span>
-                    </button>
+                    </button> -->
                     <a href="sobrenos.html">
                         <button type="button" class="optionsDropdownItem">
                             <img src="img/icons/sobrenos.svg" alt="">
