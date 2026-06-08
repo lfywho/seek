@@ -1,68 +1,131 @@
-document.addEventListener('DOMContentLoaded', () => {
-
-    const categorias = [
-        { nome: 'Fotografia', cor: ['#1b1b1b', '#2f2f2f'] },
-        { nome: 'Arte 3D', cor: ['#2d2a4a', '#5c4d7d'] },
-        { nome: 'Design gráfico', cor: ['#444', '#6a6a6a'] },
-        { nome: 'UI/UX', cor: ['#3a3f47', '#6d727c'] },
-        { nome: 'Design de produtos', cor: ['#5b3300', '#9a5c0b'] },
-        { nome: 'Moda', cor: ['#2c2c2c', '#555'] },
-        { nome: 'Concept art', cor: ['#303030', '#4d4d4d'] },
-        { nome: 'Urbano', cor: ['#262626', '#404040'] },
-        { nome: 'Arquitetura', cor: ['#3b3b3b', '#5f5f5f'] },
-        { nome: 'Branding', cor: ['#2f2f2f', '#5a5a5a'] },
-        { nome: 'Marca', cor: ['#2b2f45', '#4f5670'] },
-        { nome: 'Ilustração', cor: ['#2c2c3a', '#4c4c69'] },
-        { nome: 'Tipografia', cor: ['#1f1f1f', '#3b3b3b'] },
-        { nome: 'Motion', cor: ['#2a2a2a', '#4f4f4f'] },
+document.addEventListener('DOMContentLoaded', function () {
+    var track = document.getElementById('categoriesTrack');
+    var prev = document.querySelector('.carousel-btn.prev');
+    var next = document.querySelector('.carousel-btn.next');
+    var cores = [
+        ['#1b1b1b', '#2f2f2f'],
+        ['#2d2a4a', '#5c4d7d'],
+        ['#444', '#6a6a6a'],
+        ['#3a3f47', '#6d727c'],
+        ['#5b3300', '#9a5c0b'],
+        ['#2c2c2c', '#555'],
+        ['#303030', '#4d4d4d'],
+        ['#262626', '#404040']
     ];
 
-    const track = document.getElementById('categoriesTrack');
+    if (!track || !prev || !next) {
+        return;
+    }
 
-    // 🔥 cria os cards (equivalente ao foreach do PHP)
-    categorias.forEach(categoria => {
-        const btn = document.createElement('button');
+    function getCorCategoria(index) {
+        return cores[index % cores.length];
+    }
+
+    function setCategoriaAtiva(botaoAtivo) {
+        track.querySelectorAll('.category-card').forEach(function (botao) {
+            botao.classList.toggle('is-active', botao === botaoAtivo);
+        });
+    }
+
+    function criarCardTodos() {
+        var cor = getCorCategoria(0);
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'category-card is-active';
+        btn.style.background = 'linear-gradient(135deg, ' + cor[0] + ', ' + cor[1] + ')';
+        btn.setAttribute('aria-label', 'Ver todos os posts');
+        btn.innerHTML = '<span>Todos</span>';
+        btn.addEventListener('click', function () {
+            setCategoriaAtiva(btn);
+            if (typeof window.seekCarregarPosts === 'function') {
+                window.seekCarregarPosts('/posts');
+            }
+        });
+
+        return btn;
+    }
+
+    function criarCardCategoria(categoria, index) {
+        var nome = categoria.nome_categoria || 'Categoria';
+        var totalPosts = Number(categoria.total_posts) || 0;
+        var cor = getCorCategoria(index);
+        var btn = document.createElement('button');
+        btn.type = 'button';
         btn.className = 'category-card';
-        btn.style.background = `linear-gradient(135deg, ${categoria.cor[0]}, ${categoria.cor[1]})`;
-        btn.setAttribute('aria-label', `Ver categoria ${categoria.nome}`);
+        btn.style.background = 'linear-gradient(135deg, ' + cor[0] + ', ' + cor[1] + ')';
+        btn.setAttribute('aria-label', 'Ver categoria ' + nome);
+        btn.title = nome + ' (' + totalPosts + ' posts)';
+        btn.innerHTML = '<span>' + nome + '</span>';
+        btn.addEventListener('click', function () {
+            setCategoriaAtiva(btn);
+            if (typeof window.seekCarregarPosts === 'function') {
+                window.seekCarregarPosts('/tendencias/' + encodeURIComponent(categoria.id_categoria));
+            }
+        });
 
-        btn.innerHTML = `<span>${categoria.nome}</span>`;
+        return btn;
+    }
 
-        track.appendChild(btn);
-    });
-
-    // =========================
-    // CARROSSEL (seu código)
-    // =========================
-
-    const prev = document.querySelector('.carousel-btn.prev');
-    const next = document.querySelector('.carousel-btn.next');
-    const cards = Array.from(track.querySelectorAll('.category-card'));
-
-    const getScrollStep = () => {
-        const styles = window.getComputedStyle(track);
-        const gap = parseFloat(styles.columnGap || styles.gap || '0');
-        const cardWidth = cards[0].offsetWidth + gap;
-        const visibleCards = window.innerWidth < 768 ? 2 : 4;
-        return cardWidth * visibleCards;
-    };
-
-    const updateButtons = () => {
-        const maxScroll = track.scrollWidth - track.clientWidth - 1;
+    function updateButtons() {
+        var maxScroll = track.scrollWidth - track.clientWidth - 1;
         prev.classList.toggle('disabled', track.scrollLeft <= 0);
         next.classList.toggle('disabled', track.scrollLeft >= maxScroll);
-    };
+    }
 
-    prev.addEventListener('click', () => {
+    function renderizarCategorias(categorias) {
+        track.innerHTML = '';
+        track.appendChild(criarCardTodos());
+
+        categorias.forEach(function (categoria, index) {
+            if (categoria && categoria.id_categoria != null) {
+                track.appendChild(criarCardCategoria(categoria, index + 1));
+            }
+        });
+
+        updateButtons();
+    }
+
+    async function carregarCategorias() {
+        track.innerHTML = '<span class="category-card" aria-hidden="true">Carregando...</span>';
+        updateButtons();
+
+        try {
+            var response = await fetch(ip_api + '/tendencias');
+            if (!response.ok) {
+                throw new Error('Falha ao carregar categorias');
+            }
+
+            var categorias = await response.json();
+            renderizarCategorias(Array.isArray(categorias) ? categorias : []);
+        } catch (error) {
+            track.innerHTML = '<span class="category-card" aria-hidden="true">Categorias indisponiveis</span>';
+            updateButtons();
+        }
+    }
+
+    function getScrollStep() {
+        var cards = Array.from(track.querySelectorAll('.category-card'));
+        if (!cards.length) {
+            return 0;
+        }
+
+        var styles = window.getComputedStyle(track);
+        var gap = parseFloat(styles.columnGap || styles.gap || '0');
+        var cardWidth = cards[0].offsetWidth + gap;
+        var visibleCards = window.innerWidth < 768 ? 2 : 4;
+        return cardWidth * visibleCards;
+    }
+
+    prev.addEventListener('click', function () {
         track.scrollBy({ left: -getScrollStep(), behavior: 'smooth' });
     });
 
-    next.addEventListener('click', () => {
+    next.addEventListener('click', function () {
         track.scrollBy({ left: getScrollStep(), behavior: 'smooth' });
     });
 
     track.addEventListener('scroll', updateButtons);
     window.addEventListener('resize', updateButtons);
 
-    updateButtons();
+    carregarCategorias();
 });

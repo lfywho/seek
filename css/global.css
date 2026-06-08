@@ -2189,6 +2189,11 @@ body {
     border-color: rgba(255, 255, 255, 0.35);
 }
 
+.category-card.is-active {
+    border-color: rgba(255, 255, 255, 0.7);
+    box-shadow: 0 0 0 2px rgba(50, 43, 240, 0.35), var(--chip-shadow);
+}
+
 .carousel-btn {
     height: 36px;
     width: 36px;

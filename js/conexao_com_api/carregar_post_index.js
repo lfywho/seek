@@ -34,6 +34,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	var postState = {};
 	var POST_ID_QUERY_KEY = 'postId';
 	var replyState = null;
+	var feedRequestId = 0;
 
 	// O modal pode ser reutilizado em outras páginas (ex.: perfil) que nao tem feed.
 	// Nem todos os botoes sao obrigatorios em todas as paginas (ex.: favorito pode estar ausente),
@@ -959,23 +960,37 @@ document.addEventListener('DOMContentLoaded', function () {
 		alert('Nao foi possivel compartilhar automaticamente. Copie este link: ' + shareUrl);
 	}
 
-	async function loadPosts() {
+	async function loadPosts(endpoint) {
+		var requestId = feedRequestId + 1;
+		feedRequestId = requestId;
+		var feedEndpoint = endpoint || '/posts';
+
 		feedContainer.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#777;padding:20px 0;">Carregando posts...</p>';
 
 		try {
-			var response = await fetch(ip_api + '/posts');
+			var response = await fetch(ip_api + feedEndpoint);
 			if (!response.ok) {
 				throw new Error('Falha ao carregar posts');
 			}
 
-			postsCache = await response.json();
+			var posts = await response.json();
+			if (requestId !== feedRequestId) {
+				return;
+			}
+
+			postsCache = Array.isArray(posts) ? posts : [];
 			postsById = {};
 			postsCache.forEach(function (post) {
 				rememberPost(post);
 			});
 			renderFeed(postsCache);
-			await openPostFromUrlIfPresent();
+			if (feedEndpoint === '/posts') {
+				await openPostFromUrlIfPresent();
+			}
 		} catch (error) {
+			if (requestId !== feedRequestId) {
+				return;
+			}
 			feedContainer.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#b32929;padding:20px 0;">Nao foi possivel carregar os posts.</p>';
 		}
 	}
@@ -1069,6 +1084,10 @@ document.addEventListener('DOMContentLoaded', function () {
 	// Exposto para outras paginas (ex.: usuario.html) reutilizarem o mesmo modal.
 	window.seekOpenPostModal = function (post, options) {
 		return openPost(post, options);
+	};
+
+	window.seekCarregarPosts = function (endpoint) {
+		return loadPosts(endpoint || '/posts');
 	};
 
 	if (feedContainer) {
