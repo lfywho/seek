@@ -31,6 +31,47 @@ document.addEventListener('DOMContentLoaded', function () {
 		feedback.classList.add('inicio-login__mensagem--oculta');
 	}
 
+	function normalizarEmail(valor) {
+		return String(valor || '').trim().toLowerCase();
+	}
+
+	function getJsonLocal(chave) {
+		try {
+			var raw = localStorage.getItem(chave);
+			return raw ? JSON.parse(raw) : null;
+		} catch (error) {
+			return null;
+		}
+	}
+
+	function prepararOnboardingPrimeiroAcesso(email, usuario) {
+		var cadastroPendente = getJsonLocal('seekOnboardingCadastroPendente');
+		var emailLogin = normalizarEmail(email);
+		var tipoUsuario = String(
+			usuario.tipo_usuario ||
+			usuario.tipo ||
+			(cadastroPendente && cadastroPendente.tipo) ||
+			'padrao'
+		).toLowerCase();
+
+		if (tipoUsuario === 'empresa') {
+			tipoUsuario = 'empresarial';
+		}
+
+		if (cadastroPendente && normalizarEmail(cadastroPendente.email) === emailLogin) {
+			try {
+				localStorage.setItem('seekOnboardingMostrar', JSON.stringify({
+					id: usuario.id,
+					tipo: tipoUsuario === 'empresarial' ? 'empresarial' : 'padrao',
+					criadoEm: Date.now()
+				}));
+				localStorage.removeItem('seekOnboardingCadastroPendente');
+			} catch (error) {
+				// O login deve seguir mesmo se nao for possivel gravar o estado local.
+			}
+		}
+	}
+
 	var textoOriginalBotao = botaoEntrar.innerHTML;
 
 	loginForm.addEventListener('submit', async function (e) {
@@ -57,10 +98,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
 				var usuarioSeguro = {
 					id: data.usuario.id,
+					nome: data.usuario.nome,
+					foto: data.usuario.foto,
 					tema: data.usuario.tema,
+					tipo_usuario: data.usuario.tipo_usuario || data.usuario.tipo || '',
 					token: data.token
 				};
 
+				prepararOnboardingPrimeiroAcesso(email, data.usuario);
 				localStorage.setItem('usuarioLogado', JSON.stringify(usuarioSeguro));
 				window.location.href = '/index.html';
 				return;
