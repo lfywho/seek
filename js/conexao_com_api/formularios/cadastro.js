@@ -61,22 +61,6 @@ document.addEventListener('DOMContentLoaded', function () {
 		return String(valor || '').replace(/\D/g, '');
 	}
 
-	function normalizarEmail(valor) {
-		return String(valor || '').trim().toLowerCase();
-	}
-
-	function registrarOnboardingCadastro(email, tipo) {
-		try {
-			localStorage.setItem('seekOnboardingCadastroPendente', JSON.stringify({
-				email: normalizarEmail(email),
-				tipo: tipo,
-				criadoEm: Date.now()
-			}));
-		} catch (error) {
-			// O cadastro deve continuar mesmo se o navegador bloquear localStorage.
-		}
-	}
-
 	var textoOriginalBotao = botaoCadastro.innerHTML;
 
 	cadastroForm.addEventListener('submit', async function (e) {
@@ -136,7 +120,6 @@ document.addEventListener('DOMContentLoaded', function () {
 			var data = await response.json();
 
 			if (response.ok) {
-				registrarOnboardingCadastro(emailInput.value, cadastroEmpresarial ? 'empresarial' : 'padrao');
 				exibirMensagem(cadastroEmpresarial ? 'Conta empresarial criada com sucesso!' : 'Conta criada com sucesso!', 'sucesso');
 				cadastroForm.reset();
 				var linkLogin = document.querySelector('[data-toggle-form="login"]');
