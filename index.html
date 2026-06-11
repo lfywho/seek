@@ -2,198 +2,370 @@
 <html lang="pt-BR">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seek - Início</title>
-    <link rel="stylesheet" href="css/global.css">
-    <link rel="shortcut icon" href="img/favicon.png" type="image/x-icon">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seek - Início</title>
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="shortcut icon" href="img/favicon.png" type="image/x-icon">
 </head>
 
 <body id="todo">
 
-    <header class="cabecalho">
-    </header>
+  <header class="cabecalho">
+  </header>
 
-    <section class="categories-carousel">
+  <!-- ══════════════════════════════════
+       MODAL 1 — Empresa
+  ══════════════════════════════════ -->
+  <div class="modal" id="modalEmpresa" style="display:none;">
 
-        <div class="carousel-wrapper">
-            <button class="carousel-btn prev" aria-label="Categorias anteriores">&#10094;</button>
-
-            <div class="carousel-viewport">
-                <div class="carousel-track" id="categoriesTrack">
-                </div>
-            </div>
-
-            <button class="carousel-btn next" aria-label="Próximas categorias">&#10095;</button>
-        </div>
-    </section>
-    
-    <main class="conteudo">
-
-        <section class="feedImgs" id="feedContainer" aria-label="Feed de projetos">
-            <!-- JS vai inserir os posts aqui -->
-        </section>
-
-        <div class="post-modal" id="postModal" hidden>
-            <button type="button" class="post-modal__overlay" aria-label="Fechar modal"></button>
-
-            <div class="post-modal__nav" aria-label="Navegação do modal">
-                <button type="button" class="post-modal__nav-btn" id="modalScrollUp" aria-label="Voltar ao topo">▲</button>
-                <button type="button" class="post-modal__nav-btn" id="modalScrollDown" aria-label="Ir para comentários">▼</button>
-            </div>
-
-            <div class="post-modal__content" role="dialog" aria-modal="true" aria-labelledby="modalPostTitulo">
-
-                <header class="post-modal__header">
-                    <div class="post-modal__identity">
-                        <img id="modalAuthorAvatar" class="post-modal__avatar" src="img/userProfile.png" alt="Autor do post">
-
-                        <div class="post-modal__identity-text">
-                            <h2 id="modalPostTitulo">Título do projeto</h2>
-                            <p id="modalAuthorName">Nome do autor</p>
-                        </div>
-                    </div>
-
-                    <div class="post-modal__actions" aria-label="Ações do post">
-                        <button type="button" class="post-modal__icon-btn" id="modalShare" aria-label="Compartilhar">
-                            <img class="post-modal__icon-image" src="img/icons/Share.svg" alt="">
-                        </button>
-
-                        <button type="button" class="post-modal__icon-btn" id="modalLike" aria-label="Curtir">
-                            <img class="post-modal__icon-image" src="img/icons/like.svg" alt="">
-                        </button>   
-
-                        <button type="button" class="post-modal__close" aria-label="Fechar modal">×</button>
-                    </div>
-                </header>
-
-                <div class="post-modal__gallery" id="modalGallery" aria-label="Galeria do projeto"></div>
-
-                <div class="post-modal__body">
-                    <section class="post-modal__comments" aria-label="Comentários">
-                        <h3 class="post-modal__comments-title">Comentários</h3>
-
-                        <div class="post-modal__reply-target" id="replyTarget" hidden>
-                            <span id="replyTargetText">Respondendo</span>
-                            <button type="button" class="post-modal__reply-cancel" id="cancelReply">Cancelar</button>
-                        </div>
-
-                        <div class="post-modal__comments-list" id="commentsList" aria-live="polite"></div>
-
-                        <div class="post-modal__comment-form" aria-label="Adicionar comentário">
-                            <textarea id="commentInput" class="post-modal__comment-input" rows="2" placeholder="Adicione um comentário..."></textarea>
-                            <button type="button" id="sendComment" class="post-modal__comment-send">Enviar</button>
-                        </div>
-                    </section>
-
-                    <aside class="post-modal__sidebar" aria-label="Informações do autor">
-                        <div class="post-modal__sidebar-card post-modal__sidebar-author">
-                            <div class="post-modal__sidebar-author-top">
-                                <img id="modalSidebarAuthorAvatar" class="post-modal__sidebar-avatar" src="img/userProfile.png" alt="Autor do post">
-                                <div class="post-modal__sidebar-author-text">
-                                    <strong id="modalSidebarAuthorName">Nome do Autor</strong>
-                                    <span class="post-modal__sidebar-author-subtitle">O local onde mora</span>
-                                </div>
-                            </div>
-                            <div class="post-modal__sidebar-author-actions">
-                                <button type="button" class="post-modal__sidebar-btn post-modal__sidebar-btn--primary" id="modalSidebarFollowButton">Seguir</button>
-                                <button type="button" class="post-modal__sidebar-btn">Contratar</button>
-                            </div>
-                        </div>
-
-                        <div class="post-modal__sidebar-card">
-                            <h3 class="post-modal__sidebar-title">Galeria</h3>
-                            <div class="post-modal__sidebar-thumbs" id="modalSidebarGallery" aria-label="Miniaturas da galeria"></div>
-                        </div>
-
-                        <div class="post-modal__sidebar-card">
-                            <h3 class="post-modal__sidebar-title">Projetos</h3>
-                            <div class="post-modal__sidebar-thumbs" id="modalSidebarProjects" aria-label="Miniaturas de projetos"></div>
-                        </div>
-
-                        <div class="post-modal__sidebar-card">
-                            <h3 class="post-modal__sidebar-title">Ferramentas</h3>
-                            <div class="post-modal__sidebar-chips" id="modalSidebarTools" aria-label="Ferramentas">
-                                <span class="post-modal__chip">Photoshop</span>
-                                <span class="post-modal__chip">Illustrator</span>
-                                <span class="post-modal__chip">InDesign</span>
-                                <span class="post-modal__chip">Canva</span>
-                            </div>
-                        </div>
-
-                        <div class="post-modal__sidebar-card">
-                            <h3 class="post-modal__sidebar-title">Categorias</h3>
-                            <div class="post-modal__sidebar-chips" aria-label="Categorias">
-                                <span class="post-modal__chip">Design</span>
-                                <span class="post-modal__chip">3D Design</span>
-                                <span class="post-modal__chip">Logotipo</span>
-                                <span class="post-modal__chip">Branding</span>
-                            </div>
-                        </div>
-                    </aside>
-                </div>
-            </div>
-        </div>
-
-    </main>
-
-    
-
-    <div>
-        <select id="idiomaSelect" aria-label="Selecionar idioma">
-            <option value="pt">PT-BR</option>
-            <option value="eng">EN</option>
-        </select>
+    <div class="modal-header">
+      <button class="close" aria-label="Fechar">✕</button>
+      <h2>BEM-VINDO(A)</h2>
+      <div style="width:22px"></div>
     </div>
 
-    <script src="js/ambiente.js"></script>
-    <script src="js/conexao_com_api/carregar_post_index.js"></script>
-    <script src="js/carousel.js"></script>
-    <script src="js/header.js"></script>
-    <script src="js/usuario_logado.js"></script>
-    <script src="js/Acessibilidade/traducao.js"></script>
-    <script src="js/Acessibilidade/ModoEscuro.js"></script>
+    <p class="subtitle">Antes de prosseguir, preencha os dados abaixo</p>
 
-    <!-- FAB: criar (post + vaga) -->
-    <div class="fab" data-open="false" aria-label="Criar">
-        
-        <div class="fab__menu" role="menu" aria-label="Opções de criação">
-            <a class="fab__item" role="menuitem" href="adicionarprojeto.html" title="Adicionar post">
-                <img src="img/icons/addfotobranco.svg" alt="Adicionar post">
-            </a>
-            <a class="fab__item" role="menuitem" href="adicionarvaga.html" title="Adicionar vaga">
-                <img src="img/icons/foguetepreto.svg" alt="Adicionar vaga">
-            </a>
+    <div class="modal-body">
+
+      <div class="left-col">
+        <div class="avatar" title="Adicionar foto de perfil">
+          <i class="ti ti-photo-plus"></i>
         </div>
-        <button class="fab__main" type="button" aria-haspopup="menu" aria-expanded="false" title="Criar">
-            +
+
+        <span class="avatar-label">Adicionar foto de perfil</span>
+
+        <div style="width:100%; margin-top:6px">
+          <p class="section-label">Descrição</p>
+
+          <textarea id="empresaDescricao" class="desc-area" placeholder="Descreva sua empresa..."></textarea>
+        </div>
+      </div>
+
+      <div class="right-col">
+
+        <span class="section-label">Informação</span>
+
+        <div class="fields-row">
+
+          <div class="field-wrap">
+            <input id="empresaNomeFantasia" class="field-input" type="text" placeholder="Nome da Empresa" />
+          </div>
+
+          <div class="field-wrap">
+            <input id="empresaCategoria" class="field-input" type="text" placeholder="Categoria de Negócio" />
+          </div>
+
+          <div class="field-wrap">
+            <input id="empresaRazaoSocial" class="field-input" type="text" placeholder="Razão social" />
+          </div>
+
+          <div class="field-wrap">
+            <input id="empresaFuncionarios" class="field-input" type="number" placeholder="Numero de funcionarios" />
+          </div>
+
+        </div>
+
+        <div class="fields-row">
+
+          <div class="field-wrap">
+            <input id="empresaTelefone" class="field-input" type="text" placeholder="Telefone" />
+          </div>
+
+          <div class="field-wrap">
+            <input id="empresaCnpj" class="field-input" type="text" placeholder="CNPJ" />
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="modal-footer">
+      <button id="btnSalvarEmpresa" class="arrow-next">
+        →
+      </button>
+    </div>
+
+  </div>
+
+
+  <!-- ══════════════════════════════════
+       MODAL 2 — Pessoa Física
+  ══════════════════════════════════ -->
+  <div class="modal" id="modalPessoa" style="display:none;">
+
+    <div class="modal-header">
+      <button class="close" aria-label="Fechar">✕</button>
+      <h2>BEM-VINDO(A)</h2>
+      <div style="width:22px"></div>
+    </div>
+
+    <p class="subtitle">Antes de prosseguir, preencha os dados abaixo</p>
+
+    <div class="modal-body">
+
+      <div class="left-col">
+
+        <div class="avatar" title="Adicionar foto de perfil">
+          <i class="ti ti-photo-plus"></i>
+        </div>
+
+        <span class="avatar-label">Adicionar foto de perfil</span>
+
+        <div style="width:100%; margin-top:8px">
+
+          <div class="field-wrap" style="margin-bottom:8px">
+            <input id="pessoaNomeUsuario" class="field-input-full" type="text" placeholder="Nome de Usuário" />
+          </div>
+
+          <input id="pessoaProfissao" class="field-input-full" type="text" placeholder="Sua Profissão" />
+
+        </div>
+
+      </div>
+
+      <div class="right-col">
+
+        <hr class="divider" />
+
+        <p class="sub-label" style="font-weight:600; margin-bottom:4px">
+          Descrição
+        </p>
+
+        <textarea id="pessoaDescricao" class="textarea-field" placeholder="Fale sobre você..."></textarea>
+
+        <hr class="divider" />
+
+        <span class="section-label">Certificados</span>
+
+        <button class="add-section-btn" style="margin-bottom:6px">
+          Adicionar seção ao perfil
         </button>
+
+        <button class="plus-circle">
+          +
+        </button>
+
+      </div>
+
     </div>
 
-    <script>
-        // FAB toggle (sem arquivo novo)
-        (function () {
-            const fab = document.querySelector('.fab');
-            const main = document.querySelector('.fab__main');
-            if (!fab || !main) return;
+    <div class="modal-footer">
+      <button id="btnSalvarPessoa" class="arrow-next">
+        →
+      </button>
+    </div>
 
-            const setOpen = (open) => {
-                fab.dataset.open = open ? 'true' : 'false';
-                main.setAttribute('aria-expanded', open ? 'true' : 'false');
-            };
+  </div>
 
-            main.addEventListener('click', () => setOpen(fab.dataset.open !== 'true'));
+  <script>
+    function toggleDef() {
+      const ativo = document.getElementById('def-sim').checked;
+      document.getElementById('def-nao').checked = !ativo;
 
-            document.addEventListener('click', (e) => {
-                if (!fab.contains(e.target)) setOpen(false);
-            });
+      document.querySelectorAll('.tipo-cb').forEach(cb => cb.disabled = !ativo);
+      document.querySelectorAll('.tipo-label').forEach(el => {
+        el.style.color = ativo ? '#374151' : '#9ca3af';
+      });
+      document.getElementById('qual-select').disabled = !ativo;
+    }
 
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') setOpen(false);
-            });
-        })();
-    </script>
+    function toggleNao() {
+      const nao = document.getElementById('def-nao').checked;
+      document.getElementById('def-sim').checked = !nao;
+      toggleDef();
+    }
+  </script>
 
+  <section class="categories-carousel">
+
+    <div class="carousel-wrapper">
+      <button class="carousel-btn prev" aria-label="Categorias anteriores">&#10094;</button>
+
+      <div class="carousel-viewport">
+        <div class="carousel-track" id="categoriesTrack">
+        </div>
+      </div>
+
+      <button class="carousel-btn next" aria-label="Próximas categorias">&#10095;</button>
+    </div>
+  </section>
+
+  <main class="conteudo">
+
+    <section class="feedImgs" id="feedContainer" aria-label="Feed de projetos">
+      <!-- JS vai inserir os posts aqui -->
+    </section>
+
+    <div class="post-modal" id="postModal" hidden>
+      <button type="button" class="post-modal__overlay" aria-label="Fechar modal"></button>
+
+      <div class="post-modal__nav" aria-label="Navegação do modal">
+        <button type="button" class="post-modal__nav-btn" id="modalScrollUp" aria-label="Voltar ao topo">▲</button>
+        <button type="button" class="post-modal__nav-btn" id="modalScrollDown"
+          aria-label="Ir para comentários">▼</button>
+      </div>
+
+      <div class="post-modal__content" role="dialog" aria-modal="true" aria-labelledby="modalPostTitulo">
+
+        <header class="post-modal__header">
+          <div class="post-modal__identity">
+            <img id="modalAuthorAvatar" class="post-modal__avatar" src="img/userProfile.png" alt="Autor do post">
+
+            <div class="post-modal__identity-text">
+              <h2 id="modalPostTitulo">Título do projeto</h2>
+              <p id="modalAuthorName">Nome do autor</p>
+            </div>
+          </div>
+
+          <div class="post-modal__actions" aria-label="Ações do post">
+            <button type="button" class="post-modal__icon-btn" id="modalShare" aria-label="Compartilhar">
+              <img class="post-modal__icon-image" src="img/icons/Share.svg" alt="">
+            </button>
+
+            <button type="button" class="post-modal__icon-btn" id="modalLike" aria-label="Curtir">
+              <img class="post-modal__icon-image" src="img/icons/like.svg" alt="">
+            </button>
+
+            <button type="button" class="post-modal__close" aria-label="Fechar modal">×</button>
+          </div>
+        </header>
+
+        <div class="post-modal__gallery" id="modalGallery" aria-label="Galeria do projeto"></div>
+
+        <div class="post-modal__body">
+          <section class="post-modal__comments" aria-label="Comentários">
+            <h3 class="post-modal__comments-title">Comentários</h3>
+
+            <div class="post-modal__reply-target" id="replyTarget" hidden>
+              <span id="replyTargetText">Respondendo</span>
+              <button type="button" class="post-modal__reply-cancel" id="cancelReply">Cancelar</button>
+            </div>
+
+            <div class="post-modal__comments-list" id="commentsList" aria-live="polite"></div>
+
+            <div class="post-modal__comment-form" aria-label="Adicionar comentário">
+              <textarea id="commentInput" class="post-modal__comment-input" rows="2"
+                placeholder="Adicione um comentário..."></textarea>
+              <button type="button" id="sendComment" class="post-modal__comment-send">Enviar</button>
+            </div>
+          </section>
+
+          <aside class="post-modal__sidebar" aria-label="Informações do autor">
+            <div class="post-modal__sidebar-card post-modal__sidebar-author">
+              <div class="post-modal__sidebar-author-top">
+                <img id="modalSidebarAuthorAvatar" class="post-modal__sidebar-avatar" src="img/userProfile.png"
+                  alt="Autor do post">
+                <div class="post-modal__sidebar-author-text">
+                  <strong id="modalSidebarAuthorName">Nome do Autor</strong>
+                  <span class="post-modal__sidebar-author-subtitle">O local onde mora</span>
+                </div>
+              </div>
+              <div class="post-modal__sidebar-author-actions">
+                <button type="button" class="post-modal__sidebar-btn post-modal__sidebar-btn--primary"
+                  id="modalSidebarFollowButton">Seguir</button>
+                <button type="button" class="post-modal__sidebar-btn">Contratar</button>
+              </div>
+            </div>
+
+            <div class="post-modal__sidebar-card">
+              <h3 class="post-modal__sidebar-title">Galeria</h3>
+              <div class="post-modal__sidebar-thumbs" id="modalSidebarGallery" aria-label="Miniaturas da galeria"></div>
+            </div>
+
+            <div class="post-modal__sidebar-card">
+              <h3 class="post-modal__sidebar-title">Projetos</h3>
+              <div class="post-modal__sidebar-thumbs" id="modalSidebarProjects" aria-label="Miniaturas de projetos">
+              </div>
+            </div>
+
+            <div class="post-modal__sidebar-card">
+              <h3 class="post-modal__sidebar-title">Ferramentas</h3>
+              <div class="post-modal__sidebar-chips" id="modalSidebarTools" aria-label="Ferramentas">
+                <span class="post-modal__chip">Photoshop</span>
+                <span class="post-modal__chip">Illustrator</span>
+                <span class="post-modal__chip">InDesign</span>
+                <span class="post-modal__chip">Canva</span>
+              </div>
+            </div>
+
+            <div class="post-modal__sidebar-card">
+              <h3 class="post-modal__sidebar-title">Categorias</h3>
+              <div class="post-modal__sidebar-chips" aria-label="Categorias">
+                <span class="post-modal__chip">Design</span>
+                <span class="post-modal__chip">3D Design</span>
+                <span class="post-modal__chip">Logotipo</span>
+                <span class="post-modal__chip">Branding</span>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+
+
+  <div>
+    <select id="idiomaSelect" aria-label="Selecionar idioma">
+      <option value="pt">PT-BR</option>
+      <option value="eng">EN</option>
+    </select>
+  </div>
+
+  <script src="js/ambiente.js"></script>
+  <script src="js/conexao_com_api/carregar_post_index.js"></script>
+  <script src="js/carousel.js"></script>
+  <script src="js/header.js"></script>
+  <script src="js/usuario_logado.js"></script>
+  <script src="js/Acessibilidade/traducao.js"></script>
+  <script src="js/Acessibilidade/ModoEscuro.js"></script>
+
+  <!-- FAB: criar (post + vaga) -->
+  <div class="fab" data-open="false" aria-label="Criar">
+
+    <div class="fab__menu" role="menu" aria-label="Opções de criação">
+      <a class="fab__item" role="menuitem" href="adicionarprojeto.html" title="Adicionar post">
+        <img src="img/icons/addfotobranco.svg" alt="Adicionar post">
+      </a>
+      <a class="fab__item" role="menuitem" href="adicionarvaga.html" title="Adicionar vaga">
+        <img src="img/icons/foguetepreto.svg" alt="Adicionar vaga">
+      </a>
+    </div>
+    <button class="fab__main" type="button" aria-haspopup="menu" aria-expanded="false" title="Criar">
+      +
+    </button>
+  </div>
+
+  <script>
+    // FAB toggle (sem arquivo novo)
+    (function () {
+      const fab = document.querySelector('.fab');
+      const main = document.querySelector('.fab__main');
+      if (!fab || !main) return;
+
+      const setOpen = (open) => {
+        fab.dataset.open = open ? 'true' : 'false';
+        main.setAttribute('aria-expanded', open ? 'true' : 'false');
+      };
+
+      main.addEventListener('click', () => setOpen(fab.dataset.open !== 'true'));
+
+      document.addEventListener('click', (e) => {
+        if (!fab.contains(e.target)) setOpen(false);
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') setOpen(false);
+      });
+    })();
+  </script>
+
+  <script src="js/conexao_com_api/completar_cadastro.js"></script>
 </body>
 
 </html>

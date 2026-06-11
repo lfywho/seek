@@ -128,4 +128,23 @@ document.addEventListener('DOMContentLoaded', function () {
     window.addEventListener('resize', updateButtons);
 
     carregarCategorias();
+
+    // CAIXA DE BEM VINDO
+
+    function toggleDef() {
+      const ativo = document.getElementById('def-sim').checked;
+      document.getElementById('def-nao').checked = !ativo;
+
+      document.querySelectorAll('.tipo-cb').forEach(cb => cb.disabled = !ativo);
+      document.querySelectorAll('.tipo-label').forEach(el => {
+        el.style.color = ativo ? '#374151' : '#9ca3af';
+      });
+      document.getElementById('qual-select').disabled = !ativo;
+    }
+
+    function toggleNao() {
+      const nao = document.getElementById('def-nao').checked;
+      document.getElementById('def-sim').checked = !nao;
+      toggleDef();
+    }
 });
