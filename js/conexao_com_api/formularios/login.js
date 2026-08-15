@@ -21,13 +21,25 @@ document.addEventListener('DOMContentLoaded', function () {
 
 	function exibirMensagem(texto, tipo) {
 		feedback.textContent = texto;
-		feedback.classList.remove('inicio-login__mensagem--oculta', 'inicio-login__mensagem--erro', 'inicio-login__mensagem--sucesso');
-		feedback.classList.add(tipo === 'sucesso' ? 'inicio-login__mensagem--sucesso' : 'inicio-login__mensagem--erro');
+		feedback.classList.remove(
+			'inicio-login__mensagem--oculta',
+			'inicio-login__mensagem--erro',
+			'inicio-login__mensagem--sucesso'
+		);
+
+		feedback.classList.add(
+			tipo === 'sucesso'
+				? 'inicio-login__mensagem--sucesso'
+				: 'inicio-login__mensagem--erro'
+		);
 	}
 
 	function limparMensagem() {
 		feedback.textContent = '';
-		feedback.classList.remove('inicio-login__mensagem--erro', 'inicio-login__mensagem--sucesso');
+		feedback.classList.remove(
+			'inicio-login__mensagem--erro',
+			'inicio-login__mensagem--sucesso'
+		);
 		feedback.classList.add('inicio-login__mensagem--oculta');
 	}
 
@@ -44,31 +56,57 @@ document.addEventListener('DOMContentLoaded', function () {
 		var senha = senhaInput.value;
 
 		try {
-			var response = await fetch(ip_api + '/usuarios/login', {
+			var response = await fetch(ip_api + '/auth/login', {
 				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ email: email, senha: senha })
+				credentials: 'include',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					email: email,
+					senha: senha
+				})
 			});
 
-			var data = await response.json();
+			var data;
 
-			if (response.ok && data.usuario && data.token) {
-				exibirMensagem('Login realizado com sucesso. Redirecionando...', 'sucesso');
+			try {
+				data = await response.json();
+			} catch (jsonError) {
+				data = {};
+			}
 
-				var usuarioSeguro = {
-					id: data.usuario.id,
-					tema: data.usuario.tema,
-					token: data.token
-				};
+			if (response.ok && data.success && data.data && data.data.usuario) {
+				exibirMensagem(
+					data.message || 'Login realizado com sucesso. Redirecionando...',
+					'sucesso'
+				);
 
-				localStorage.setItem('usuarioLogado', JSON.stringify(usuarioSeguro));
 				window.location.href = '/index.html';
 				return;
 			}
 
-			exibirMensagem('Email ou senha invalidos.', 'erro');
+			var mensagemErro = data.message || 'Email ou senha invalidos.';
+			var contaNaoVerificada =
+				response.status === 403 &&
+				mensagemErro.toLowerCase().includes('conta') &&
+				mensagemErro.toLowerCase().includes('verificada');
+
+			if (
+				contaNaoVerificada &&
+				typeof window.abrirModalVerificacaoConta === 'function'
+			) {
+				window.abrirModalVerificacaoConta(email);
+				return;
+			}
+
+			exibirMensagem(mensagemErro, 'erro');
+
 		} catch (err) {
-			exibirMensagem('Erro na requisicao: ' + err.message, 'erro');
+			exibirMensagem(
+				'Erro na requisicao: ' + err.message,
+				'erro'
+			);
 		} finally {
 			botaoEntrar.disabled = false;
 			botaoEntrar.innerHTML = textoOriginalBotao;
