@@ -1,23 +1,23 @@
 // variável global
 var ip_api = "http://127.0.0.1:4500";
 
-function getStorageJSON(chave) {
-	try {
-		var raw = localStorage.getItem(chave);
-		return raw ? JSON.parse(raw) : null;
-	} catch (error) {
-		return null;
-	}
-}
+// function getStorageJSON(chave) {
+// 	try {
+// 		var raw = localStorage.getItem(chave);
+// 		return raw ? JSON.parse(raw) : null;
+// 	} catch (error) {
+// 		return null;
+// 	}
+// }
 
-function getUsuarioLogado() {
-	return getStorageJSON('usuarioLogado');
-}
+// function getUsuarioLogado() {
+// 	return getStorageJSON('usuarioLogado');
+// }
 
-function setUsuarioLogado(usuario) {
-	localStorage.setItem('usuarioLogado', JSON.stringify(usuario));
-}
+// function setUsuarioLogado(usuario) {
+// 	localStorage.setItem('usuarioLogado', JSON.stringify(usuario));
+// }
 
-function limparUsuarioLogado() {
-	localStorage.removeItem('usuarioLogado');
-}
+// function limparUsuarioLogado() {
+// 	localStorage.removeItem('usuarioLogado');
+// }

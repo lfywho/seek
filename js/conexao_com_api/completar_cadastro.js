@@ -1,159 +1,123 @@
 document.addEventListener("DOMContentLoaded", () => {
-    verificarCadastro();
+    verificarPrimeiroLogin();
+
+    // Adiciona os eventos aos botões de salvar, que temporariamente 
+    // apenas completam o cadastro sem enviar os dados do formulário
+    const btnSalvarPessoa = document.getElementById("btnSalvarPessoa");
+    if (btnSalvarPessoa) {
+        btnSalvarPessoa.addEventListener("click", completarCadastro);
+    }
+
+    const btnSalvarEmpresa = document.getElementById("btnSalvarEmpresa");
+    if (btnSalvarEmpresa) {
+        btnSalvarEmpresa.addEventListener("click", completarCadastro);
+    }
 });
 
-async function verificarCadastro() {
+/**
+ * 1. Verifica se é o primeiro login do usuário
+ */
+async function verificarPrimeiroLogin() {
+    try {
+        const response = await fetch(`${ip_api}/usuarios/verificar-primeiro-login`, {
+            method: "GET",
+            credentials: "include"
+        });
+
+        if (!response.ok) {
+            if (response.status === 401) {
+                console.warn("Usuário não autenticado. O modal não será aberto.");
+            } else {
+                console.error("Erro na verificação de cadastro:", response.status);
+            }
+            return;
+        }
+
+        const data = await response.json();
+
+        // Se a API retornar sucesso e a flag de primeiro login for true, abre o modal
+        if (data.success && data.data && data.data.primeiro_login === true) {
+            await abrirModalPorTipoUsuario();
+        }
+
+    } catch (erro) {
+        console.error("Erro de comunicação ao verificar primeiro login:", erro);
+    }
+}
+
+/**
+ * Utilitário: Busca os dados do usuário para saber qual modal abrir (PF ou Empresa)
+ */
+async function abrirModalPorTipoUsuario() {
+    try {
+        const response = await fetch(`${ip_api}/auth/me`, {
+            method: "GET",
+            credentials: "include"
+        });
+
+        if (!response.ok) return;
+
+        const data = await response.json();
+
+        if (data.success && data.data && data.data.usuario) {
+            const tipoUsuario = data.data.usuario.tipo_usuario; // "PF" ou outro tipo (PJ/Empresa)
+            const modalEmpresa = document.getElementById("modalEmpresa");
+            const modalPessoa = document.getElementById("modalPessoa");
+
+            if (tipoUsuario === "PF") {
+                if (modalPessoa) modalPessoa.style.display = "block";
+            } else {
+                if (modalEmpresa) modalEmpresa.style.display = "block";
+            }
+        }
+    } catch (erro) {
+        console.error("Erro ao buscar o tipo de usuário:", erro);
+        // Fallback de segurança para mostrar o de pessoa física
+        const modalPessoa = document.getElementById("modalPessoa");
+        if (modalPessoa) modalPessoa.style.display = "block";
+    }
+}
+
+/**
+ * 2. Atualiza o Status para "Cadastro Completo" e fecha o modal
+ */
+async function completarCadastro(event) {
+    event.preventDefault(); // Previne reload caso o botão seja type="submit" num form
+
+    const btn = event.target;
+    const textoOriginal = btn.innerText || btn.textContent;
+    
+    // Desabilita o botão para evitar múltiplos cliques
+    btn.disabled = true;
+    btn.innerText = "Salvando...";
 
     try {
+        const response = await fetch(`${ip_api}/usuarios/completar-cadastro`, {
+            method: "PATCH",
+            credentials: "include" // Importante: Garante envio do cookie
+        });
 
-        const usuario = getUsuarioLogado();
+        const data = await response.json();
 
-        if (!usuario) return;
+        if (response.ok && data.success) {
+            // Sucesso! Fechamos ambos os modais
+            const modalPessoa = document.getElementById("modalPessoa");
+            const modalEmpresa = document.getElementById("modalEmpresa");
 
-        const usuarioId =
-            usuario.id ||
-            usuario.usuario_id ||
-            usuario.usuario?.id;
+            if (modalPessoa) modalPessoa.style.display = "none";
+            if (modalEmpresa) modalEmpresa.style.display = "none";
 
-        if (!usuarioId) {
-            console.error("ID do usuário não encontrado");
-            return;
-        }
-
-        const response = await fetch(
-            `${ip_api}/usuarios/verificarcaixa/${usuarioId}`
-        );
-
-        const dados = await response.json();
-
-        if (!dados.length) return;
-
-        const cadastro = dados[0];
-
-        if (cadastro.cadastro_completo == 1) {
-            return;
-        }
-
-        if (cadastro.tipo === "empresa") {
-            document.getElementById("modalEmpresa").style.display = "block";
+            console.log(data.message); // Exibe no console "Cadastro completado com sucesso."
         } else {
-            document.getElementById("modalPessoa").style.display = "block";
+            // Caso a API retorne success: false ou erro de validação
+            alert(data.message || "Ocorreu um erro ao concluir o cadastro.");
         }
-
     } catch (erro) {
-        console.error(erro);
+        console.error("Erro ao completar cadastro:", erro);
+        alert("Erro de comunicação com o servidor. Tente novamente mais tarde.");
+    } finally {
+        // Restaura o estado do botão
+        btn.disabled = false;
+        btn.innerText = textoOriginal;
     }
-
-}
-
-async function completarColunaCadastro(usuarioId) {
-
-    await fetch(
-        `${ip_api}/usuarios/completarcoluna-cadastro/${usuarioId}`,
-        {
-            method: "PUT"
-        }
-    );
-
-}
-
-document
-    .getElementById("btnSalvarPessoa")
-    ?.addEventListener("click", salvarPessoa);
-
-async function salvarPessoa() {
-
-    try {
-
-        const usuario = getUsuarioLogado();
-
-        const usuarioId =
-            usuario.id ||
-            usuario.usuario_id ||
-            usuario.usuario?.id;
-
-        const body = {
-            usuario_id: usuarioId,
-            nome_de_usuario: document.getElementById("pessoaNomeUsuario").value,
-            profissao: document.getElementById("pessoaProfissao").value,
-            descricao: document.getElementById("pessoaDescricao").value
-        };
-
-        const response = await fetch(
-            `${ip_api}/usuarios/completar-cadastro-padrao`,
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(body)
-            }
-        );
-
-        if (!response.ok) {
-            throw new Error("Erro ao salvar cadastro");
-        }
-
-        await completarColunaCadastro(usuarioId);
-
-        document.getElementById("modalPessoa").style.display = "none";
-
-    } catch (erro) {
-        console.error(erro);
-        alert("Erro ao salvar cadastro.");
-    }
-
-}
-
-document
-    .getElementById("btnSalvarEmpresa")
-    ?.addEventListener("click", salvarEmpresa);
-
-async function salvarEmpresa() {
-
-    try {
-
-        const usuario = getUsuarioLogado();
-
-        const usuarioId =
-            usuario.id ||
-            usuario.usuario_id ||
-            usuario.usuario?.id;
-
-        const body = {
-            usuario_id: usuarioId,
-            razao_social: document.getElementById("empresaRazaoSocial").value,
-            nome_fantasia: document.getElementById("empresaNomeFantasia").value,
-            cnpj: document.getElementById("empresaCnpj").value,
-            telefone_comercial: document.getElementById("empresaTelefone").value,
-            categoria_negocio: document.getElementById("empresaCategoria").value,
-            numero_funcionarios: document.getElementById("empresaFuncionarios").value,
-            endereco_completo: "",
-            descricao: document.getElementById("empresaDescricao").value
-        };
-
-        const response = await fetch(
-            `${ip_api}/usuarios/completar-cadastro-empresa`,
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(body)
-            }
-        );
-
-        if (!response.ok) {
-            throw new Error("Erro ao salvar cadastro");
-        }
-
-        await completarColunaCadastro(usuarioId);
-
-        document.getElementById("modalEmpresa").style.display = "none";
-
-    } catch (erro) {
-        console.error(erro);
-        alert("Erro ao salvar cadastro.");
-    }
-
 }
