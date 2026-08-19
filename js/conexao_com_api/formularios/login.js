@@ -81,7 +81,6 @@ document.addEventListener('DOMContentLoaded', function () {
 					data.message || 'Login realizado com sucesso. Redirecionando...',
 					'sucesso'
 				);
-
 				window.location.href = '/index.html';
 				return;
 			}

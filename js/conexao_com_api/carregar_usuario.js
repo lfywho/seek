@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
+    // Referências do DOM
     var aside = document.querySelector('.usuario-profile-card');
     var bannerImage = document.getElementById('usuarioBannerImagem');
     var avatarImage = document.getElementById('usuarioAvatarImagem');
@@ -12,8 +13,8 @@ document.addEventListener('DOMContentLoaded', function () {
     var seguirContainer = document.getElementById('container-seguir-mensagem');
     var seguirButton = seguirContainer ? seguirContainer.querySelector('.usuario-btn--primary') : null;
     var mensagemButton = seguirContainer ? seguirContainer.querySelector('.usuario-btn--secondary') : null;
-    var usuarioLogado = getUsuarioLogado();
-    var idUsuarioLogado = usuarioLogado && usuarioLogado.id ? String(usuarioLogado.id) : null;
+    
+    // Variáveis de Estado
     var idUsuarioPaginaAtual = null;
     var estaSeguindoUsuario = false;
     var modalRelacionamentos = null;
@@ -21,11 +22,12 @@ document.addEventListener('DOMContentLoaded', function () {
     var modalRelacionamentosList = null;
     var modalRelacionamentosEmpty = null;
     var modalRelacionamentosCloseButton = null;
-    var relacionamentoEmExibicao = null;
 
-    if (!aside || !bannerImage || !avatarImage || !nomeElement || !usuarioElement || !descricaoElement || !statsValues.length) {
-        return;
+    if (!aside || !bannerImage || !avatarImage || !nomeElement || !descricaoElement || !statsValues.length) {
+        return; // Elementos vitais não encontrados na página
     }
+
+    // --- FUNÇÕES UTILITÁRIAS ---
 
     function escapeHtml(value) {
         return String(value)
@@ -36,10 +38,38 @@ document.addEventListener('DOMContentLoaded', function () {
             .replace(/'/g, '&#39;');
     }
 
-    function criarModalRelacionamentos() {
-        if (modalRelacionamentos) {
-            return;
+    // NOVA FUNÇÃO: Obtém da URL ou da API (se logado)
+    async function obterIdUsuario() {
+        var params = new URLSearchParams(window.location.search);
+        var id = params.get('iduser') || params.get('id');
+
+        if (id) {
+            return id;
         }
+
+        // Fallback: Se não tem ID na URL, busca o ID do próprio usuário autenticado via Cookie HttpOnly
+        try {
+            var response = await fetch(ip_api + '/auth/id', {
+                method: 'GET',
+                credentials: 'include' // Garante o envio do cookie JWT
+            });
+
+            var result = await response.json();
+
+            if (response.ok && result.success && result.data && result.data.id) {
+                return result.data.id;
+            }
+        } catch (error) {
+            console.error('Erro ao buscar o ID do usuário logado:', error);
+        }
+
+        return null;
+    }
+
+    // --- MODAL DE RELACIONAMENTOS (SEGUIDORES / SEGUINDO) ---
+
+    function criarModalRelacionamentos() {
+        if (modalRelacionamentos) return;
 
         var modal = document.createElement('div');
         modal.className = 'usuario-relacionamentos-modal';
@@ -67,8 +97,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        modalRelacionamentosCloseButton.addEventListener('click', fecharModalRelacionamentos);
-
         document.addEventListener('keydown', function (event) {
             if (event.key === 'Escape' && modalRelacionamentos && !modalRelacionamentos.hidden) {
                 fecharModalRelacionamentos();
@@ -78,30 +106,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function abrirModalRelacionamentos(titulo) {
         criarModalRelacionamentos();
-
-        relacionamentoEmExibicao = titulo;
         modalRelacionamentosTitle.textContent = titulo;
         modalRelacionamentos.hidden = false;
         document.body.classList.add('usuario-relacionamentos-aberto');
-        document.documentElement.classList.add('usuario-relacionamentos-aberto');
     }
 
     function fecharModalRelacionamentos() {
-        if (!modalRelacionamentos) {
-            return;
-        }
-
+        if (!modalRelacionamentos) return;
         modalRelacionamentos.hidden = true;
-        relacionamentoEmExibicao = null;
         document.body.classList.remove('usuario-relacionamentos-aberto');
-        document.documentElement.classList.remove('usuario-relacionamentos-aberto');
     }
 
     function renderizarRelacionamentos(lista) {
-        if (!modalRelacionamentosList || !modalRelacionamentosEmpty) {
-            return;
-        }
-
         var usuarios = Array.isArray(lista) ? lista : [];
         modalRelacionamentosList.innerHTML = '';
 
@@ -116,23 +132,18 @@ document.addEventListener('DOMContentLoaded', function () {
         usuarios.forEach(function (usuario) {
             var link = document.createElement('a');
             link.className = 'usuario-relacionamentos-modal__item';
-            link.href = 'usuario.html?id=' + encodeURIComponent(usuario.id);
+            link.href = 'usuario.html?iduser=' + encodeURIComponent(usuario.id);
             link.innerHTML =
-                '<img class="usuario-relacionamentos-modal__avatar" src="' + escapeHtml(usuario.foto || 'img/userProfile.png') + '" alt="Foto de ' + escapeHtml(usuario.nome || 'Usuário') + '">' +
-                '<span class="usuario-relacionamentos-modal__nome">' + escapeHtml(usuario.nome || 'Usuário') + '</span>';
+                '<img class="usuario-relacionamentos-modal__avatar" src="' + escapeHtml(usuario.foto_perfil || 'img/userProfile.png') + '" alt="Foto de ' + escapeHtml(usuario.nome) + '">' +
+                '<span class="usuario-relacionamentos-modal__nome">' + escapeHtml(usuario.nome) + '</span>';
 
-            link.addEventListener('click', function () {
-                fecharModalRelacionamentos();
-            });
-
+            link.addEventListener('click', fecharModalRelacionamentos);
             modalRelacionamentosList.appendChild(link);
         });
     }
 
     async function carregarRelacionamentos(tipoRelacionamento) {
-        if (!idUsuarioPaginaAtual) {
-            return;
-        }
+        if (!idUsuarioPaginaAtual) return;
 
         criarModalRelacionamentos();
         abrirModalRelacionamentos(tipoRelacionamento === 'seguindo' ? 'Seguindo' : 'Seguidores');
@@ -141,207 +152,133 @@ document.addEventListener('DOMContentLoaded', function () {
         modalRelacionamentosList.innerHTML = '';
 
         var endpoint = tipoRelacionamento === 'seguindo'
-            ? '/usuarios/lista-seguindo/' + encodeURIComponent(idUsuarioPaginaAtual)
-            : '/usuarios/lista-seguidores/' + encodeURIComponent(idUsuarioPaginaAtual);
+            ? '/seguidores/seguindo/' + encodeURIComponent(idUsuarioPaginaAtual)
+            : '/seguidores/seguidores/' + encodeURIComponent(idUsuarioPaginaAtual);
 
         try {
-            var response = await fetch(ip_api + endpoint);
+            var response = await fetch(ip_api + endpoint, {
+                method: 'GET',
+                credentials: 'include'
+            });
 
-            if (!response.ok) {
-                throw new Error('Falha ao carregar relacionamentos');
+            if (response.status === 401) {
+                modalRelacionamentosEmpty.textContent = 'Você precisa estar logado para ver isso.';
+                return;
             }
 
-            var lista = await response.json();
-            renderizarRelacionamentos(lista);
+            var result = await response.json();
+            
+            if (response.ok && result.success) {
+                renderizarRelacionamentos(result.data);
+            } else {
+                throw new Error(result.message || 'Falha ao carregar relacionamentos');
+            }
         } catch (error) {
             console.error(error);
             modalRelacionamentosEmpty.hidden = false;
-            modalRelacionamentosEmpty.textContent = 'Nao foi possivel carregar a lista.';
+            modalRelacionamentosEmpty.textContent = 'Não foi possível carregar a lista.';
         }
     }
 
-    function getIdUsuarioPagina() {
-        var params = new URLSearchParams(window.location.search);
-        var idUser = params.get('iduser') || params.get('id');
+    // --- CONTROLE DE UI DO PERFIL ---
 
-        if (idUser) {
-            return idUser;
+    function esconderAcoesDoProprioPerfil(isProprioPerfil) {
+        if (seguirContainer) seguirContainer.style.display = isProprioPerfil ? 'none' : '';
+        if (mensagemButton) mensagemButton.style.display = isProprioPerfil ? 'none' : '';
+
+        var menuPopover = document.querySelector('.usuario-profile-card__menu-popover');
+        if (menuPopover) {
+            Array.from(menuPopover.children).forEach(function(item) {
+                item.style.display = isProprioPerfil ? 'none' : '';
+            });
         }
-
-        if (idUsuarioLogado) {
-            return idUsuarioLogado;
-        }
-
-        return null;
     }
 
     function atualizarBotaoSeguir() {
-        if (!seguirButton) {
-            return;
-        }
-
+        if (!seguirButton) return;
         seguirButton.textContent = estaSeguindoUsuario ? 'Deixar de seguir' : 'Seguir';
         seguirButton.classList.toggle('is-following', estaSeguindoUsuario);
         seguirButton.setAttribute('aria-pressed', estaSeguindoUsuario ? 'true' : 'false');
     }
 
     function ajustarTotalSeguidores(delta) {
-        if (!statsValues[0]) {
-            return;
-        }
-
-        var atual = parseInt(statsValues[0].textContent, 10);
-        if (Number.isNaN(atual)) {
-            atual = 0;
-        }
-
-        var novoTotal = atual + delta;
-        if (novoTotal < 0) {
-            novoTotal = 0;
-        }
-
-        statsValues[0].textContent = String(novoTotal);
+        if (!statsValues[0]) return;
+        var atual = parseInt(statsValues[0].textContent, 10) || 0;
+        statsValues[0].textContent = String(Math.max(0, atual + delta));
     }
 
-    function esconderAcoesDoProprioPerfil(isProprioPerfil) {
-        if (!seguirContainer) {
-            return;
-        }
+    // --- INTEGRAÇÃO DA API: AÇÕES DE SEGUIR ---
 
-        seguirContainer.style.display = isProprioPerfil ? 'none' : '';
-        if (mensagemButton) {
-            mensagemButton.style.display = isProprioPerfil ? 'none' : '';
-        }
+    async function inicializarBotaoSeguir() {
+        if (!seguirButton || !idUsuarioPaginaAtual) return;
 
-        var menuPopover = document.querySelector('.usuario-profile-card__menu-popover');
-        if (menuPopover) {
-            var itens = menuPopover.children;
+        seguirButton.disabled = true;
 
-            if (itens[0]) {
-                itens[0].style.display = isProprioPerfil ? 'none' : '';
+        try {
+            var response = await fetch(ip_api + '/seguidores/status/' + encodeURIComponent(idUsuarioPaginaAtual), {
+                method: 'GET',
+                credentials: 'include'
+            });
+
+            if (response.ok) {
+                var result = await response.json();
+                if (result.success && result.data) {
+                    estaSeguindoUsuario = !!result.data.seguindo;
+                }
+            } else if (response.status === 401) {
+                // Usuário não logado, mantém o botão desabilitado ou exibe alert ao clicar
+                estaSeguindoUsuario = false;
             }
+        } catch (error) {
+            console.error(error);
+        } finally {
+            atualizarBotaoSeguir();
+            seguirButton.disabled = false;
+        }
+    }
 
-            if (itens[1]) {
-                itens[1].style.display = isProprioPerfil ? 'none' : '';
+    if (seguirButton) {
+        seguirButton.addEventListener('click', async function () {
+            if (!idUsuarioPaginaAtual) return;
+            seguirButton.disabled = true;
+
+            try {
+                // Define o método dependendo do status atual (POST = Seguir, DELETE = Deixar de seguir)
+                var metodo = estaSeguindoUsuario ? 'DELETE' : 'POST';
+                var response = await fetch(ip_api + '/seguidores/' + encodeURIComponent(idUsuarioPaginaAtual), {
+                    method: metodo,
+                    credentials: 'include'
+                });
+
+                if (response.status === 401) {
+                    alert('Você precisa estar logado para seguir um usuário.');
+                    return;
+                }
+
+                var result = await response.json();
+
+                if (response.ok && result.success) {
+                    estaSeguindoUsuario = !estaSeguindoUsuario;
+                    atualizarBotaoSeguir();
+                    ajustarTotalSeguidores(estaSeguindoUsuario ? 1 : -1);
+                } else {
+                    alert(result.message || 'Ocorreu um erro ao processar sua solicitação.');
+                }
+            } catch (error) {
+                console.error(error);
+                alert('Erro de comunicação com o servidor.');
+            } finally {
+                seguirButton.disabled = false;
             }
-        }
-    }
-
-    async function verificarSeSegueUsuario(idLogado, idPagina) {
-        var response = await fetch(ip_api + '/usuarios/verificarsesegue/' + encodeURIComponent(idLogado) + '/' + encodeURIComponent(idPagina));
-
-        if (!response.ok) {
-            throw new Error('Falha ao verificar se segue o usuario');
-        }
-
-        var data = await response.json();
-        return !!(data && data.segue);
-    }
-
-    async function alternarSeguimentoUsuario(idLogado, idPagina) {
-        var response = await fetch(ip_api + '/usuarios/seguir-usuario/' + encodeURIComponent(idLogado) + '/' + encodeURIComponent(idPagina), {
-            method: 'POST'
-        });
-
-        if (!response.ok) {
-            throw new Error('Falha ao alternar seguimento');
-        }
-
-        return response.json();
-    }
-
-    function getPostImage(post) {
-        if (Array.isArray(post.imagens) && post.imagens.length > 0) {
-            return post.imagens[0];
-        }
-
-        return 'img/logo.png';
-    }
-
-    function getPostAuthor(post) {
-        return post.user && post.user.nome ? post.user.nome : 'Usuário';
-    }
-
-    function getPostAuthorPhoto(post) {
-        return post.user && post.user.foto ? post.user.foto : 'img/userProfile.png';
-    }
-
-    function getRelativeTime(value) {
-        if (!value) {
-            return '';
-        }
-
-        var date = new Date(value);
-        if (Number.isNaN(date.getTime())) {
-            return '';
-        }
-
-        var diffMs = Date.now() - date.getTime();
-        if (diffMs < 0) {
-            diffMs = 0;
-        }
-
-        var seconds = Math.floor(diffMs / 1000);
-        if (seconds < 60) {
-            return 'agora mesmo';
-        }
-
-        var minutes = Math.floor(seconds / 60);
-        if (minutes < 60) {
-            return minutes === 1 ? 'há 1 minuto' : 'há ' + minutes + ' minutos';
-        }
-
-        var hours = Math.floor(minutes / 60);
-        if (hours < 24) {
-            return hours === 1 ? 'há 1 hora' : 'há ' + hours + ' horas';
-        }
-
-        var days = Math.floor(hours / 24);
-        if (days < 30) {
-            return days === 1 ? 'há 1 dia' : 'há ' + days + ' dias';
-        }
-
-        var months = Math.floor(days / 30);
-        if (months < 12) {
-            return months === 1 ? 'há 1 mês' : 'há ' + months + ' meses';
-        }
-
-        var years = Math.floor(months / 12);
-        return years === 1 ? 'há 1 ano' : 'há ' + years + ' anos';
-    }
-
-    function formatDate(value) {
-        if (!value) {
-            return '';
-        }
-
-        var date = new Date(value);
-        if (Number.isNaN(date.getTime())) {
-            return '';
-        }
-
-        return date.toLocaleDateString('pt-BR', {
-            day: '2-digit',
-            month: 'short',
-            year: 'numeric'
         });
     }
+
+    // --- INTEGRAÇÃO DA API: POSTS ---
 
     function renderPostsUsuario(posts) {
         var listaPosts = Array.isArray(posts) ? posts : [];
 
-        window.usuarioPerfilPosts = listaPosts;
-        window.usuarioPerfilPostsLoading = false;
-
-        if (typeof window.renderUsuarioPerfilPosts === 'function') {
-            window.renderUsuarioPerfilPosts(listaPosts);
-            return;
-        }
-
-        if (!tabPanel) {
-            return;
-        }
-
+        if (!tabPanel) return;
         tabPanel.innerHTML = '';
 
         if (!listaPosts.length) {
@@ -357,20 +294,25 @@ document.addEventListener('DOMContentLoaded', function () {
             article.className = 'feedCard';
             article.dataset.postId = String(post.id);
 
+            // Resolução da imagem: Usa a capa se existir, senão pega a primeira do array imagens.
+            var imgSrc = post.capa || (Array.isArray(post.imagens) && post.imagens.length > 0 ? post.imagens[0] : 'img/logo.png');
+            var authorName = post.criador && post.criador.nome ? post.criador.nome : 'Usuário';
+            var authorPhoto = post.criador && post.criador.foto_perfil ? post.criador.foto_perfil : 'img/userProfile.png';
+
             article.innerHTML =
                 '<div class="feedImg">' +
-                '<img src="' + getPostImage(post) + '" alt="' + (post.titulo || 'Post') + '">' +
+                '<img src="' + escapeHtml(imgSrc) + '" alt="' + escapeHtml(post.titulo || 'Post') + '">' +
                 '</div>' +
                 '<div class="infoPost">' +
                 '<div class="feedInfoLeft">' +
-                '<span class="feedPostTitle">' + (post.titulo || 'Sem título') + '</span>' +
+                '<span class="feedPostTitle">' + escapeHtml(post.titulo || 'Sem título') + '</span>' +
                 '<div class="logoName">' +
-                '<img class="logoUser" src="' + getPostAuthorPhoto(post) + '" alt="' + getPostAuthor(post) + '">' +
-                '<span class="userName">' + getPostAuthor(post) + '</span>' +
+                '<img class="logoUser" src="' + escapeHtml(authorPhoto) + '" alt="' + escapeHtml(authorName) + '">' +
+                '<span class="userName">' + escapeHtml(authorName) + '</span>' +
                 '</div>' +
                 '</div>' +
                 '<div class="likeView">' +
-                '<span class="feedPostTime">' + (getRelativeTime(post.criado_em) || formatDate(post.criado_em)) + '</span>' +
+                '<span class="feedPostTime">' + escapeHtml(post.tempo_atras || '') + '</span>' +
                 '</div>' +
                 '</div>';
 
@@ -382,72 +324,103 @@ document.addEventListener('DOMContentLoaded', function () {
 
     async function carregarPostsDoUsuario(idUsuario) {
         if (!idUsuario) {
-            window.usuarioPerfilPosts = [];
-            window.usuarioPerfilPostsLoading = false;
             renderPostsUsuario([]);
             return;
         }
 
-        window.usuarioPerfilPostsLoading = true;
-
-        if (tabPanel) {
-            tabPanel.innerHTML = '<p class="usuario-empty-state">Carregando posts...</p>';
-        }
+        if (tabPanel) tabPanel.innerHTML = '<p class="usuario-empty-state">Carregando posts...</p>';
 
         try {
-            var response = await fetch(ip_api + '/posts/usuario/' + idUsuario);
+            var response = await fetch(ip_api + '/posts/usuario/' + encodeURIComponent(idUsuario), {
+                method: 'GET',
+                credentials: 'include'
+            });
 
-            if (!response.ok) {
-                throw new Error('Falha ao carregar posts do usuário');
+            var result = await response.json();
+
+            if (response.ok && result.success) {
+                renderPostsUsuario(result.data);
+            } else {
+                throw new Error(result.message || 'Falha ao carregar posts');
             }
-
-            var posts = await response.json();
-            renderPostsUsuario(posts);
         } catch (error) {
-            window.usuarioPerfilPosts = [];
-            window.usuarioPerfilPostsLoading = false;
-
-            if (tabPanel) {
-                tabPanel.innerHTML = '<p class="usuario-empty-state">Nao foi possivel carregar os posts.</p>';
-            }
-
             console.error(error);
+            if (tabPanel) {
+                tabPanel.innerHTML = '<p class="usuario-empty-state">Não foi possível carregar os posts.</p>';
+            }
         }
     }
 
+    // --- INTEGRAÇÃO DA API: CARREGAMENTO INICIAL (PERFIL) ---
+
     function aplicarDadosNoAside(usuario) {
-        var nome = usuario.nome || 'Nome do Usuário';
-        var nomeUsuario = usuario.nome_de_usuario || '';
+        var nome = usuario.nome || 'Usuário';
         var descricao = usuario.descricao || 'Este usuário ainda não adicionou uma descrição.';
         var foto = usuario.foto || 'img/userProfile.png';
         var banner = usuario.banner || 'img/bannervagas.jpg';
-        var tipoUsuario = String(usuario.tipo_usuario || usuario.tipo || '').toLowerCase();
+        var tipoUsuario = String(usuario.tipo_usuario || '').toUpperCase();
 
         bannerImage.src = banner;
         bannerImage.alt = 'Banner de ' + nome;
         avatarImage.src = foto;
         avatarImage.alt = 'Foto de perfil de ' + nome;
         nomeElement.textContent = nome;
-        usuarioElement.textContent = nomeUsuario ? '@' + nomeUsuario : 'Perfil do usuário';
+        
+        if (usuarioElement) usuarioElement.textContent = 'Perfil do usuário'; 
+        
         descricaoElement.textContent = descricao;
 
-        if (statsValues[0]) {
-            statsValues[0].textContent = String(usuario.total_seguidores ?? 0);
-        }
-
-        if (statsValues[1]) {
-            statsValues[1].textContent = String(usuario.total_seguindo ?? 0);
-        }
-
-        if (statsValues[2]) {
-            statsValues[2].textContent = String(usuario.total_posts ?? 0);
-        }
+        if (statsValues[0]) statsValues[0].textContent = String(usuario.total_seguidores ?? 0);
+        if (statsValues[1]) statsValues[1].textContent = String(usuario.total_seguindo ?? 0);
+        if (statsValues[2]) statsValues[2].textContent = String(usuario.total_posts ?? 0);
 
         if (vagasTabButton) {
-            vagasTabButton.style.display = tipoUsuario === 'padrao' ? 'none' : '';
+            vagasTabButton.style.display = tipoUsuario !== 'PJ' && tipoUsuario !== 'EMPRESA' ? 'none' : '';
+        }
+
+        if (usuario.edit === true) {
+            esconderAcoesDoProprioPerfil(true);
+        } else {
+            esconderAcoesDoProprioPerfil(false);
+            inicializarBotaoSeguir();
         }
     }
 
+    async function carregarAsideUsuario() {
+        // Agora aguardamos a função assíncrona que buscará na URL ou via /auth/id
+        var idUsuario = await obterIdUsuario();
+
+        if (!idUsuario) {
+            console.error("ID do usuário não fornecido na URL e usuário não está logado.");
+            if (nomeElement) nomeElement.textContent = "Usuário não encontrado";
+            if (descricaoElement) descricaoElement.textContent = "Não foi possível carregar o perfil sem um ID válido.";
+            esconderAcoesDoProprioPerfil(true);
+            return;
+        }
+
+        idUsuarioPaginaAtual = String(idUsuario);
+
+        try {
+            var response = await fetch(ip_api + '/usuarios/' + encodeURIComponent(idUsuarioPaginaAtual), {
+                method: 'GET',
+                credentials: 'include' // Obrigatório para a API verificar se o perfil pertence ao usuário da sessão
+            });
+
+            var result = await response.json();
+
+            if (response.ok && result.success) {
+                aplicarDadosNoAside(result.data);
+                carregarPostsDoUsuario(idUsuarioPaginaAtual);
+            } else {
+                throw new Error(result.message || 'Falha ao carregar perfil do usuário');
+            }
+        } catch (error) {
+            console.error(error);
+            alert("Não foi possível carregar as informações do perfil.");
+        }
+    }
+
+    // --- LISTENERS DOS BOTÕES DE ESTATÍSTICA ---
     if (statsButtons.length >= 2) {
         statsButtons[0].addEventListener('click', function () {
             carregarRelacionamentos('seguidores');
@@ -458,85 +431,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    async function inicializarBotaoSeguir() {
-        if (!seguirButton || !idUsuarioLogado || !idUsuarioPaginaAtual) {
-            return;
-        }
-
-        if (String(idUsuarioLogado) === String(idUsuarioPaginaAtual)) {
-            esconderAcoesDoProprioPerfil(true);
-            return;
-        }
-
-        esconderAcoesDoProprioPerfil(false);
-        seguirButton.disabled = true;
-
-        try {
-            estaSeguindoUsuario = await verificarSeSegueUsuario(idUsuarioLogado, idUsuarioPaginaAtual);
-            atualizarBotaoSeguir();
-        } catch (error) {
-            console.error(error);
-            estaSeguindoUsuario = false;
-            atualizarBotaoSeguir();
-        } finally {
-            seguirButton.disabled = false;
-        }
-    }
-
-    if (seguirButton) {
-        seguirButton.addEventListener('click', async function () {
-            if (!idUsuarioLogado || !idUsuarioPaginaAtual) {
-                return;
-            }
-
-            if (String(idUsuarioLogado) === String(idUsuarioPaginaAtual)) {
-                return;
-            }
-
-            seguirButton.disabled = true;
-
-            try {
-                var resposta = await alternarSeguimentoUsuario(idUsuarioLogado, idUsuarioPaginaAtual);
-                estaSeguindoUsuario = !!(resposta && resposta.seguindo);
-                atualizarBotaoSeguir();
-
-                if (estaSeguindoUsuario) {
-                    ajustarTotalSeguidores(1);
-                } else {
-                    ajustarTotalSeguidores(-1);
-                }
-            } catch (error) {
-                console.error(error);
-            } finally {
-                seguirButton.disabled = false;
-            }
-        });
-    }
-
-    async function carregarAsideUsuario() {
-        var idUsuario = getIdUsuarioPagina();
-
-        if (!idUsuario) {
-            return;
-        }
-
-        idUsuarioPaginaAtual = String(idUsuario);
-
-        try {
-            var response = await fetch(ip_api + '/usuarios/perfil/' + idUsuario);
-
-            if (!response.ok) {
-                throw new Error('Falha ao carregar perfil do usuário');
-            }
-
-            var usuario = await response.json();
-            aplicarDadosNoAside(usuario);
-            carregarPostsDoUsuario(idUsuario);
-            await inicializarBotaoSeguir();
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
+    // Inicia o processo
     carregarAsideUsuario();
 });
