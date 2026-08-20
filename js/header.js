@@ -118,30 +118,6 @@ function montarHeader() {
                     </div>
                 </div>
 
-                <!-- <div class="perfilDropdownGroup">
-                    <button type="button" class="perfilDropdownItem">
-                        <img src="img/icons/favoritos.svg" alt="">
-                        <span data-i18n="saved">Salvos</span>
-                    </button>
-                    <button type="button" class="perfilDropdownItem">
-                        <img src="img/icons/like.svg" alt="">
-                        <span data-i18n="favorites">Favoritos</span>
-                    </button>
-                    <button type="button" class="perfilDropdownItem">
-                        <img src="img/icons/vagas.svg" alt="">
-                        <span data-i18n="myJobs">Minhas vagas</span>
-                    </button>
-                </div>
-
-                <div class="perfilDropdownDivider"></div>
-
-                <div class="perfilDropdownGroup">
-                    <button type="button" class="perfilDropdownItem">
-                        <img src="img/icons/favoritos.svg" alt="">
-                        <span data-i18n="myProjects">Meus projetos</span>
-                    </button>
-                </div> -->
-
                 <div class="perfilDropdownDivider"></div> 
 
                 <div class="perfilDropdownGroup">
@@ -164,14 +140,6 @@ function montarHeader() {
 
             <div class="optionsDropdownMenu" id="optionsMenu" hidden>
                 <div class="optionsDropdownGroup">
-                    <!-- <button type="button" class="optionsDropdownItem">
-                        <img src="img/icons/termos.svg" alt="">
-                        <span data-i18n="termsOfUse">Termos de uso</span>
-                    </button>
-                    <button type="button" class="optionsDropdownItem">
-                        <img src="img/icons/privacidade.svg" alt="">
-                        <span data-i18n="privacy">Privacidade</span>
-                    </button> -->
                     <a href="sobrenos.html">
                         <button type="button" class="optionsDropdownItem">
                             <img src="img/icons/sobrenos.svg" alt="">
@@ -200,12 +168,6 @@ function montarHeader() {
                             <span data-i18n="email">Email</span>
                         </button>
                     </a>
-                    <!--<a href="https://www.behance.net/seek" target="_blank" rel="noopener noreferrer">
-                        <button type="button" class="optionsDropdownItem">
-                            <span class="optionsDropdownBrand">Bē</span>
-                            <span data-i18n="behance">Behance</span>
-                        </button> -->
-                    </a>
                 </div>
             </div>
         </div>
@@ -219,7 +181,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const searchDropdownTitle = document.getElementById('inputPesquisaDropdownTitle');
     const searchDropdownList = document.getElementById('inputPesquisaDropdownList');
     const searchIconButtons = searchWrapper ? searchWrapper.querySelectorAll('.inputPesquisaIconButton') : [];
-    const userSearchApiUrl = 'http://localhost:4500/pesquisa/usuarios/';
+    
+    // Atualizado com ip_api
+    const userSearchApiUrl = ip_api + '/usuarios/pesquisar';
     const recentSearches = ['Design gráfico', 'Ilustração', 'Concept art', 'Art 3D'];
 
     let searchDebounceTimer = null;
@@ -293,7 +257,7 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     const renderSearchUsers = function (users) {
-        if (!users.length) {
+        if (!users || !users.length) {
             renderSearchMessage('Usuários', 'Nenhum usuário encontrado.');
             return;
         }
@@ -301,7 +265,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const itemsHtml = users.map(function (user) {
             const userId = escapeHtml(user.id);
             const userName = escapeHtml(user.nome || 'Usuário');
-            const userPhoto = escapeHtml(user.foto || 'img/userProfile.png');
+            // Mapeando a foto_perfil da nova API, ou exibindo padrão caso nula
+            const userPhoto = escapeHtml(user.foto_perfil || 'img/userProfile.png');
 
             return '<a class="inputPesquisaResultadoItem" href="usuario.html?id=' + userId + '">' +
                 '<img class="inputPesquisaResultadoFoto" src="' + userPhoto + '" alt="">' +
@@ -324,7 +289,7 @@ document.addEventListener('DOMContentLoaded', function () {
         searchRequestToken += 1;
     };
 
-    const searchUsers = function (term) {
+    const searchUsers = async function (term) {
         cancelPendingSearch();
 
         const requestToken = searchRequestToken;
@@ -332,35 +297,42 @@ document.addEventListener('DOMContentLoaded', function () {
 
         renderSearchMessage('Usuários', 'Carregando usuários...');
 
-        fetch(userSearchApiUrl + encodeURIComponent(term), {
-            signal: searchRequestController.signal
-        })
-            .then(function (response) {
-                if (!response.ok) {
-                    throw new Error('Falha ao consultar a pesquisa de usuários.');
-                }
-
-                return response.json();
-            })
-            .then(function (users) {
-                if (requestToken !== searchRequestToken) {
-                    return;
-                }
-
-                renderSearchUsers(Array.isArray(users) ? users : []);
-            })
-            .catch(function (error) {
-                if (error && error.name === 'AbortError') {
-                    return;
-                }
-
-                renderSearchMessage('Usuários', 'Não foi possível carregar os usuários.');
-            })
-            .finally(function () {
-                if (requestToken === searchRequestToken) {
-                    searchRequestController = null;
-                }
+        try {
+            // Nota: POST é necessário no fetch caso o corpo da requisição seja preenchido (body).
+            const response = await fetch(userSearchApiUrl, {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    termo: term
+                }),
+                signal: searchRequestController.signal
             });
+
+            const result = await response.json();
+
+            // Interrompe se o usuário continuar digitando e nova requisição sobrescreveu essa
+            if (requestToken !== searchRequestToken) {
+                return;
+            }
+
+            if (response.ok && result.success) {
+                renderSearchUsers(result.data || []);
+            } else {
+                renderSearchMessage('Usuários', result.message || 'Falha ao buscar usuários.');
+            }
+        } catch (error) {
+            if (error && error.name === 'AbortError') {
+                return;
+            }
+            renderSearchMessage('Usuários', 'Não foi possível carregar os usuários.');
+        } finally {
+            if (requestToken === searchRequestToken) {
+                searchRequestController = null;
+            }
+        }
     };
 
     const syncSearchState = function () {
@@ -478,6 +450,12 @@ document.addEventListener('DOMContentLoaded', function () {
             const deleteButton = event.target.closest('.inputPesquisaExcluirButton');
 
             if (!deleteButton) {
+                const searchItemButton = event.target.closest('.inputPesquisaSugestaoItem');
+                if (searchItemButton) {
+                    const term = searchItemButton.dataset.term || searchItemButton.textContent.trim();
+                    searchInput.value = term;
+                    syncSearchState();
+                }
                 return;
             }
 
@@ -501,13 +479,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (!recentSearches.length) {
                     renderRecentSearches();
                 }
-            }
-
-            const searchItemButton = event.target.closest('.inputPesquisaSugestaoItem');
-            if (searchItemButton) {
-                const term = searchItemButton.dataset.term || searchItemButton.textContent.trim();
-                searchInput.value = term;
-                syncSearchState();
             }
         });
     }
