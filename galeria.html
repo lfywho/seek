@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Galeria de projetos criativos da Seek.">
+    <title>Seek - Galeria</title>
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="shortcut icon" href="img/favicon.png" type="image/x-icon">
+</head>
+
+<body class="galeria-page" data-active-nav="galeria" id="todo">
+    <header class="cabecalho"></header>
+
+    <section class="categories-carousel" aria-label="Categorias de criação">
+        <div class="carousel-wrapper">
+            <button class="carousel-btn prev" aria-label="Categorias anteriores">&#10094;</button>
+            <div class="carousel-viewport">
+                <div class="carousel-track" id="categoriesTrack"></div>
+            </div>
+            <button class="carousel-btn next" aria-label="Próximas categorias">&#10095;</button>
+        </div>
+    </section>
+
+    <main class="conteudo-galeria">
+        <section class="galeria-layout" aria-label="Galeria de projetos">
+            <aside class="galeria-filtros" aria-label="Filtros da galeria">
+                <details class="galeria-filter-panel">
+                    <summary class="galeria-filter-summary">
+                        <span>Filtros</span>
+                        <span aria-hidden="true">⌄</span>
+                    </summary>
+
+                    <div class="galeria-filter-content">
+                        <section class="galeria-filter-group">
+                            <h2>Campos de criação</h2>
+                            <label class="galeria-filter-option"><input type="radio" name="campo" checked><span>Todos</span></label>
+                            <label class="galeria-filter-option"><input type="radio" name="campo"><span>Design gráfico</span></label>
+                            <label class="galeria-filter-option"><input type="radio" name="campo"><span>Design de interfaces (UI/UX)</span></label>
+                            <label class="galeria-filter-option"><input type="radio" name="campo"><span>Arquitetura</span></label>
+                            <label class="galeria-filter-option"><input type="radio" name="campo"><span>Ilustração</span></label>
+                            <label class="galeria-filter-option"><input type="radio" name="campo"><span>Fotografia</span></label>
+                        </section>
+
+                        <section class="galeria-filter-group">
+                            <h2>Categorias</h2>
+                            <label class="galeria-filter-option"><input type="checkbox"><span>3D</span></label>
+                            <label class="galeria-filter-option"><input type="checkbox"><span>Adobe Photoshop</span></label>
+                            <label class="galeria-filter-option"><input type="checkbox"><span>Design gráfico</span></label>
+                            <label class="galeria-filter-option"><input type="checkbox"><span>UI/UX Design</span></label>
+                            <label class="galeria-filter-option"><input type="checkbox"><span>Adobe Illustrator</span></label>
+                        </section>
+
+                        <section class="galeria-filter-group">
+                            <h2>Cores</h2>
+                            <div class="galeria-color-list" aria-label="Filtrar por cor">
+                                <button class="galeria-color galeria-color--white" type="button" aria-label="Branco"></button>
+                                <button class="galeria-color galeria-color--red" type="button" aria-label="Vermelho"></button>
+                                <button class="galeria-color galeria-color--orange" type="button" aria-label="Laranja"></button>
+                                <button class="galeria-color galeria-color--yellow" type="button" aria-label="Amarelo"></button>
+                                <button class="galeria-color galeria-color--lime" type="button" aria-label="Verde-limão"></button>
+                                <button class="galeria-color galeria-color--green" type="button" aria-label="Verde"></button>
+                                <button class="galeria-color galeria-color--aqua" type="button" aria-label="Turquesa"></button>
+                                <button class="galeria-color galeria-color--blue" type="button" aria-label="Azul"></button>
+                                <button class="galeria-color galeria-color--indigo" type="button" aria-label="Índigo"></button>
+                                <button class="galeria-color galeria-color--purple" type="button" aria-label="Roxo"></button>
+                                <button class="galeria-color galeria-color--pink" type="button" aria-label="Rosa"></button>
+                                <button class="galeria-color galeria-color--gray" type="button" aria-label="Cinza"></button>
+                                <button class="galeria-color galeria-color--black" type="button" aria-label="Preto"></button>
+                            </div>
+                        </section>
+                    </div>
+                </details>
+            </aside>
+
+            <section class="galeria-grid" aria-label="Projetos em destaque">
+                <article class="galeria-card">
+                    <div class="galeria-card__media">
+                        <img src="img/curso_teste.png" alt="Retrato de um homem vestindo uma camisa amarela">
+                        <span class="galeria-card__tag">TOP SALE</span>
+                        <button class="galeria-card__save" type="button" aria-label="Salvar projeto"><img src="img/icons/favoritos.svg" alt=""></button>
+                        <h2>Título da obra</h2>
+                    </div>
+                    <div class="galeria-card__body">
+                        <div class="galeria-card__author"><img src="img/userProfilepreto.png" alt="" aria-hidden="true"><span>Nome do autor</span><span class="galeria-card__stats">4,9 <img src="img/icons/estrela.svg" alt=""> 3,5 mil</span></div>
+                        <div class="galeria-card__footer"><span>Design</span><strong>R$39,90</strong></div>
+                    </div>
+                </article>
+
+                <article class="galeria-card">
+                    <div class="galeria-card__media">
+                        <img src="img/curso_teste.png" alt="Retrato de um homem vestindo uma camisa amarela">
+                        <span class="galeria-card__tag">TOP SALE</span>
+                        <button class="galeria-card__save" type="button" aria-label="Salvar projeto"><img src="img/icons/favoritos.svg" alt=""></button>
+                        <h2>Identidade em movimento</h2>
+                    </div>
+                    <div class="galeria-card__body">
+                        <div class="galeria-card__author"><img src="img/userProfilepreto.png" alt="" aria-hidden="true"><span>Nome do autor</span><span class="galeria-card__stats">4,9 <img src="img/icons/estrela.svg" alt=""> 3,5 mil</span></div>
+                        <div class="galeria-card__footer"><span>Branding</span><strong>R$39,90</strong></div>
+                    </div>
+                </article>
+
+                <article class="galeria-card">
+                    <div class="galeria-card__media">
+                        <img src="img/curso_teste.png" alt="Retrato de um homem vestindo uma camisa amarela">
+                        <span class="galeria-card__tag">TOP SALE</span>
+                        <button class="galeria-card__save" type="button" aria-label="Salvar projeto"><img src="img/icons/favoritos.svg" alt=""></button>
+                        <h2>Forma e textura</h2>
+                    </div>
+                    <div class="galeria-card__body">
+                        <div class="galeria-card__author"><img src="img/userProfilepreto.png" alt="" aria-hidden="true"><span>Nome do autor</span><span class="galeria-card__stats">4,9 <img src="img/icons/estrela.svg" alt=""> 3,5 mil</span></div>
+                        <div class="galeria-card__footer"><span>Fotografia</span><strong>R$39,90</strong></div>
+                    </div>
+                </article>
+
+                <article class="galeria-card">
+                    <div class="galeria-card__media">
+                        <img src="img/curso_teste.png" alt="Retrato de um homem vestindo uma camisa amarela">
+                        <span class="galeria-card__tag">TOP SALE</span>
+                        <button class="galeria-card__save" type="button" aria-label="Salvar projeto"><img src="img/icons/favoritos.svg" alt=""></button>
+                        <h2>Conexões visuais</h2>
+                    </div>
+                    <div class="galeria-card__body">
+                        <div class="galeria-card__author"><img src="img/userProfilepreto.png" alt="" aria-hidden="true"><span>Nome do autor</span><span class="galeria-card__stats">4,9 <img src="img/icons/estrela.svg" alt=""> 3,5 mil</span></div>
+                        <div class="galeria-card__footer"><span>UI/UX</span><strong>R$39,90</strong></div>
+                    </div>
+                </article>
+
+                <article class="galeria-card">
+                    <div class="galeria-card__media">
+                        <img src="img/curso_teste.png" alt="Retrato de um homem vestindo uma camisa amarela">
+                        <span class="galeria-card__tag">TOP SALE</span>
+                        <button class="galeria-card__save" type="button" aria-label="Salvar projeto"><img src="img/icons/favoritos.svg" alt=""></button>
+                        <h2>Vozes do cotidiano</h2>
+                    </div>
+                    <div class="galeria-card__body">
+                        <div class="galeria-card__author"><img src="img/userProfilepreto.png" alt="" aria-hidden="true"><span>Nome do autor</span><span class="galeria-card__stats">4,9 <img src="img/icons/estrela.svg" alt=""> 3,5 mil</span></div>
+                        <div class="galeria-card__footer"><span>Ilustração</span><strong>R$39,90</strong></div>
+                    </div>
+                </article>
+
+                <article class="galeria-card">
+                    <div class="galeria-card__media">
+                        <img src="img/curso_teste.png" alt="Retrato de um homem vestindo uma camisa amarela">
+                        <span class="galeria-card__tag">TOP SALE</span>
+                        <button class="galeria-card__save" type="button" aria-label="Salvar projeto"><img src="img/icons/favoritos.svg" alt=""></button>
+                        <h2>Perspectivas urbanas</h2>
+                    </div>
+                    <div class="galeria-card__body">
+                        <div class="galeria-card__author"><img src="img/userProfilepreto.png" alt="" aria-hidden="true"><span>Nome do autor</span><span class="galeria-card__stats">4,9 <img src="img/icons/estrela.svg" alt=""> 3,5 mil</span></div>
+                        <div class="galeria-card__footer"><span>Arquitetura</span><strong>R$39,90</strong></div>
+                    </div>
+                </article>
+            </section>
+        </section>
+    </main>
+
+    <script src="js/ambiente.js"></script>
+    <script src="js/header.js"></script>
+    <script src="js/cursos-carousel.js"></script>
+    <script src="js/Acessibilidade/ModoEscuro.js"></script>
+</body>
+
+</html>

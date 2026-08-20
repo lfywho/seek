@@ -17,6 +17,7 @@ function montarHeader() {
 
     <nav class="navegarPaginas">
         ${buildNavItem('explorar', 'Explorar', 'index.html')}
+        ${buildNavItem('galeria', 'Galeria', 'galeria.html')}
         ${buildNavItem('vagas', 'Vagas', 'vagas.html')}
         ${buildNavItem('criar', 'Criar', 'adicionarprojeto.html')}
     </nav>
