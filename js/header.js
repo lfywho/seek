@@ -33,24 +33,8 @@ function montarHeader() {
 
         <div class="inputPesquisaDropdown" id="inputPesquisaDropdown" hidden>
             <div class="inputPesquisaDropdownTitle" id="inputPesquisaDropdownTitle">Recentes</div>
-
             <div class="inputPesquisaDropdownList" id="inputPesquisaDropdownList">
-                <div class="inputPesquisaSugestaoRow">
-                    <button type="button" class="inputPesquisaSugestaoItem">Design gráfico</button>
-                    <button type="button" class="inputPesquisaExcluirButton" aria-label="Excluir recente">X</button>
-                </div>
-                <div class="inputPesquisaSugestaoRow">
-                    <button type="button" class="inputPesquisaSugestaoItem">Ilustração</button>
-                    <button type="button" class="inputPesquisaExcluirButton" aria-label="Excluir recente">X</button>
-                </div>
-                <div class="inputPesquisaSugestaoRow">
-                    <button type="button" class="inputPesquisaSugestaoItem">Concept art</button>
-                    <button type="button" class="inputPesquisaExcluirButton" aria-label="Excluir recente">X</button>
-                </div>
-                <div class="inputPesquisaSugestaoRow">
-                    <button type="button" class="inputPesquisaSugestaoItem">Art 3D</button>
-                    <button type="button" class="inputPesquisaExcluirButton" aria-label="Excluir recente">X</button>
-                </div>
+                <p class="inputPesquisaEstadoVazio">Carregando histórico...</p>
             </div>
         </div>
     </div>
@@ -98,7 +82,6 @@ function montarHeader() {
                 <button type="button" class="notificationsCTA" id="notificationsReloadButton" data-i18n="notificationsReload">Atualizar notificações</button>
             </div>
         </div>
-
 
         <div class="perfilDropdown">
             <button type="button" class="menuHeaderButton" aria-label="Perfil" aria-haspopup="menu"
@@ -155,7 +138,6 @@ function montarHeader() {
                     </a>
                 </div>
 
-
                 <div class="optionsDropdownGroup">
                     <a href="https://www.instagram.com/seek_brasil" target="_blank" rel="noopener noreferrer">
                         <button type="button" class="optionsDropdownItem">
@@ -182,10 +164,11 @@ document.addEventListener('DOMContentLoaded', function () {
     const searchDropdownTitle = document.getElementById('inputPesquisaDropdownTitle');
     const searchDropdownList = document.getElementById('inputPesquisaDropdownList');
     const searchIconButtons = searchWrapper ? searchWrapper.querySelectorAll('.inputPesquisaIconButton') : [];
-    
-    // Atualizado com ip_api
+
     const userSearchApiUrl = ip_api + '/usuarios/pesquisar';
-    const recentSearches = ['Design gráfico', 'Ilustração', 'Concept art', 'Art 3D'];
+    const historySearchApiUrl = ip_api + '/usuarios/historico-pesquisas';
+    
+    let recentSearches = []; // Agora armazena objetos da API { id, termo_pesquisa }
 
     let searchDebounceTimer = null;
     let searchRequestController = null;
@@ -240,12 +223,72 @@ document.addEventListener('DOMContentLoaded', function () {
         searchDropdownList.innerHTML = contentHtml;
     };
 
+    // --- CARREGAR HISTÓRICO DE PESQUISA ---
+    const loadRecentSearches = async function () {
+        try {
+            const response = await fetch(historySearchApiUrl, {
+                method: 'GET',
+                credentials: 'include'
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                if (result.success) {
+                    recentSearches = result.data || [];
+                    renderRecentSearches();
+                }
+            } else {
+                // Caso falhe (ex: 401 Unauthorized), exibe estado vazio padrão silenciosamente
+                recentSearches = [];
+                renderRecentSearches();
+            }
+        } catch (error) {
+            console.error('Erro ao carregar histórico de pesquisas:', error);
+            recentSearches = [];
+            renderRecentSearches();
+        }
+    };
+
+    // --- DELETAR HISTÓRICO DE PESQUISA ---
+    const deleteSearchHistory = async function (id, rowElement) {
+        const deleteBtn = rowElement.querySelector('.inputPesquisaExcluirButton');
+        if (deleteBtn) deleteBtn.disabled = true; // Impede múltiplos cliques
+
+        try {
+            const response = await fetch(historySearchApiUrl + '/' + id, {
+                method: 'DELETE',
+                credentials: 'include'
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.success) {
+                // Atualiza o array local
+                recentSearches = recentSearches.filter(item => String(item.id) !== String(id));
+                
+                // Atualiza a interface
+                rowElement.remove();
+                if (!recentSearches.length) {
+                    renderRecentSearches();
+                }
+            } else {
+                console.error(result.message || 'Erro ao deletar histórico.');
+                if (deleteBtn) deleteBtn.disabled = false;
+            }
+        } catch (error) {
+            console.error('Erro na requisição de exclusão:', error);
+            if (deleteBtn) deleteBtn.disabled = false;
+        }
+    };
+
     const renderRecentSearches = function () {
         const itemsHtml = recentSearches.length
-            ? recentSearches.map(function (term) {
-                return '<div class="inputPesquisaSugestaoRow">' +
+            ? recentSearches.map(function (item) {
+                const term = item.termo_pesquisa;
+                const id = item.id;
+                return '<div class="inputPesquisaSugestaoRow" data-id="' + id + '">' +
                     '<button type="button" class="inputPesquisaSugestaoItem" data-term="' + escapeHtml(term) + '">' + escapeHtml(term) + '</button>' +
-                    '<button type="button" class="inputPesquisaExcluirButton" aria-label="Excluir recente">X</button>' +
+                    '<button type="button" class="inputPesquisaExcluirButton" aria-label="Excluir recente" data-id="' + id + '">X</button>' +
                     '</div>';
             }).join('')
             : '<p class="inputPesquisaEstadoVazio">Nenhuma pesquisa recente.</p>';
@@ -266,10 +309,9 @@ document.addEventListener('DOMContentLoaded', function () {
         const itemsHtml = users.map(function (user) {
             const userId = escapeHtml(user.id);
             const userName = escapeHtml(user.nome || 'Usuário');
-            // Mapeando a foto_perfil da nova API, ou exibindo padrão caso nula
             const userPhoto = escapeHtml(user.foto_perfil || 'img/userProfile.png');
 
-            return '<a class="inputPesquisaResultadoItem" href="usuario.html?id=' + userId + '">' +
+            return '<a class="inputPesquisaResultadoItem" href="usuario.html?iduser=' + userId + '">' +
                 '<img class="inputPesquisaResultadoFoto" src="' + userPhoto + '" alt="">' +
                 '<span class="inputPesquisaResultadoNome">' + userName + '</span>' +
                 '</a>';
@@ -299,22 +341,18 @@ document.addEventListener('DOMContentLoaded', function () {
         renderSearchMessage('Usuários', 'Carregando usuários...');
 
         try {
-            // Nota: POST é necessário no fetch caso o corpo da requisição seja preenchido (body).
-            const response = await fetch(userSearchApiUrl, {
-                method: 'POST',
+            const urlBusca = userSearchApiUrl + '?termo=' + encodeURIComponent(term);
+            const response = await fetch(urlBusca, {
+                method: 'GET',
                 credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({
-                    termo: term
-                }),
                 signal: searchRequestController.signal
             });
 
             const result = await response.json();
 
-            // Interrompe se o usuário continuar digitando e nova requisição sobrescreveu essa
             if (requestToken !== searchRequestToken) {
                 return;
             }
@@ -427,7 +465,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (searchWrapper && searchInput && searchDropdown) {
         searchInput.setAttribute('aria-expanded', 'false');
-        renderRecentSearches();
+        
+        // Dispara requisição inicial para buscar histórico quando a página carrega
+        loadRecentSearches();
 
         searchInput.addEventListener('focus', syncSearchState);
         searchInput.addEventListener('click', syncSearchState);
@@ -450,36 +490,26 @@ document.addEventListener('DOMContentLoaded', function () {
         searchDropdown.addEventListener('click', function (event) {
             const deleteButton = event.target.closest('.inputPesquisaExcluirButton');
 
-            if (!deleteButton) {
-                const searchItemButton = event.target.closest('.inputPesquisaSugestaoItem');
-                if (searchItemButton) {
-                    const term = searchItemButton.dataset.term || searchItemButton.textContent.trim();
-                    searchInput.value = term;
-                    syncSearchState();
+            // Caso seja botão de deletar o histórico
+            if (deleteButton) {
+                event.preventDefault();
+                event.stopPropagation();
+
+                const id = deleteButton.getAttribute('data-id');
+                const row = deleteButton.closest('.inputPesquisaSugestaoRow');
+
+                if (id && row) {
+                    deleteSearchHistory(id, row);
                 }
                 return;
             }
 
-            event.preventDefault();
-            event.stopPropagation();
-
-            const row = deleteButton.closest('.inputPesquisaSugestaoRow');
-            if (row) {
-                const termButton = row.querySelector('.inputPesquisaSugestaoItem');
-                if (termButton) {
-                    const term = termButton.dataset.term || termButton.textContent.trim();
-                    const index = recentSearches.indexOf(term);
-
-                    if (index !== -1) {
-                        recentSearches.splice(index, 1);
-                    }
-                }
-
-                row.remove();
-
-                if (!recentSearches.length) {
-                    renderRecentSearches();
-                }
+            // Caso seja botão de sugestão (texto pesquisado)
+            const searchItemButton = event.target.closest('.inputPesquisaSugestaoItem');
+            if (searchItemButton) {
+                const term = searchItemButton.dataset.term || searchItemButton.textContent.trim();
+                searchInput.value = term;
+                syncSearchState();
             }
         });
     }
