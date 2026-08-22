@@ -1,347 +1,290 @@
+// js/conexao_com_api/carregar_configuracoes.js
+
 document.addEventListener('DOMContentLoaded', function () {
-	var fotoPerfil = document.getElementById('configuracoesPerfilFoto');
-	var nomePerfil = document.getElementById('configuracoesPerfilNome');
-	var localizacaoPerfil = document.getElementById('configuracoesPerfilLocalizacao');
-	var fotoInput = document.getElementById('configuracoesFotoInput');
-	var bannerInput = document.getElementById('configuracoesBannerInput');
-	var nomeInput = document.getElementById('configuracoesNomeInput');
-	var usernameInput = document.getElementById('configuracoesUsernameInput');
-	var descricaoInput = document.getElementById('configuracoesDescricaoInput');
-	var salvarInformacoesButton = document.getElementById('configuracoesSalvarInformacoes');
-	var informacoesFeedback = document.getElementById('configuracoesInformacoesFeedback');
-	var notificacoesLista = document.getElementById('configuracoesNotificacoesLista');
-	var usuarioAtual = null;
-	var textosNotificacoes = {
-		receber_comentarios: {
-			titulo: 'Comentários',
-			descricao: 'Receba avisos quando alguem comentar nos seus posts.'
-		},
-		receber_likes: {
-			titulo: 'Curtidas',
-			descricao: 'Receba avisos quando alguem curtir seus posts.'
-		},
-		receber_login: {
-			titulo: 'Login',
-			descricao: 'Receba avisos sobre acessos e atividades de login.'
-		},
-		receber_seguidores: {
-			titulo: 'Seguidores',
-			descricao: 'Receba avisos quando alguem comecar a seguir voce.'
-		}
-	};
+    const fotoPerfil = document.getElementById('configuracoesPerfilFoto');
+    const nomePerfil = document.getElementById('configuracoesPerfilNome');
+    const localizacaoPerfil = document.getElementById('configuracoesPerfilLocalizacao');
+    const salvarInformacoesButton = document.getElementById('configuracoesSalvarInformacoes');
+    const informacoesFeedback = document.getElementById('configuracoesInformacoesFeedback');
+    const notificacoesLista = document.getElementById('configuracoesNotificacoesLista');
+    
+    let usuarioAtual = null;
 
-	if (!fotoPerfil || !nomePerfil || !localizacaoPerfil) {
-		return;
-	}
+    async function inicializar() {
+        await carregarUsuario();
+        await carregarPreferenciasNotificacoes();
+    }
 
-	function aplicarDadosNoAside(usuario) {
-		var nome = usuario.nome || usuario.nome_de_usuario || 'Usuario';
-		var foto = usuario.foto || 'img/userProfilepreto.png';
-		var localizacao = usuario.localizacao || usuario.cidade || usuario.endereco || 'Sao Paulo - Matao';
+    async function carregarUsuario() {
+        try {
+            const response = await fetch(ip_api + '/auth/me', {
+                method: 'GET',
+                credentials: 'include'
+            });
 
-		nomePerfil.textContent = nome;
-		fotoPerfil.src = foto;
-		fotoPerfil.alt = 'Foto de perfil de ' + nome;
-		localizacaoPerfil.textContent = localizacao;
-	}
+            if (response.status === 401) {
+                window.location.href = 'login.html';
+                return;
+            }
 
-	function preencherFormularioInformacoes(usuario) {
-		if (nomeInput) {
-			nomeInput.value = usuario.nome || '';
-		}
+            const res = await response.json();
+            if (response.ok && res.success) {
+                usuarioAtual = res.data.usuario;
+                aplicarDadosNoAside(usuarioAtual);
+                renderizarFormularioInformacoes(usuarioAtual);
+            }
+        } catch (error) {
+            console.error('Erro ao carregar dados do usuário:', error);
+        }
+    }
 
-		if (usernameInput) {
-			usernameInput.value = usuario.nome_de_usuario || '';
-		}
+    function aplicarDadosNoAside(usuario) {
+        if (fotoPerfil) fotoPerfil.src = usuario.foto_perfil || 'img/userProfilepreto.png';
+        if (nomePerfil) nomePerfil.textContent = usuario.nome || usuario.nome_fantasia || 'Usuário';
+        
+        if (localizacaoPerfil) {
+            if (usuario.tipo_usuario === 'PF' && usuario.cidade) {
+                localizacaoPerfil.textContent = `${usuario.cidade} - ${usuario.estado || ''}`;
+            } else if (usuario.tipo_usuario === 'EMPRESA' && usuario.endereco_completo) {
+                localizacaoPerfil.textContent = usuario.endereco_completo;
+            } else {
+                localizacaoPerfil.textContent = 'Localização não informada';
+            }
+        }
+    }
 
-		if (descricaoInput) {
-			descricaoInput.value = usuario.descricao || '';
-		}
-	}
+    function renderizarFormularioInformacoes(usuario) {
+        const panelForm = document.querySelector('.minhas-informações .panel-form');
+        if (!panelForm) return;
 
-	function mostrarFeedbackInformacoes(mensagem, erro) {
-		if (!informacoesFeedback) {
-			return;
-		}
+        const inputsDeArquivo = Array.from(panelForm.querySelectorAll('.field-group--file'));
+        panelForm.innerHTML = '';
+        inputsDeArquivo.forEach(el => panelForm.appendChild(el));
 
-		informacoesFeedback.textContent = mensagem;
-		informacoesFeedback.style.color = erro ? '#b91c1c' : '#166534';
-	}
+        if (usuario.tipo_usuario === 'PF') {
+            criarCampoTexto(panelForm, 'nome_usuario', 'Nome público', usuario.nome_usuario || usuario.nome);
+            criarCampoTexto(panelForm, 'telefone', 'Telefone', usuario.telefone);
+            criarCampoTexto(panelForm, 'cidade', 'Cidade', usuario.cidade);
+            criarCampoTexto(panelForm, 'estado', 'Estado', usuario.estado);
+            criarCampoTextarea(panelForm, 'sobre', 'Sobre mim', usuario.sobre);
+            criarCampoTexto(panelForm, 'linkedin', 'LinkedIn URL', usuario.linkedin);
+            criarCampoTexto(panelForm, 'github', 'GitHub URL', usuario.github);
+            criarCampoTexto(panelForm, 'curriculo', 'Link do Currículo', usuario.curriculo);
+        } else if (usuario.tipo_usuario === 'EMPRESA') {
+            criarCampoTexto(panelForm, 'razao_social', 'Razão Social', usuario.razao_social);
+            criarCampoTexto(panelForm, 'nome_fantasia', 'Nome Fantasia', usuario.nome_fantasia || usuario.nome);
+            criarCampoTexto(panelForm, 'telefone_comercial', 'Telefone Comercial', usuario.telefone_comercial);
+            criarCampoTexto(panelForm, 'categoria_negocio', 'Categoria de Negócio', usuario.categoria_negocio);
+            criarCampoTexto(panelForm, 'numero_funcionarios', 'Número de Funcionários', usuario.numero_funcionarios, 'number');
+            criarCampoTexto(panelForm, 'endereco_completo', 'Endereço Completo', usuario.endereco_completo);
+            criarCampoTextarea(panelForm, 'descricao', 'Descrição da Empresa', usuario.descricao);
+            criarCampoTexto(panelForm, 'site', 'Site', usuario.site);
+        }
+    }
 
-	async function carregarUsuarioDaApi(idUsuario) {
-		var response = await fetch(ip_api + '/usuarios/' + idUsuario);
+    function criarCampoTexto(container, id, label, valor, type = 'text') {
+        const div = document.createElement('div');
+        div.className = 'field-group field-group--stack';
+        div.innerHTML = `
+            <span>${label}</span>
+            <input id="input_${id}" type="${type}" placeholder="${label}" value="${valor || ''}">
+        `;
+        container.appendChild(div);
+    }
 
-		if (!response.ok) {
-			throw new Error('Nao foi possivel carregar usuario');
-		}
+    function criarCampoTextarea(container, id, label, valor) {
+        const div = document.createElement('div');
+        div.className = 'field-group field-group--stack';
+        div.innerHTML = `
+            <span>${label}</span>
+            <textarea id="input_${id}" rows="4" placeholder="${label}">${valor || ''}</textarea>
+        `;
+        container.appendChild(div);
+    }
 
-		var data = await response.json();
-		if (!Array.isArray(data) || !data[0]) {
-			throw new Error('Usuario nao encontrado');
-		}
+    function mostrarFeedback(mensagem, ehErro) {
+        if (!informacoesFeedback) return;
+        informacoesFeedback.textContent = mensagem;
+        informacoesFeedback.style.color = ehErro ? '#b91c1c' : '#166534'; 
+    }
 
-		return data[0];
-	}
+    async function salvarInformacoes() {
+        if (!usuarioAtual) return;
+        
+        salvarInformacoesButton.disabled = true;
+        salvarInformacoesButton.textContent = 'Salvando...';
+        mostrarFeedback('', false);
 
-	async function atualizarUsuarioNaApi(idUsuario, formData) {
-		var response = await fetch(ip_api + '/usuarios/' + idUsuario, {
-			method: 'PUT',
-			body: formData
-		});
+        try {
+            const fotoInput = document.getElementById('configuracoesFotoInput');
+            if (fotoInput && fotoInput.files[0]) {
+                const fdFoto = new FormData();
+                fdFoto.append('foto', fotoInput.files[0]);
+                await fetch(ip_api + '/usuarios/foto-perfil', {
+                    method: 'PUT',
+                    credentials: 'include',
+                    body: fdFoto
+                });
+            }
 
-		if (!response.ok) {
-			throw new Error('Nao foi possivel atualizar usuario');
-		}
+            const bannerInput = document.getElementById('configuracoesBannerInput');
+            if (bannerInput && bannerInput.files[0]) {
+                const fdBanner = new FormData();
+                fdBanner.append('banner', bannerInput.files[0]);
+                await fetch(ip_api + '/usuarios/banner-perfil', {
+                    method: 'PUT',
+                    credentials: 'include',
+                    body: fdBanner
+                });
+            }
 
-		return response.json();
-	}
+            let corpoRequisicao = {};
+            let endpoint = '';
 
-	async function carregarPreferenciasNotificacoesDaApi(idUsuario) {
-		var response = await fetch(ip_api + '/usuarios/preferencias-notificacoes/' + idUsuario);
+            if (usuarioAtual.tipo_usuario === 'PF') {
+                endpoint = '/usuarios/perfil-pessoa-física';
+                corpoRequisicao = {
+                    nome_usuario: document.getElementById('input_nome_usuario')?.value,
+                    telefone: document.getElementById('input_telefone')?.value,
+                    cidade: document.getElementById('input_cidade')?.value,
+                    estado: document.getElementById('input_estado')?.value,
+                    sobre: document.getElementById('input_sobre')?.value,
+                    linkedin: document.getElementById('input_linkedin')?.value,
+                    github: document.getElementById('input_github')?.value,
+                    curriculo: document.getElementById('input_curriculo')?.value
+                };
+            } else {
+                endpoint = '/usuarios/perfil-empresa';
+                const inputNumFunc = document.getElementById('input_numero_funcionarios')?.value;
+                corpoRequisicao = {
+                    razao_social: document.getElementById('input_razao_social')?.value,
+                    nome_fantasia: document.getElementById('input_nome_fantasia')?.value,
+                    telefone_comercial: document.getElementById('input_telefone_comercial')?.value,
+                    categoria_negocio: document.getElementById('input_categoria_negocio')?.value,
+                    numero_funcionarios: inputNumFunc ? parseInt(inputNumFunc, 10) : null,
+                    endereco_completo: document.getElementById('input_endereco_completo')?.value,
+                    descricao: document.getElementById('input_descricao')?.value,
+                    site: document.getElementById('input_site')?.value
+                };
+            }
 
-		if (!response.ok) {
-			throw new Error('Nao foi possivel carregar preferencias de notificacoes');
-		}
+            const response = await fetch(ip_api + endpoint, {
+                method: 'PUT',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(corpoRequisicao)
+            });
 
-		return response.json();
-	}
+            const res = await response.json();
 
-	async function atualizarPreferenciaNotificacaoNaApi(idUsuario, nomeNotificacao, preferencia) {
-		var response = await fetch(ip_api + '/usuarios/preferencias-notificacoes/' + idUsuario, {
-			method: 'PUT',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				nome_notificacao: nomeNotificacao,
-				preferencia: String(preferencia)
-			})
-		});
+            if (response.ok) {
+                mostrarFeedback('Configurações salvas com sucesso!', false);
+                if(fotoInput) fotoInput.value = '';
+                if(bannerInput) bannerInput.value = '';
+                await carregarUsuario(); 
+            } else {
+                mostrarFeedback(res.message || 'Erro ao salvar as configurações.', true);
+            }
 
-		if (!response.ok) {
-			throw new Error('Nao foi possivel atualizar preferencia de notificacao');
-		}
+        } catch (error) {
+            console.error(error);
+            mostrarFeedback('Falha na conexão com o servidor.', true);
+        } finally {
+            salvarInformacoesButton.disabled = false;
+            salvarInformacoesButton.textContent = 'Salvar';
+        }
+    }
 
-		return response.json();
-	}
+    if (salvarInformacoesButton) {
+        salvarInformacoesButton.addEventListener('click', salvarInformacoes);
+    }
 
-	function getTextoNotificacao(nomeNotificacao) {
-		if (textosNotificacoes[nomeNotificacao]) {
-			return textosNotificacoes[nomeNotificacao];
-		}
+    const dicNotificacoes = {
+        email_like_post: { titulo: 'Curtidas', descricao: 'Avisos quando alguém curtir seus posts.' },
+        email_novo_seguidor: { titulo: 'Seguidores', descricao: 'Avisos quando alguém começar a seguir você.' },
+        email_login: { titulo: 'Login', descricao: 'Avisos sobre acessos e atividades na sua conta.' },
+        email_comentarios: { titulo: 'Comentários', descricao: 'Avisos de comentários nos seus posts.' }
+    };
 
-		return {
-			titulo: nomeNotificacao.replace(/_/g, ' '),
-			descricao: 'Ative ou desative esta preferencia de notificacao.'
-		};
-	}
+    async function carregarPreferenciasNotificacoes() {
+        if (!notificacoesLista) return;
 
-	function renderizarPreferenciasNotificacoes(preferencias) {
-		if (!notificacoesLista) {
-			return;
-		}
+        try {
+            const response = await fetch(ip_api + '/preferencias-notificacoes', {
+                method: 'GET',
+                credentials: 'include'
+            });
 
-		notificacoesLista.innerHTML = '';
+            const res = await response.json();
+            if (response.ok && res.success && res.data) {
+                renderizarListaNotificacoes(res.data);
+            } else {
+                notificacoesLista.innerHTML = '<p class="field-note">Não foi possível carregar as preferências.</p>';
+            }
+        } catch (error) {
+            notificacoesLista.innerHTML = '<p class="field-note">Erro de conexão ao carregar preferências.</p>';
+        }
+    }
 
-		if (!Array.isArray(preferencias) || !preferencias.length) {
-			notificacoesLista.innerHTML = '<p class="field-note">Nenhuma preferencia de notificacao encontrada.</p>';
-			return;
-		}
+    function renderizarListaNotificacoes(preferencias) {
+        notificacoesLista.innerHTML = '';
+        
+        for (const [chave, valor] of Object.entries(preferencias)) {
+            const infoTextos = dicNotificacoes[chave] || { titulo: chave, descricao: 'Ative ou desative esta notificação.' };
+            
+            const row = document.createElement('div');
+            row.className = 'panel-row panel-row--split';
+            row.innerHTML = `
+                <div>
+                    <strong>${infoTextos.titulo}</strong>
+                    <span>${infoTextos.descricao}</span>
+                </div>
+                <label class="toggle">
+                    <input type="checkbox" data-chave="${chave}" ${valor === true ? 'checked' : ''}>
+                    <span></span>
+                </label>
+            `;
+            notificacoesLista.appendChild(row);
+        }
 
-		preferencias.forEach(function (preferencia) {
-			var texto = getTextoNotificacao(preferencia.nome_notificacao);
-			var row = document.createElement('div');
-			var content = document.createElement('div');
-			var titulo = document.createElement('strong');
-			var descricao = document.createElement('span');
-			var label = document.createElement('label');
-			var input = document.createElement('input');
-			var slider = document.createElement('span');
+        notificacoesLista.querySelectorAll('input[type="checkbox"]').forEach(input => {
+            input.addEventListener('change', alterarPreferenciaIndividual);
+        });
+    }
 
-			row.className = 'panel-row panel-row--split';
-			titulo.textContent = texto.titulo;
-			descricao.textContent = texto.descricao;
+    async function alterarPreferenciaIndividual(event) {
+        const input = event.target;
+        const chave = input.dataset.chave;
+        const novoValor = input.checked;
+        
+        input.disabled = true;
 
-			label.className = 'toggle';
-			input.type = 'checkbox';
-			input.checked = Number(preferencia.preferencia) === 1;
-			input.dataset.nomeNotificacao = preferencia.nome_notificacao;
+        try {
+            const corpoRequisicao = {
+                preferencias: {}
+            };
+            corpoRequisicao.preferencias[chave] = novoValor;
 
-			label.appendChild(input);
-			label.appendChild(slider);
-			content.appendChild(titulo);
-			content.appendChild(descricao);
-			row.appendChild(content);
-			row.appendChild(label);
-			notificacoesLista.appendChild(row);
-		});
-	}
+            const response = await fetch(ip_api + '/preferencias-notificacoes', {
+                method: 'PUT',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(corpoRequisicao)
+            });
 
-	async function carregarPreferenciasNotificacoes(idUsuario) {
-		if (!notificacoesLista || !idUsuario) {
-			return;
-		}
+            const res = await response.json();
 
-		notificacoesLista.innerHTML = '<p class="field-note">Carregando preferencias de notificacoes...</p>';
+            if (!response.ok || !res.success) {
+                throw new Error(res.message || 'Erro ao atualizar preferência');
+            }
+        } catch (error) {
+            console.error('Erro ao atualizar notificação:', error);
+            input.checked = !novoValor;
+            alert('Não foi possível alterar a configuração. Tente novamente.');
+        } finally {
+            input.disabled = false;
+        }
+    }
 
-		try {
-			var preferencias = await carregarPreferenciasNotificacoesDaApi(idUsuario);
-			renderizarPreferenciasNotificacoes(preferencias);
-		} catch (error) {
-			notificacoesLista.innerHTML = '<p class="field-note">Nao foi possivel carregar suas preferencias de notificacoes.</p>';
-		}
-	}
-
-	async function alterarPreferenciaNotificacao(event) {
-		var input = event.target;
-
-		if (!input || input.type !== 'checkbox' || !input.dataset.nomeNotificacao || !usuarioAtual || !usuarioAtual.id) {
-			return;
-		}
-
-		var valorAnterior = input.checked ? 0 : 1;
-		var novoValor = input.checked ? 1 : 0;
-
-		input.disabled = true;
-
-		try {
-			await atualizarPreferenciaNotificacaoNaApi(usuarioAtual.id, input.dataset.nomeNotificacao, novoValor);
-		} catch (error) {
-			input.checked = Number(valorAnterior) === 1;
-			alert('Nao foi possivel atualizar esta preferencia de notificacao.');
-		} finally {
-			input.disabled = false;
-		}
-	}
-
-	function montarFormDataAlteracoes() {
-		var formData = new FormData();
-		var possuiAlteracao = false;
-
-		if (fotoInput && fotoInput.files && fotoInput.files[0]) {
-			formData.append('foto', fotoInput.files[0]);
-			possuiAlteracao = true;
-		}
-
-		if (bannerInput && bannerInput.files && bannerInput.files[0]) {
-			formData.append('banner', bannerInput.files[0]);
-			possuiAlteracao = true;
-		}
-
-		if (nomeInput && nomeInput.value !== (usuarioAtual.nome || '')) {
-			formData.append('nome', nomeInput.value);
-			possuiAlteracao = true;
-		}
-
-		if (usernameInput && usernameInput.value !== (usuarioAtual.nome_de_usuario || '')) {
-			formData.append('nome_de_usuario', usernameInput.value);
-			possuiAlteracao = true;
-		}
-
-		if (descricaoInput && descricaoInput.value !== (usuarioAtual.descricao || '')) {
-			formData.append('descricao', descricaoInput.value);
-			possuiAlteracao = true;
-		}
-
-		return possuiAlteracao ? formData : null;
-	}
-
-	function atualizarUsuarioLogado(usuarioAtualizado) {
-		if (typeof setUsuarioLogado !== 'function' || typeof getUsuarioLogado !== 'function') {
-			return;
-		}
-
-		var usuarioLocal = getUsuarioLogado() || {};
-		setUsuarioLogado({
-			id: usuarioAtualizado.id,
-			nome: usuarioAtualizado.nome,
-			foto: usuarioAtualizado.foto,
-			tema: usuarioAtualizado.tema,
-			token: usuarioLocal.token || ''
-		});
-	}
-
-	async function salvarInformacoesUsuario() {
-		if (!usuarioAtual || !usuarioAtual.id) {
-			mostrarFeedbackInformacoes('Usuario nao encontrado. Faca login novamente.', true);
-			return;
-		}
-
-		var formData = montarFormDataAlteracoes();
-		if (!formData) {
-			mostrarFeedbackInformacoes('Nenhuma alteracao para salvar.', false);
-			return;
-		}
-
-		if (salvarInformacoesButton) {
-			salvarInformacoesButton.disabled = true;
-			salvarInformacoesButton.textContent = 'Salvando...';
-		}
-
-		mostrarFeedbackInformacoes('', false);
-
-		try {
-			await atualizarUsuarioNaApi(usuarioAtual.id, formData);
-
-			var usuarioAtualizado = await carregarUsuarioDaApi(usuarioAtual.id);
-			usuarioAtual = usuarioAtualizado;
-			aplicarDadosNoAside(usuarioAtualizado);
-			preencherFormularioInformacoes(usuarioAtualizado);
-			atualizarUsuarioLogado(usuarioAtualizado);
-
-			if (fotoInput) {
-				fotoInput.value = '';
-			}
-
-			if (bannerInput) {
-				bannerInput.value = '';
-			}
-
-			mostrarFeedbackInformacoes('Informacoes salvas com sucesso.', false);
-		} catch (error) {
-			mostrarFeedbackInformacoes('Nao foi possivel salvar suas informacoes.', true);
-		} finally {
-			if (salvarInformacoesButton) {
-				salvarInformacoesButton.disabled = false;
-				salvarInformacoesButton.textContent = 'Salvar';
-			}
-		}
-	}
-
-	async function carregarConfiguracoesUsuario() {
-		if (typeof getUsuarioLogado !== 'function') {
-			return;
-		}
-
-		var usuarioLocal = getUsuarioLogado();
-		if (!usuarioLocal || !usuarioLocal.id) {
-			return;
-		}
-
-		usuarioAtual = usuarioLocal;
-		aplicarDadosNoAside(usuarioLocal);
-		preencherFormularioInformacoes(usuarioLocal);
-		carregarPreferenciasNotificacoes(usuarioLocal.id);
-
-		try {
-			var usuarioApi = await carregarUsuarioDaApi(usuarioLocal.id);
-			usuarioAtual = usuarioApi;
-			aplicarDadosNoAside(usuarioApi);
-			preencherFormularioInformacoes(usuarioApi);
-		} catch (error) {
-			usuarioAtual = usuarioLocal;
-			aplicarDadosNoAside(usuarioLocal);
-			preencherFormularioInformacoes(usuarioLocal);
-		}
-	}
-
-	if (salvarInformacoesButton) {
-		salvarInformacoesButton.addEventListener('click', salvarInformacoesUsuario);
-	}
-
-	if (notificacoesLista) {
-		notificacoesLista.addEventListener('change', alterarPreferenciaNotificacao);
-	}
-
-	carregarConfiguracoesUsuario();
+    inicializar();
 });
