@@ -28,7 +28,10 @@ document.addEventListener('DOMContentLoaded', function () {
 	var replyTarget = document.getElementById('replyTarget');
 	var replyTargetText = document.getElementById('replyTargetText');
 	var cancelReplyButton = document.getElementById('cancelReply');
+	
+	// Utilizado apenas para saber se é o próprio usuário (para ocultar o botão de seguir)
 	var loggedUser = typeof getUsuarioLogado === 'function' ? getUsuarioLogado() : null;
+	
 	var postsCache = [];
 	var postsById = {};
 	var postState = {};
@@ -36,9 +39,6 @@ document.addEventListener('DOMContentLoaded', function () {
 	var replyState = null;
 	var feedRequestId = 0;
 
-	// O modal pode ser reutilizado em outras páginas (ex.: perfil) que nao tem feed.
-	// Nem todos os botoes sao obrigatorios em todas as paginas (ex.: favorito pode estar ausente),
-	// portanto checamos apenas os elementos essenciais.
 	if (!modal || !modalTitle || !modalAuthorName || !modalAuthorAvatar || !modalGallery || !modalLikeButton || !modalShareButton || !modalCloseButton || !modalOverlay) {
 		return;
 	}
@@ -63,53 +63,29 @@ document.addEventListener('DOMContentLoaded', function () {
 	}
 
 	function rememberPost(post) {
-		if (!post || post.id == null) {
-			return;
-		}
-
+		if (!post || post.id == null) return;
 		var numericId = Number(post.id);
-		if (!numericId) {
-			return;
-		}
+		if (!numericId) return;
 
 		postsById[numericId] = post;
 		for (var index = 0; index < postsCache.length; index += 1) {
-			if (Number(postsCache[index].id) === numericId) {
-				return;
-			}
+			if (Number(postsCache[index].id) === numericId) return;
 		}
 		postsCache.push(post);
 	}
 
-	function getCurrentUserName() {
-		if (loggedUser && loggedUser.nome) {
-			return loggedUser.nome;
-		}
-		return 'Você';
-	}
-
 	function hideReplyTarget() {
 		replyState = null;
-		if (!replyTarget) {
-			return;
-		}
+		if (!replyTarget) return;
 		replyTarget.hidden = true;
-		if (replyTargetText) {
-			replyTargetText.textContent = '';
-		}
-		if (commentInput) {
-			commentInput.placeholder = 'Adicione um comentário...';
-		}
+		if (replyTargetText) replyTargetText.textContent = '';
+		if (commentInput) commentInput.placeholder = 'Adicione um comentário...';
 	}
 
 	function showReplyTarget(commentId, userName) {
 		replyState = commentId;
-		if (!replyTarget) {
-			return;
-		}
-		if (replyTargetText) {
-			replyTargetText.textContent = 'Respondendo ' + userName;
-		}
+		if (!replyTarget) return;
+		if (replyTargetText) replyTargetText.textContent = 'Respondendo ' + userName;
 		replyTarget.hidden = false;
 		if (commentInput) {
 			commentInput.placeholder = 'Escreva sua resposta...';
@@ -118,46 +94,74 @@ document.addEventListener('DOMContentLoaded', function () {
 	}
 
 	function openUserProfile(userId) {
-		if (!userId) {
-			return;
-		}
-
+		if (!userId) return;
 		window.location.href = 'usuario.html?id=' + encodeURIComponent(userId);
 	}
 
 	function normalizeComment(comment) {
-		var replies = Array.isArray(comment && (comment.respostas || comment.replies))
-			? (comment.respostas || comment.replies)
-			: [];
-
 		return {
-			id: comment && comment.id != null ? comment.id : 'c-' + Date.now(),
-			userId: comment && comment.user_id != null ? comment.user_id : comment && comment.userId != null ? comment.userId : '',
-			user: comment && comment.nome ? comment.nome : comment && comment.user ? comment.user : 'Usuário',
-			photo: comment && comment.foto ? comment.foto : comment && comment.photo ? comment.photo : 'img/userProfile.png',
-			text: comment && comment.comentario ? comment.comentario : comment && comment.text ? comment.text : '',
-			replies: replies.map(normalizeComment)
+			id: comment.id,
+			userId: comment.usuario?.id || '',
+			user: comment.usuario?.nome || 'Usuário',
+			photo: comment.usuario?.foto_perfil || 'img/userProfile.png',
+			text: comment.comentario,
+			date: comment.data_comentario,
+			repliesCount: comment.quantidade_respostas || 0
+		};
+	}
+
+	function normalizeReply(reply) {
+		return {
+			id: reply.id,
+			userId: reply.usuario?.id || '',
+			user: reply.usuario?.nome || 'Usuário',
+			photo: reply.usuario?.foto_perfil || 'img/userProfile.png',
+			text: reply.resposta,
+			date: reply.data_resposta
 		};
 	}
 
 	function makeProfileTrigger(element, userId, userName) {
-		if (!element || !userId) {
-			return;
-		}
-
+		if (!element || !userId) return;
 		element.style.cursor = 'pointer';
 		element.setAttribute('role', 'link');
 		element.setAttribute('tabindex', '0');
 		element.setAttribute('aria-label', 'Abrir perfil de ' + (userName || 'usuário'));
-		element.addEventListener('click', function () {
-			openUserProfile(userId);
-		});
+		element.addEventListener('click', function () { openUserProfile(userId); });
 		element.addEventListener('keydown', function (event) {
 			if (event.key === 'Enter' || event.key === ' ') {
 				event.preventDefault();
 				openUserProfile(userId);
 			}
 		});
+	}
+
+	// Busca as respostas de um comentário na API
+	async function loadRepliesForComment(commentId, repliesContainer, loadButton) {
+		loadButton.textContent = 'Carregando...';
+		loadButton.disabled = true;
+
+		try {
+			var response = await fetch(ip_api + '/posts/comentarios/' + commentId + '/respostas', {
+				method: 'GET',
+				credentials: 'include'
+			});
+			var data = await response.json();
+
+			if (response.ok && data.success && data.data) {
+				var replies = data.data.map(normalizeReply);
+				repliesContainer.innerHTML = ''; // Limpa o botão
+				replies.forEach(function (reply) {
+					repliesContainer.appendChild(createCommentNode(reply, true));
+				});
+			} else {
+				loadButton.textContent = 'Erro ao carregar';
+			}
+		} catch (error) {
+			console.error(error);
+			loadButton.textContent = 'Erro ao carregar';
+			loadButton.disabled = false;
+		}
 	}
 
 	function createCommentNode(comment, isReply) {
@@ -174,7 +178,6 @@ document.addEventListener('DOMContentLoaded', function () {
 			avatar.style.backgroundImage = 'url("' + String(comment.photo).replace(/"/g, '\\"') + '")';
 			avatar.style.backgroundSize = 'cover';
 			avatar.style.backgroundPosition = 'center';
-			avatar.style.backgroundRepeat = 'no-repeat';
 		}
 
 		var body = document.createElement('div');
@@ -196,7 +199,9 @@ document.addEventListener('DOMContentLoaded', function () {
 		replyBtn.className = 'post-modal__comment-reply';
 		replyBtn.textContent = 'Responder';
 		replyBtn.addEventListener('click', function () {
-			showReplyTarget(comment.id, comment.user || 'Usuário');
+			// Se for uma resposta, respondemos ao comentário principal (não aninhamos infinitamente)
+			var targetId = isReply ? wrapper.parentElement.dataset.commentId : comment.id;
+			showReplyTarget(targetId || comment.id, comment.user || 'Usuário');
 		});
 
 		body.appendChild(user);
@@ -207,14 +212,20 @@ document.addEventListener('DOMContentLoaded', function () {
 		row.appendChild(body);
 		wrapper.appendChild(row);
 
-		if (Array.isArray(comment.replies) && comment.replies.length) {
+		// Se o comentário principal possuir respostas, cria um botão para carregá-las
+		if (!isReply && comment.repliesCount > 0) {
 			var repliesWrapper = document.createElement('div');
 			repliesWrapper.className = 'post-modal__replies';
+			repliesWrapper.dataset.commentId = comment.id;
 
-			comment.replies.forEach(function (reply) {
-				repliesWrapper.appendChild(createCommentNode(reply, true));
+			var loadRepliesBtn = document.createElement('button');
+			loadRepliesBtn.className = 'post-modal__load-replies';
+			loadRepliesBtn.textContent = 'Ver ' + comment.repliesCount + ' resposta(s)';
+			loadRepliesBtn.addEventListener('click', function() {
+				loadRepliesForComment(comment.id, repliesWrapper, loadRepliesBtn);
 			});
 
+			repliesWrapper.appendChild(loadRepliesBtn);
 			wrapper.appendChild(repliesWrapper);
 		}
 
@@ -222,9 +233,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	}
 
 	function renderComments(postId) {
-		if (!commentsList) {
-			return;
-		}
+		if (!commentsList) return;
 
 		var state = postState[postId];
 		if (!state) {
@@ -233,12 +242,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		}
 
 		if (state.commentsLoading) {
-			commentsList.innerHTML = '<p class="post-modal__comments-empty">Carregando comentários...</p>';
-			return;
-		}
-
-		if (state.commentsError) {
-			commentsList.innerHTML = '<p class="post-modal__comments-empty">' + state.commentsError + '</p>';
+			commentsList.innerHTML = '<p class="post-modal__comments-empty">Carregando detalhes do post...</p>';
 			return;
 		}
 
@@ -258,27 +262,38 @@ document.addEventListener('DOMContentLoaded', function () {
 		});
 	}
 
-	async function loadComments(postId) {
+	// Unificamos o carregamento de Comentários, Likes e Favoritos através da rota de detalhes do post
+	async function loadPostDetails(postId) {
 		var state = postState[postId];
-		if (!state) {
-			return;
-		}
+		if (!state) return;
 
 		state.commentsLoading = true;
-		state.commentsError = '';
 		renderComments(postId);
 
 		try {
-			var response = await fetch(ip_api + '/comentarios/' + encodeURIComponent(postId));
-			if (!response.ok) {
-				throw new Error('Falha ao carregar comentarios');
-			}
-
+			var response = await fetch(ip_api + '/posts/' + encodeURIComponent(postId), {
+				method: 'GET',
+				credentials: 'include'
+			});
+			
 			var data = await response.json();
-			state.comments = Array.isArray(data) ? data.map(normalizeComment) : [];
+			
+			if (response.ok && data.success && data.data) {
+				var detailData = data.data;
+				
+				state.liked = !!detailData.usuario_curtiu;
+				state.favorite = !!detailData.usuario_salvou;
+				state.totalLikes = Number(detailData.likes) || 0;
+				state.comments = Array.isArray(detailData.comentarios) ? detailData.comentarios.map(normalizeComment) : [];
+				
+				updateLikeButton(postId);
+				updateFavoriteButton(postId);
+			} else {
+				throw new Error(data.message || 'Falha ao carregar detalhes');
+			}
 		} catch (error) {
-			state.comments = [];
-			state.commentsError = 'Nao foi possivel carregar os comentarios.';
+			console.error(error);
+			commentsList.innerHTML = '<p class="post-modal__comments-empty">Não foi possível carregar as informações do post.</p>';
 		} finally {
 			state.commentsLoading = false;
 			renderComments(postId);
@@ -286,206 +301,99 @@ document.addEventListener('DOMContentLoaded', function () {
 	}
 
 	async function submitComment(postId, rawText) {
-		var state = postState[postId];
-		if (!state) {
-			return;
-		}
-
 		var text = (rawText || '').trim();
-		if (!text || !loggedUser || !loggedUser.id) {
-			return;
-		}
+		if (!text) return;
 
+		sendCommentButton.disabled = true;
+
+		// Se tem replyState, a rota é de resposta. Se não, é comentário comum.
 		var endpoint = replyState
-			? '/comentarios/' + encodeURIComponent(postId) + '/responder/' + encodeURIComponent(replyState)
-			: '/comentarios/' + encodeURIComponent(postId);
+			? '/posts/' + encodeURIComponent(replyState) + '/comentarios'
+			: '/posts/' + encodeURIComponent(postId) + '/comentarios';
 
-		var response = await fetch(ip_api + endpoint, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				idusuario: String(loggedUser.id),
-				conteudo: text
-			})
-		});
+		var bodyPayload = replyState 
+			? { resposta: text } 
+			: { comentario: text };
 
-		if (!response.ok) {
-			throw new Error('Falha ao enviar comentario');
+		try {
+			var response = await fetch(ip_api + endpoint, {
+				method: 'POST',
+				credentials: 'include',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(bodyPayload)
+			});
+			
+			var data = await response.json();
+
+			if (!response.ok || !data.success) {
+				throw new Error(data.message || 'Falha ao enviar comentário');
+			}
+
+			hideReplyTarget();
+			if (commentInput) commentInput.value = '';
+			
+			// Recarrega os detalhes do post para trazer o comentário atualizado
+			await loadPostDetails(postId);
+			
+		} catch (error) {
+			console.error(error);
+			alert('Não foi possível enviar o comentário.');
+		} finally {
+			sendCommentButton.disabled = false;
 		}
-
-		hideReplyTarget();
-		if (commentInput) {
-			commentInput.value = '';
-		}
-
-		await loadComments(postId);
 	}
 
 	function formatDate(value) {
-		if (!value) {
-			return '';
-		}
-
+		if (!value) return '';
 		var date = new Date(value);
-		if (Number.isNaN(date.getTime())) {
-			return '';
-		}
-
-		return date.toLocaleDateString('pt-BR', {
-			day: '2-digit',
-			month: 'short',
-			year: 'numeric'
-		});
+		if (Number.isNaN(date.getTime())) return '';
+		return date.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' });
 	}
 
-	function getRelativeTime(value) {
-		if (!value) {
-			return '';
-		}
-
-		var date = new Date(value);
-		if (Number.isNaN(date.getTime())) {
-			return '';
-		}
-
-		var diffMs = Date.now() - date.getTime();
-		if (diffMs < 0) {
-			diffMs = 0;
-		}
-
-		var seconds = Math.floor(diffMs / 1000);
-		if (seconds < 60) {
-			return 'agora mesmo';
-		}
-
-		var minutes = Math.floor(seconds / 60);
-		if (minutes < 60) {
-			return minutes === 1 ? 'há 1 minuto' : 'há ' + minutes + ' minutos';
-		}
-
-		var hours = Math.floor(minutes / 60);
-		if (hours < 24) {
-			return hours === 1 ? 'há 1 hora' : 'há ' + hours + ' horas';
-		}
-
-		var days = Math.floor(hours / 24);
-		if (days < 30) {
-			return days === 1 ? 'há 1 dia' : 'há ' + days + ' dias';
-		}
-
-		var months = Math.floor(days / 30);
-		if (months < 12) {
-			return months === 1 ? 'há 1 mês' : 'há ' + months + ' meses';
-		}
-
-		var years = Math.floor(months / 12);
-		return years === 1 ? 'há 1 ano' : 'há ' + years + ' anos';
-	}
-
+	// Funções auxiliares para lidar com as diferenças do JSON retornado pela Feed
 	function getPostImage(post) {
-		if (Array.isArray(post.imagens) && post.imagens.length > 0) {
-			return post.imagens[0];
-		}
-
+		if (post.capa) return post.capa;
+		if (Array.isArray(post.imagens) && post.imagens.length > 0) return post.imagens[0];
 		return 'img/logo.png';
 	}
 
 	function getPostImages(post) {
-		if (Array.isArray(post.imagens) && post.imagens.length > 0) {
-			return post.imagens.filter(Boolean);
-		}
-
-		return [getPostImage(post)];
+		if (Array.isArray(post.imagens) && post.imagens.length > 0) return post.imagens.filter(Boolean);
+		if (post.capa) return [post.capa];
+		return ['img/logo.png'];
 	}
 
 	function getPostAuthor(post) {
-		return post.user && post.user.nome ? post.user.nome : 'Usuário';
+		return post.criador?.nome || post.nome || 'Usuário';
 	}
 
 	function getPostAuthorPhoto(post) {
-		return post.user && post.user.foto ? post.user.foto : 'img/userProfile.png';
+		return post.criador?.foto_perfil || post.foto_perfil || 'img/userProfile.png';
 	}
 
 	function getPostAuthorId(post) {
-		if (!post) {
-			return null;
-		}
-
-		if (post.user && post.user.id != null) {
-			return post.user.id;
-		}
-
-		if (post.id_usuario != null) {
-			return post.id_usuario;
-		}
-
-		if (post.user_id != null) {
-			return post.user_id;
-		}
-
-		if (post.idUsuario != null) {
-			return post.idUsuario;
-		}
-
-		return null;
+		return post.criador?.id || post.usuario_id || null;
 	}
 
 	function esconderBotaoSeguirModal(esconder) {
-		if (!modalSidebarFollowButton) {
-			return;
-		}
-
+		if (!modalSidebarFollowButton) return;
 		modalSidebarFollowButton.style.display = esconder ? 'none' : '';
 	}
 
 	function atualizarBotaoSeguirModal(estaSeguindo) {
-		if (!modalSidebarFollowButton) {
-			return;
-		}
-
+		if (!modalSidebarFollowButton) return;
 		modalSidebarFollowButton.textContent = estaSeguindo ? 'Deixar de seguir' : 'Seguir';
 		modalSidebarFollowButton.classList.toggle('is-following', !!estaSeguindo);
 		modalSidebarFollowButton.setAttribute('aria-pressed', estaSeguindo ? 'true' : 'false');
-	}
-
-	async function verificarSeSegueAutor(idLogado, idAutor) {
-		var response = await fetch(ip_api + '/usuarios/verificarsesegue/' + encodeURIComponent(idLogado) + '/' + encodeURIComponent(idAutor));
-
-		if (!response.ok) {
-			throw new Error('Falha ao verificar se segue o usuario');
-		}
-
-		var data = await response.json();
-		return !!(data && data.segue);
-	}
-
-	async function alternarSeguimentoAutor(idLogado, idAutor) {
-		var response = await fetch(ip_api + '/usuarios/seguir-usuario/' + encodeURIComponent(idLogado) + '/' + encodeURIComponent(idAutor), {
-			method: 'POST'
-		});
-
-		if (!response.ok) {
-			throw new Error('Falha ao alternar seguimento');
-		}
-
-		return response.json();
+		// Salva o estado atual no botão para ser lido no toggle
+		modalSidebarFollowButton.dataset.seguindo = estaSeguindo ? '1' : '0';
 	}
 
 	async function inicializarBotaoSeguirModal(post) {
-		if (!modalSidebarFollowButton) {
-			return;
-		}
+		if (!modalSidebarFollowButton) return;
 
 		var idAutor = getPostAuthorId(post);
-
-		if (!loggedUser || !loggedUser.id || !idAutor) {
-			esconderBotaoSeguirModal(true);
-			return;
-		}
-
-		if (String(loggedUser.id) === String(idAutor)) {
+		if (!idAutor || (loggedUser && String(loggedUser.id) === String(idAutor))) {
 			esconderBotaoSeguirModal(true);
 			return;
 		}
@@ -494,8 +402,17 @@ document.addEventListener('DOMContentLoaded', function () {
 		modalSidebarFollowButton.disabled = true;
 
 		try {
-			var estaSeguindo = await verificarSeSegueAutor(loggedUser.id, idAutor);
-			atualizarBotaoSeguirModal(estaSeguindo);
+			var response = await fetch(ip_api + '/seguidores/status/' + encodeURIComponent(idAutor), {
+				method: 'GET',
+				credentials: 'include'
+			});
+			var data = await response.json();
+			
+			if (response.ok && data.success && data.data) {
+				atualizarBotaoSeguirModal(data.data.seguindo);
+			} else {
+				atualizarBotaoSeguirModal(false);
+			}
 		} catch (error) {
 			console.error(error);
 			atualizarBotaoSeguirModal(false);
@@ -504,19 +421,31 @@ document.addEventListener('DOMContentLoaded', function () {
 		}
 	}
 
+	async function alternarSeguimentoAutor(idAutor) {
+		var estaSeguindo = modalSidebarFollowButton.dataset.seguindo === '1';
+		var method = estaSeguindo ? 'DELETE' : 'POST';
+
+		var response = await fetch(ip_api + '/seguidores/' + encodeURIComponent(idAutor), {
+			method: method,
+			credentials: 'include'
+		});
+		
+		var data = await response.json();
+
+		if (!response.ok || !data.success) {
+			throw new Error(data.message || 'Falha ao alternar seguimento');
+		}
+
+		// Se tudo deu certo, inverte o status local
+		atualizarBotaoSeguirModal(!estaSeguindo);
+	}
+
 	function getPostIdFromUrl() {
 		var params = new URLSearchParams(window.location.search);
 		var rawValue = params.get(POST_ID_QUERY_KEY);
-		if (!rawValue) {
-			return null;
-		}
-
+		if (!rawValue) return null;
 		var parsed = Number(rawValue);
-		if (!Number.isInteger(parsed) || parsed <= 0) {
-			return null;
-		}
-
-		return parsed;
+		return (!Number.isInteger(parsed) || parsed <= 0) ? null : parsed;
 	}
 
 	function setPostIdInUrl(postId) {
@@ -531,25 +460,12 @@ document.addEventListener('DOMContentLoaded', function () {
 		history.replaceState({}, '', url);
 	}
 
-	function getCurrentPostShareUrl() {
-		var postId = Number(modal.dataset.currentPostId);
-		if (!postId) {
-			return window.location.href;
-		}
-
-		var shareUrl = new URL(window.location.href);
-		shareUrl.searchParams.set(POST_ID_QUERY_KEY, String(postId));
-		return shareUrl.toString();
-	}
-
 	function createGalleryTile(src, altText) {
 		var figure = document.createElement('figure');
 		figure.className = 'post-modal__tile';
-
 		var image = document.createElement('img');
 		image.src = src;
 		image.alt = altText;
-
 		figure.appendChild(image);
 		return figure;
 	}
@@ -557,27 +473,20 @@ document.addEventListener('DOMContentLoaded', function () {
 	function createSidebarThumb(src, altText) {
 		var thumb = document.createElement('div');
 		thumb.className = 'post-modal__sidebar-thumb';
-
 		if (src) {
 			var image = document.createElement('img');
 			image.src = src;
 			image.alt = altText || '';
 			thumb.appendChild(image);
 		}
-
 		return thumb;
 	}
 
 	function renderSidebarThumbs(container, images, titlePrefix) {
-		if (!container) {
-			return;
-		}
-
+		if (!container) return;
 		var list = Array.isArray(images) ? images.filter(Boolean) : [];
 		container.innerHTML = '';
-
-		var max = 3;
-		for (var index = 0; index < max; index += 1) {
+		for (var index = 0; index < 3; index += 1) {
 			var src = list[index] || '';
 			container.appendChild(createSidebarThumb(src, (titlePrefix || 'Imagem') + ' ' + (index + 1)));
 		}
@@ -585,11 +494,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 	function renderGallery(post) {
 		var images = getPostImages(post);
-
-		if (!images.length) {
-			images = ['img/logo.png'];
-		}
-
 		modalGallery.dataset.count = String(images.length);
 		modalGallery.innerHTML = '';
 
@@ -607,9 +511,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		modalAuthorName.textContent = getPostAuthor(post);
 		modalAuthorAvatar.src = getPostAuthorPhoto(post);
 		modalAuthorAvatar.alt = getPostAuthor(post);
-		if (modalSidebarAuthorName) {
-			modalSidebarAuthorName.textContent = getPostAuthor(post);
-		}
+		if (modalSidebarAuthorName) modalSidebarAuthorName.textContent = getPostAuthor(post);
 		if (modalSidebarAuthorAvatar) {
 			modalSidebarAuthorAvatar.src = getPostAuthorPhoto(post);
 			modalSidebarAuthorAvatar.alt = getPostAuthor(post);
@@ -619,9 +521,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 	function updateLikeButton(postId) {
 		var state = postState[postId];
-		if (!state) {
-			return;
-		}
+		if (!state) return;
 
 		modalLikeButton.classList.toggle('active', !!state.liked);
 		modalLikeButton.setAttribute('aria-pressed', state.liked ? 'true' : 'false');
@@ -631,13 +531,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 	function updateFavoriteButton(postId) {
 		var state = postState[postId];
-		if (!state) {
-			return;
-		}
-
-		if (!modalFavoriteButton) {
-			return;
-		}
+		if (!state || !modalFavoriteButton) return;
 
 		modalFavoriteButton.classList.toggle('active', !!state.favorite);
 		modalFavoriteButton.setAttribute('aria-pressed', state.favorite ? 'true' : 'false');
@@ -651,7 +545,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 		var body = document.createElement('div');
 		body.className = 'feedImg';
-
 		var image = document.createElement('img');
 		image.src = getPostImage(post);
 		image.alt = post.titulo || 'Post';
@@ -662,14 +555,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
 		var left = document.createElement('div');
 		left.className = 'feedInfoLeft';
-
 		var title = document.createElement('span');
 		title.className = 'feedPostTitle';
 		title.textContent = post.titulo || 'Sem título';
 
 		var logoName = document.createElement('div');
 		logoName.className = 'logoName';
-
 		var avatar = document.createElement('img');
 		avatar.className = 'logoUser';
 		avatar.src = getPostAuthorPhoto(post);
@@ -681,33 +572,25 @@ document.addEventListener('DOMContentLoaded', function () {
 
 		logoName.appendChild(avatar);
 		logoName.appendChild(author);
-
 		left.appendChild(title);
 		left.appendChild(logoName);
 
 		var likeView = document.createElement('div');
 		likeView.className = 'likeView';
-
 		var postTime = document.createElement('span');
 		postTime.className = 'feedPostTime';
-		postTime.textContent = getRelativeTime(post.criado_em) || formatDate(post.criado_em);
+		postTime.textContent = post.tempo_atras || formatDate(post.data_postagem);
 
 		likeView.appendChild(postTime);
-
 		info.appendChild(left);
 		info.appendChild(likeView);
 
 		article.appendChild(body);
 		article.appendChild(info);
 
-		article.addEventListener('click', function () {
-			openPost(post);
-		});
-
+		article.addEventListener('click', function () { openPost(post); });
 		article.addEventListener('keydown', function (event) {
-			if (event.key === 'Enter') {
-				openPost(post);
-			}
+			if (event.key === 'Enter') openPost(post);
 		});
 
 		return article;
@@ -715,12 +598,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
 	function renderFeed(posts) {
 		feedContainer.innerHTML = '';
-
 		if (!posts.length) {
 			feedContainer.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#777;padding:20px 0;">Nenhum post encontrado.</p>';
 			return;
 		}
-
 		posts.forEach(function (post) {
 			feedContainer.appendChild(renderCard(post));
 		});
@@ -736,44 +617,14 @@ document.addEventListener('DOMContentLoaded', function () {
 		modal.hidden = true;
 		document.body.style.overflow = '';
 		hideReplyTarget();
-		if (commentInput) {
-			commentInput.value = '';
-		}
+		if (commentInput) commentInput.value = '';
 		clearPostIdFromUrl();
-	}
-
-	async function loadLikeStatus(postId) {
-		if (!loggedUser || !loggedUser.id) {
-			return false;
-		}
-
-		var response = await fetch(ip_api + '/posts/verifica-like/' + loggedUser.id + '/' + postId);
-		if (!response.ok) {
-			return false;
-		}
-
-		return response.json();
-	}
-
-	async function loadLikeCount(postId) {
-		var response = await fetch(ip_api + '/posts/likes/' + postId);
-		if (!response.ok) {
-			return 0;
-		}
-
-		var data = await response.json();
-		return Array.isArray(data) && data[0] ? Number(data[0].total_likes) || 0 : 0;
 	}
 
 	async function openPost(post, options) {
 		rememberPost(post);
-
 		var config = options || {};
-		var shouldSyncUrl = config.syncUrl !== false;
-
-		if (shouldSyncUrl) {
-			setPostIdInUrl(post.id);
-		}
+		if (config.syncUrl !== false) setPostIdInUrl(post.id);
 
 		setModalContent(post);
 		await inicializarBotaoSeguirModal(post);
@@ -782,63 +633,97 @@ document.addEventListener('DOMContentLoaded', function () {
 			postState[post.id] = {
 				liked: false,
 				favorite: false,
-				totalLikes: Number(post.total_likes) || 0,
+				totalLikes: Number(post.likes) || 0,
 				comments: [],
-				commentsLoading: false,
-				commentsError: ''
+				commentsLoading: true
 			};
-		}
-		if (!Array.isArray(postState[post.id].comments)) {
-			postState[post.id].comments = [];
 		}
 
 		hideReplyTarget();
-		if (commentInput) {
-			commentInput.value = '';
-		}
+		if (commentInput) commentInput.value = '';
 
 		openModal();
-		modalLikeButton.disabled = !loggedUser;
-		if (sendCommentButton) {
-			sendCommentButton.disabled = !loggedUser || !loggedUser.id;
-		}
-		await loadComments(post.id);
+		
+		// Atualiza layout visual com dados parciais enquanto carrega o resto
+		updateLikeButton(post.id); 
+		
+		// Carrega os dados ricos (comentários, estado se eu dei like, se eu salvei, etc)
+		await loadPostDetails(post.id);
+	}
+
+	async function toggleLike() {
+		var postId = Number(modal.dataset.currentPostId);
+		var state = postState[postId];
+		if (!state) return;
+
+		modalLikeButton.disabled = true;
+		var method = state.liked ? 'DELETE' : 'POST';
 
 		try {
-			postState[post.id].liked = !!(await loadLikeStatus(post.id));
-			postState[post.id].totalLikes = await loadLikeCount(post.id) || postState[post.id].totalLikes;
-			updateLikeButton(post.id);
-			updateFavoriteButton(post.id);
+			var response = await fetch(ip_api + '/posts/' + encodeURIComponent(postId) + '/like', {
+				method: method,
+				credentials: 'include'
+			});
+			var data = await response.json();
+
+			if (response.ok && data.success) {
+				state.liked = !state.liked;
+				state.totalLikes += state.liked ? 1 : -1;
+				updateLikeButton(postId);
+			} else {
+				// Requer auth / status 401
+				if(response.status === 401) alert("Faça login para curtir.");
+			}
 		} catch (error) {
-			updateLikeButton(post.id);
-			updateFavoriteButton(post.id);
+			console.error(error);
+		} finally {
+			modalLikeButton.disabled = false;
+		}
+	}
+
+	async function toggleFavorite() {
+		var postId = Number(modal.dataset.currentPostId);
+		var state = postState[postId];
+		if (!state || !modalFavoriteButton) return;
+
+		modalFavoriteButton.disabled = true;
+		var method = state.favorite ? 'DELETE' : 'POST';
+
+		try {
+			var response = await fetch(ip_api + '/posts/' + encodeURIComponent(postId) + '/salvar', {
+				method: method,
+				credentials: 'include'
+			});
+			var data = await response.json();
+
+			if (response.ok && data.success) {
+				state.favorite = !state.favorite;
+				updateFavoriteButton(postId);
+			} else {
+				if(response.status === 401) alert("Faça login para salvar o post.");
+			}
+		} catch (error) {
+			console.error(error);
+		} finally {
+			modalFavoriteButton.disabled = false;
 		}
 	}
 
 	if (modalSidebarFollowButton) {
 		modalSidebarFollowButton.addEventListener('click', async function () {
 			var postId = Number(modal.dataset.currentPostId);
-			var post = postsById[postId] || postsCache.find(function (item) {
-				return Number(item.id) === postId;
-			});
-
-			if (!post || !loggedUser || !loggedUser.id) {
-				return;
-			}
+			var post = postsById[postId];
+			if (!post) return;
 
 			var idAutor = getPostAuthorId(post);
-			if (!idAutor || String(loggedUser.id) === String(idAutor)) {
-				return;
-			}
+			if (!idAutor) return;
 
 			modalSidebarFollowButton.disabled = true;
-
 			try {
-				var resposta = await alternarSeguimentoAutor(loggedUser.id, idAutor);
-				var estaSeguindo = !!(resposta && resposta.seguindo);
-				atualizarBotaoSeguirModal(estaSeguindo);
+				await alternarSeguimentoAutor(idAutor);
 			} catch (error) {
 				console.error(error);
+				alert("Não foi possível realizar esta ação no momento.");
 			} finally {
 				modalSidebarFollowButton.disabled = false;
 			}
@@ -848,15 +733,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	if (sendCommentButton && commentInput) {
 		sendCommentButton.addEventListener('click', async function () {
 			var postId = Number(modal.dataset.currentPostId);
-			if (!postId) {
-				return;
-			}
-
-			try {
-				await submitComment(postId, commentInput.value);
-			} catch (error) {
-				alert('Nao foi possivel enviar o comentario.');
-			}
+			if (postId) await submitComment(postId, commentInput.value);
 		});
 
 		commentInput.addEventListener('keydown', function (event) {
@@ -868,21 +745,14 @@ document.addEventListener('DOMContentLoaded', function () {
 	}
 
 	if (cancelReplyButton) {
-		cancelReplyButton.addEventListener('click', function () {
-			hideReplyTarget();
-		});
+		cancelReplyButton.addEventListener('click', function () { hideReplyTarget(); });
 	}
 
 	async function openPostFromUrlIfPresent() {
 		var postIdFromUrl = getPostIdFromUrl();
-		if (!postIdFromUrl) {
-			return;
-		}
+		if (!postIdFromUrl) return;
 
-		var targetPost = postsCache.find(function (post) {
-			return Number(post.id) === postIdFromUrl;
-		});
-
+		var targetPost = postsCache.find(function (post) { return Number(post.id) === postIdFromUrl; });
 		if (!targetPost) {
 			clearPostIdFromUrl();
 			return;
@@ -891,204 +761,93 @@ document.addEventListener('DOMContentLoaded', function () {
 		await openPost(targetPost, { syncUrl: false });
 	}
 
-	async function toggleLike() {
-		var postId = Number(modal.dataset.currentPostId);
-		var state = postState[postId];
-
-		if (!state || !loggedUser || !loggedUser.id) {
-			return;
-		}
-
-		var response = await fetch(ip_api + '/posts/like', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				userId: loggedUser.id,
-				postId: postId
-			})
-		});
-
-		if (!response.ok) {
-			return;
-		}
-
-		var data = await response.json();
-		state.liked = !!data.liked;
-		state.totalLikes = await loadLikeCount(postId) || state.totalLikes;
-		updateLikeButton(postId);
-	}
-
-	async function shareCurrentPost() {
-		var postId = Number(modal.dataset.currentPostId);
-		if (!postId) {
-			return;
-		}
-
-		var post = postsById[postId] || postsCache.find(function (item) {
-			return Number(item.id) === postId;
-		});
-
-		var shareUrl = getCurrentPostShareUrl();
-		var shareTitle = post && post.titulo ? post.titulo : 'Post no Seek';
-
-		if (navigator.share) {
-			try {
-				await navigator.share({
-					title: shareTitle,
-					url: shareUrl
-				});
-				return;
-			} catch (error) {
-				if (error && error.name === 'AbortError') {
-					return;
-				}
-			}
-		}
-
-		if (navigator.clipboard && navigator.clipboard.writeText) {
-			try {
-				await navigator.clipboard.writeText(shareUrl);
-				alert('Link do post copiado para a area de transferencia.');
-				return;
-			} catch (error) {
-				// fallback handled below
-			}
-		}
-
-		alert('Nao foi possivel compartilhar automaticamente. Copie este link: ' + shareUrl);
-	}
-
 	async function loadPosts(endpoint) {
-		var requestId = feedRequestId + 1;
-		feedRequestId = requestId;
+		var requestId = ++feedRequestId;
 		var feedEndpoint = endpoint || '/posts';
 
 		feedContainer.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#777;padding:20px 0;">Carregando posts...</p>';
 
 		try {
-			var response = await fetch(ip_api + feedEndpoint);
-			if (!response.ok) {
+			var response = await fetch(ip_api + feedEndpoint, {
+				method: 'GET',
+				credentials: 'include' // Envia cookie para saber autenticação, caso exista
+			});
+			var resData = await response.json();
+
+			if (!response.ok || !resData.success) {
 				throw new Error('Falha ao carregar posts');
 			}
 
-			var posts = await response.json();
-			if (requestId !== feedRequestId) {
-				return;
-			}
+			if (requestId !== feedRequestId) return;
 
-			postsCache = Array.isArray(posts) ? posts : [];
+			postsCache = Array.isArray(resData.data) ? resData.data : [];
 			postsById = {};
-			postsCache.forEach(function (post) {
-				rememberPost(post);
-			});
+			postsCache.forEach(function (post) { rememberPost(post); });
+			
 			renderFeed(postsCache);
+			
 			if (feedEndpoint === '/posts') {
 				await openPostFromUrlIfPresent();
 			}
 		} catch (error) {
-			if (requestId !== feedRequestId) {
-				return;
-			}
-			feedContainer.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#b32929;padding:20px 0;">Nao foi possivel carregar os posts.</p>';
+			if (requestId !== feedRequestId) return;
+			feedContainer.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#b32929;padding:20px 0;">Não foi possível carregar os posts.</p>';
 		}
 	}
 
-	modalLikeButton.addEventListener('click', function () {
-		toggleLike();
-	});
-
+	modalLikeButton.addEventListener('click', function () { toggleLike(); });
+	
 	if (modalFavoriteButton) {
-		modalFavoriteButton.addEventListener('click', function () {
-			var postId = Number(modal.dataset.currentPostId);
-			if (!postState[postId]) {
-				return;
-			}
-
-			postState[postId].favorite = !postState[postId].favorite;
-			updateFavoriteButton(postId);
-		});
+		modalFavoriteButton.addEventListener('click', function () { toggleFavorite(); });
 	}
 
-	modalShareButton.addEventListener('click', function () {
-		shareCurrentPost();
+	modalShareButton.addEventListener('click', async function () {
+		var postId = Number(modal.dataset.currentPostId);
+		if (!postId) return;
+
+		var url = new URL(window.location.href);
+		url.searchParams.set(POST_ID_QUERY_KEY, String(postId));
+		var shareUrl = url.toString();
+
+		if (navigator.share) {
+			try {
+				await navigator.share({ title: 'Post no Seek', url: shareUrl });
+				return;
+			} catch (e) { if (e.name === 'AbortError') return; }
+		}
+
+		if (navigator.clipboard && navigator.clipboard.writeText) {
+			await navigator.clipboard.writeText(shareUrl);
+			alert('Link copiado para a área de transferência.');
+		} else {
+			alert('Copie este link: ' + shareUrl);
+		}
 	});
-
-	if (modalInfoButton) {
-		modalInfoButton.addEventListener('click', function () {
-			var postId = Number(modal.dataset.currentPostId);
-			var post = postsById[postId] || postsCache.find(function (item) {
-				return Number(item.id) === postId;
-			});
-
-			if (!post) {
-				return;
-			}
-
-			alert(post.legenda || 'Sem descricao para este projeto.');
-		});
-	}
-
-	if (modalCommentsButton) {
-		modalCommentsButton.addEventListener('click', function () {
-			var postId = Number(modal.dataset.currentPostId);
-			var post = postsById[postId] || postsCache.find(function (item) {
-				return Number(item.id) === postId;
-			});
-
-			if (!post) {
-				return;
-			}
-
-			var created = getRelativeTime(post.criado_em) || formatDate(post.criado_em) || 'data indisponivel';
-			alert('Publicado ' + created + '.');
-		});
-	}
 
 	modalCloseButton.addEventListener('click', closeModal);
 	modalOverlay.addEventListener('click', closeModal);
-
 	document.addEventListener('keydown', function (event) {
-		if (event.key === 'Escape' && !modal.hidden) {
-			closeModal();
-		}
+		if (event.key === 'Escape' && !modal.hidden) closeModal();
 	});
-
-	function scrollModalToElement(targetElement) {
-		if (!targetElement) {
-			return;
-		}
-
-		var modalRect = modal.getBoundingClientRect();
-		var targetRect = targetElement.getBoundingClientRect();
-		var targetTop = targetRect.top - modalRect.top + modal.scrollTop;
-		modal.scrollTo({
-			top: Math.max(0, targetTop),
-			behavior: 'smooth'
-		});
-	}
 
 	if (modalScrollUpButton) {
 		modalScrollUpButton.addEventListener('click', function () {
-			scrollModalToElement(modalHeader || modal);
+			modal.scrollTo({ top: 0, behavior: 'smooth' });
 		});
 	}
 
 	if (modalScrollDownButton) {
 		modalScrollDownButton.addEventListener('click', function () {
-			scrollModalToElement(modalCommentsSection || commentsList);
+			if(commentsList) {
+				var modalRect = modal.getBoundingClientRect();
+				var targetRect = commentsList.getBoundingClientRect();
+				modal.scrollTo({ top: Math.max(0, targetRect.top - modalRect.top + modal.scrollTop), behavior: 'smooth' });
+			}
 		});
 	}
 
-	// Exposto para outras paginas (ex.: usuario.html) reutilizarem o mesmo modal.
-	window.seekOpenPostModal = function (post, options) {
-		return openPost(post, options);
-	};
-
-	window.seekCarregarPosts = function (endpoint) {
-		return loadPosts(endpoint || '/posts');
-	};
+	window.seekOpenPostModal = function (post, options) { return openPost(post, options); };
+	window.seekCarregarPosts = function (endpoint) { return loadPosts(endpoint || '/posts'); };
 
 	if (feedContainer) {
 		loadPosts();

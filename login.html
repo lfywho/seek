@@ -25,8 +25,8 @@
 
                 <div class="inicio-login__painel inicio-login__painel--ativo" data-form-panel="login">
                     <h2>Fazer Login</h2>
-                        <p>Ainda nao possui uma conta? <a href="#" data-toggle-form="cadastro-tipo"
-                            class="link_fake" data-abrir-cadastro>cadastrar</a></p>
+                    <p>Ainda nao possui uma conta? <a href="#" data-toggle-form="cadastro-tipo" class="link_fake"
+                            data-abrir-cadastro>cadastrar</a></p>
 
                     <form class="inicio-login__form" action="/login" method="post">
                         <label for="email">Email:</label>
@@ -153,6 +153,52 @@
                             <span>Entrar com Apple</span>
                         </button>
                     </form>
+                    <div class="inicio-login__modal" id="modal-verificacao" hidden>
+                        <div class="inicio-login__modal-conteudo">
+                            <button type="button" id="fechar-modal-verificacao" class="inicio-login__modal-fechar">
+                                &times;
+                            </button>
+
+                            <h2>Verifique seu email</h2>
+
+                            <p>
+                                Enviamos um código de verificação de 6 dígitos para:
+                            </p>
+
+                            <strong id="email-verificacao"></strong>
+
+                            <p>
+                                Verifique sua caixa de entrada e digite o código abaixo para confirmar sua conta.
+                            </p>
+
+                            <label for="codigo-verificacao">Código de verificação:</label>
+
+                            <div class="inicio-login__codigo-verificacao">
+                                <input type="text" id="codigo-verificacao" inputmode="numeric" maxlength="6"
+                                    autocomplete="one-time-code" placeholder="000000">
+                                <div class="inicio-login__codigo-verificacao-caixas" aria-hidden="true">
+                                    <span></span>
+                                    <span></span>
+                                    <span></span>
+                                    <span></span>
+                                    <span></span>
+                                    <span></span>
+                                </div>
+                            </div>
+
+                            <p id="mensagem-verificacao" class="inicio-login__mensagem inicio-login__mensagem--oculta"
+                                aria-live="polite">
+                            </p>
+
+                            <button type="button" id="confirmar-codigo-verificacao">
+                                Confirmar código
+                            </button>
+
+                            <button type="button" id="reenviar-codigo-verificacao">
+                                Reenviar código
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </article>
         </section>

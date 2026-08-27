@@ -22,15 +22,13 @@
         <div class="perfil sidebar__perfil">
           <img id="configuracoesPerfilFoto" src="img/userProfilepreto.png" alt="Perfil">
           <p><strong id="configuracoesPerfilNome">Nome do usuário</strong></p>
-          <span id="configuracoesPerfilLocalizacao">São Paulo - Matão</span>
+          <span id="configuracoesPerfilLocalizacao">Localização</span>
         </div>
 
         <nav class="sidebar__menu">
           <ul>
-            <!-- <li class="sidebar__menu-item active"><a onclick="mostrar('privacidade', this)"><img src="img/icons/privacidade.svg" alt=""> <span>Privacidade</span></a></li> -->
             <li class="sidebar__menu-item active"><a onclick="mostrar('notificações', this)"><img src="img/icons/email.svg" alt=""> <span>Notificações</span></a></li>
             <li class="sidebar__menu-item"><a onclick="mostrar('acessibilidade', this)"><img src="img/icons/usuario.svg" alt=""> <span>Acessibilidade</span></a></li>
-            <!-- <li class="sidebar__menu-item"><a onclick="mostrar('email-senha', this)"><img src="img/icons/email.svg" alt=""> <span>Email e senha</span></a></li> -->
             <li class="sidebar__menu-item"><a onclick="mostrar('minhas-informações', this)"><img src="img/icons/config.svg" alt=""> <span>Minhas informações</span></a></li>
           </ul>
         </nav>
@@ -38,81 +36,6 @@
     </aside>
 
     <section class="configuracoes__content Esquerda">
-
-      <!-- <div class="tab-panel privacidade active">
-        <div class="panel-header panel-header--grey">
-          <p class="panel-title"><strong>Privacidade</strong></p>
-          <p class="panel-description">Nesta aba você poderá editar suas preferências de quem pode acessar seus conteúdos.</p>
-        </div>
-
-        <div class="panel-section">
-          <div class="panel-row panel-row--split">
-            <div>
-              <strong>Quem pode ver seu perfil?</strong>
-              <span>Define se sua conta aparece na barra de pesquisa.</span>
-            </div>
-            <div class="select-pill">
-              <select aria-label="Quem pode ver seu perfil">
-                <option value="todos" selected>Todos</option>
-                <option value="amigos">Apenas amigos</option>
-                <option value="somente_eu">Somente eu</option>
-              </select>
-            </div>
-          </div>
-          <div class="panel-row panel-row--split">
-            <div>
-              <strong>Quem pode ver seus posts?</strong>
-              <span>Define quem visualiza seus posts.</span>
-            </div>
-            <div class="select-pill">
-              <select aria-label="Quem pode ver seus posts">
-                <option value="todos" selected>Todos</option>
-                <option value="amigos">Apenas amigos</option>
-                <option value="somente_eu">Somente eu</option>
-              </select>
-            </div>
-          </div>
-          <div class="panel-row panel-row--split">
-            <div>
-              <strong>Quem pode comentar?</strong>
-              <span>Define quem pode adicionar comentários nos seus posts.</span>
-            </div>
-            <div class="select-pill">
-              <select aria-label="Quem pode comentar">
-                <option value="todos" selected>Todos</option>
-                <option value="amigos">Apenas amigos</option>
-                <option value="somente_eu">Somente eu</option>
-              </select>
-            </div>
-          </div>
-          <div class="panel-row panel-row--split panel-row--action">
-            <div>
-              <strong>Usuários bloqueados</strong>
-              <span>Mostra as pessoas que você bloqueou.</span>
-            </div>
-            <div class="dropdown" data-dropdown="bloqueados">
-              <button class="dropdown-toggle" type="button" aria-expanded="false">▼</button>
-              <div class="dropdown-menu" role="menu">
-                <div class="dropdown-item">Ver bloqueados</div>
-                <div class="dropdown-item">Adicionar bloqueado</div>
-              </div>
-            </div>
-          </div>
-          <div class="panel-row panel-row--split panel-row--action">
-            <div>
-              <strong>Palavras bloqueadas</strong>
-              <span>Mostra as palavras que você bloqueou, para ninguém utilizar elas no seu perfil.</span>
-            </div>
-            <div class="dropdown" data-dropdown="palavras">
-              <button class="dropdown-toggle" type="button" aria-expanded="false">▼</button>
-              <div class="dropdown-menu" role="menu">
-                <div class="dropdown-item">Ver palavras bloqueadas</div>
-                <div class="dropdown-item">Adicionar palavra</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div> -->
 
       <div class="tab-panel notificações active">
         <div class="panel-header panel-header--grey">
@@ -169,48 +92,6 @@
         </div>
       </div>
 
-      <!-- <div class="tab-panel email-senha">
-        <div class="panel-header panel-header--grey">
-          <p class="panel-title"><strong>Email e senha</strong></p>
-          <p class="panel-description">Nesta aba você pode alterar seu email, sua senha, e ativar o fator de duas etapas.</p>
-        </div>
-
-        <div class="panel-form">
-          <div class="field-group field-group--stack">
-            <span>E-mail</span>
-            <p class="field-note">Altera o seu e-mail de cadastro.</p>
-            <input type="email" placeholder="placeholder_do_email_atual_em_cinza">
-          </div>
-
-          <div class="field-group field-group--stack">
-            <span>Senha atual</span>
-            <p class="field-note">Onde fica sua senha atual.</p>
-            <input type="password" placeholder="•••••••••••••">
-          </div>
-
-          <div class="field-group field-group--stack">
-            <span>Alterar senha</span>
-            <p class="field-note">Altera sua senha atual.</p>
-            <input type="password" placeholder="•••••••••••••">
-          </div>
-
-          <div class="field-group field-group--control">
-            <div>
-              <span>Ativar fator de duas etapas</span>
-              <p class="field-note">Ativa ou desativa a autenticação extra.</p>
-            </div>
-            <label class="toggle">
-              <input type="checkbox" checked>
-              <span></span>
-            </label>
-          </div>
-        </div>
-
-        <div class="panel-actions">
-          <button type="button" class="button button--primary">Confirmar</button>
-        </div>
-      </div> -->
-
       <div class="tab-panel minhas-informações">
         <div class="panel-header panel-header--grey">
           <p class="panel-title"><strong>Minhas Informações</strong></p>
@@ -239,21 +120,8 @@
               <img src="img/icons/capaprojetopreto.svg" alt="Selecionar banner">
             </label>
           </div>
-
-          <div class="field-group field-group--stack">
-            <span>Nome de usuário</span>
-            <input id="configuracoesNomeInput" type="text" placeholder="placeholder_de_usuario_atual_em_cinza">
-          </div>
-
-          <div class="field-group field-group--stack">
-            <span>@username</span>
-            <input id="configuracoesUsernameInput" type="text" placeholder="@placeholder_de_usuario_atual_em_cinza">
-          </div>
-
-          <div class="field-group field-group--stack">
-            <span>Biografia</span>
-            <textarea id="configuracoesDescricaoInput" rows="4" placeholder="Uma pequena descrição sobre você, o que você faz e com o que você trabalha, sua jornada acadêmica, etc..."></textarea>
-          </div>
+          
+          <!-- Os demais inputs (PF ou EMPRESA) serão injetados dinamicamente via JS aqui -->
         </div>
 
         <div class="panel-actions">
@@ -266,12 +134,13 @@
   </main>
 
   <script src="js/ambiente.js"></script>
-  <script src="js/conexao_com_api/carregar_post_index.js"></script>
   <script src="js/header.js"></script>
   <script src="js/usuario_logado.js"></script>
-  <script src="js/conexao_com_api/carregar_configuracoes.js"></script>
   <script src="js/Acessibilidade/traducao.js"></script>
   <script src="js/Acessibilidade/ModoEscuro.js"></script>
+  
+  <!-- Scripts separados -->
   <script src="js/configura.js"></script>
+  <script src="js/conexao_com_api/carregar_configuracoes.js"></script>
 </body>
 </html>

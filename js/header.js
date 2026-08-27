@@ -17,6 +17,7 @@ function montarHeader() {
 
     <nav class="navegarPaginas">
         ${buildNavItem('explorar', 'Explorar', 'index.html')}
+        ${buildNavItem('galeria', 'Galeria', 'galeria.html')}
         ${buildNavItem('vagas', 'Vagas', 'vagas.html')}
         ${buildNavItem('criar', 'Criar', 'adicionarprojeto.html')}
     </nav>
@@ -32,24 +33,8 @@ function montarHeader() {
 
         <div class="inputPesquisaDropdown" id="inputPesquisaDropdown" hidden>
             <div class="inputPesquisaDropdownTitle" id="inputPesquisaDropdownTitle">Recentes</div>
-
             <div class="inputPesquisaDropdownList" id="inputPesquisaDropdownList">
-                <div class="inputPesquisaSugestaoRow">
-                    <button type="button" class="inputPesquisaSugestaoItem">Design gráfico</button>
-                    <button type="button" class="inputPesquisaExcluirButton" aria-label="Excluir recente">X</button>
-                </div>
-                <div class="inputPesquisaSugestaoRow">
-                    <button type="button" class="inputPesquisaSugestaoItem">Ilustração</button>
-                    <button type="button" class="inputPesquisaExcluirButton" aria-label="Excluir recente">X</button>
-                </div>
-                <div class="inputPesquisaSugestaoRow">
-                    <button type="button" class="inputPesquisaSugestaoItem">Concept art</button>
-                    <button type="button" class="inputPesquisaExcluirButton" aria-label="Excluir recente">X</button>
-                </div>
-                <div class="inputPesquisaSugestaoRow">
-                    <button type="button" class="inputPesquisaSugestaoItem">Art 3D</button>
-                    <button type="button" class="inputPesquisaExcluirButton" aria-label="Excluir recente">X</button>
-                </div>
+                <p class="inputPesquisaEstadoVazio">Carregando histórico...</p>
             </div>
         </div>
     </div>
@@ -98,7 +83,6 @@ function montarHeader() {
             </div>
         </div>
 
-
         <div class="perfilDropdown">
             <button type="button" class="menuHeaderButton" aria-label="Perfil" aria-haspopup="menu"
                 aria-expanded="false" id="perfilMenuButton">
@@ -117,30 +101,6 @@ function montarHeader() {
                         </div>
                     </div>
                 </div>
-
-                <!-- <div class="perfilDropdownGroup">
-                    <button type="button" class="perfilDropdownItem">
-                        <img src="img/icons/favoritos.svg" alt="">
-                        <span data-i18n="saved">Salvos</span>
-                    </button>
-                    <button type="button" class="perfilDropdownItem">
-                        <img src="img/icons/like.svg" alt="">
-                        <span data-i18n="favorites">Favoritos</span>
-                    </button>
-                    <button type="button" class="perfilDropdownItem">
-                        <img src="img/icons/vagas.svg" alt="">
-                        <span data-i18n="myJobs">Minhas vagas</span>
-                    </button>
-                </div>
-
-                <div class="perfilDropdownDivider"></div>
-
-                <div class="perfilDropdownGroup">
-                    <button type="button" class="perfilDropdownItem">
-                        <img src="img/icons/favoritos.svg" alt="">
-                        <span data-i18n="myProjects">Meus projetos</span>
-                    </button>
-                </div> -->
 
                 <div class="perfilDropdownDivider"></div> 
 
@@ -164,14 +124,6 @@ function montarHeader() {
 
             <div class="optionsDropdownMenu" id="optionsMenu" hidden>
                 <div class="optionsDropdownGroup">
-                    <!-- <button type="button" class="optionsDropdownItem">
-                        <img src="img/icons/termos.svg" alt="">
-                        <span data-i18n="termsOfUse">Termos de uso</span>
-                    </button>
-                    <button type="button" class="optionsDropdownItem">
-                        <img src="img/icons/privacidade.svg" alt="">
-                        <span data-i18n="privacy">Privacidade</span>
-                    </button> -->
                     <a href="sobrenos.html">
                         <button type="button" class="optionsDropdownItem">
                             <img src="img/icons/sobrenos.svg" alt="">
@@ -186,7 +138,6 @@ function montarHeader() {
                     </a>
                 </div>
 
-
                 <div class="optionsDropdownGroup">
                     <a href="https://www.instagram.com/seek_brasil" target="_blank" rel="noopener noreferrer">
                         <button type="button" class="optionsDropdownItem">
@@ -199,12 +150,6 @@ function montarHeader() {
                             <img src="img/icons/email.svg" alt="">
                             <span data-i18n="email">Email</span>
                         </button>
-                    </a>
-                    <!--<a href="https://www.behance.net/seek" target="_blank" rel="noopener noreferrer">
-                        <button type="button" class="optionsDropdownItem">
-                            <span class="optionsDropdownBrand">Bē</span>
-                            <span data-i18n="behance">Behance</span>
-                        </button> -->
                     </a>
                 </div>
             </div>
@@ -219,8 +164,11 @@ document.addEventListener('DOMContentLoaded', function () {
     const searchDropdownTitle = document.getElementById('inputPesquisaDropdownTitle');
     const searchDropdownList = document.getElementById('inputPesquisaDropdownList');
     const searchIconButtons = searchWrapper ? searchWrapper.querySelectorAll('.inputPesquisaIconButton') : [];
-    const userSearchApiUrl = 'http://localhost:4500/pesquisa/usuarios/';
-    const recentSearches = ['Design gráfico', 'Ilustração', 'Concept art', 'Art 3D'];
+
+    const userSearchApiUrl = ip_api + '/usuarios/pesquisar';
+    const historySearchApiUrl = ip_api + '/usuarios/historico-pesquisas';
+    
+    let recentSearches = []; // Agora armazena objetos da API { id, termo_pesquisa }
 
     let searchDebounceTimer = null;
     let searchRequestController = null;
@@ -275,12 +223,72 @@ document.addEventListener('DOMContentLoaded', function () {
         searchDropdownList.innerHTML = contentHtml;
     };
 
+    // --- CARREGAR HISTÓRICO DE PESQUISA ---
+    const loadRecentSearches = async function () {
+        try {
+            const response = await fetch(historySearchApiUrl, {
+                method: 'GET',
+                credentials: 'include'
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                if (result.success) {
+                    recentSearches = result.data || [];
+                    renderRecentSearches();
+                }
+            } else {
+                // Caso falhe (ex: 401 Unauthorized), exibe estado vazio padrão silenciosamente
+                recentSearches = [];
+                renderRecentSearches();
+            }
+        } catch (error) {
+            console.error('Erro ao carregar histórico de pesquisas:', error);
+            recentSearches = [];
+            renderRecentSearches();
+        }
+    };
+
+    // --- DELETAR HISTÓRICO DE PESQUISA ---
+    const deleteSearchHistory = async function (id, rowElement) {
+        const deleteBtn = rowElement.querySelector('.inputPesquisaExcluirButton');
+        if (deleteBtn) deleteBtn.disabled = true; // Impede múltiplos cliques
+
+        try {
+            const response = await fetch(historySearchApiUrl + '/' + id, {
+                method: 'DELETE',
+                credentials: 'include'
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.success) {
+                // Atualiza o array local
+                recentSearches = recentSearches.filter(item => String(item.id) !== String(id));
+                
+                // Atualiza a interface
+                rowElement.remove();
+                if (!recentSearches.length) {
+                    renderRecentSearches();
+                }
+            } else {
+                console.error(result.message || 'Erro ao deletar histórico.');
+                if (deleteBtn) deleteBtn.disabled = false;
+            }
+        } catch (error) {
+            console.error('Erro na requisição de exclusão:', error);
+            if (deleteBtn) deleteBtn.disabled = false;
+        }
+    };
+
     const renderRecentSearches = function () {
         const itemsHtml = recentSearches.length
-            ? recentSearches.map(function (term) {
-                return '<div class="inputPesquisaSugestaoRow">' +
+            ? recentSearches.map(function (item) {
+                const term = item.termo_pesquisa;
+                const id = item.id;
+                return '<div class="inputPesquisaSugestaoRow" data-id="' + id + '">' +
                     '<button type="button" class="inputPesquisaSugestaoItem" data-term="' + escapeHtml(term) + '">' + escapeHtml(term) + '</button>' +
-                    '<button type="button" class="inputPesquisaExcluirButton" aria-label="Excluir recente">X</button>' +
+                    '<button type="button" class="inputPesquisaExcluirButton" aria-label="Excluir recente" data-id="' + id + '">X</button>' +
                     '</div>';
             }).join('')
             : '<p class="inputPesquisaEstadoVazio">Nenhuma pesquisa recente.</p>';
@@ -293,7 +301,7 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     const renderSearchUsers = function (users) {
-        if (!users.length) {
+        if (!users || !users.length) {
             renderSearchMessage('Usuários', 'Nenhum usuário encontrado.');
             return;
         }
@@ -301,9 +309,9 @@ document.addEventListener('DOMContentLoaded', function () {
         const itemsHtml = users.map(function (user) {
             const userId = escapeHtml(user.id);
             const userName = escapeHtml(user.nome || 'Usuário');
-            const userPhoto = escapeHtml(user.foto || 'img/userProfile.png');
+            const userPhoto = escapeHtml(user.foto_perfil || 'img/userProfile.png');
 
-            return '<a class="inputPesquisaResultadoItem" href="usuario.html?id=' + userId + '">' +
+            return '<a class="inputPesquisaResultadoItem" href="usuario.html?iduser=' + userId + '">' +
                 '<img class="inputPesquisaResultadoFoto" src="' + userPhoto + '" alt="">' +
                 '<span class="inputPesquisaResultadoNome">' + userName + '</span>' +
                 '</a>';
@@ -324,7 +332,7 @@ document.addEventListener('DOMContentLoaded', function () {
         searchRequestToken += 1;
     };
 
-    const searchUsers = function (term) {
+    const searchUsers = async function (term) {
         cancelPendingSearch();
 
         const requestToken = searchRequestToken;
@@ -332,35 +340,38 @@ document.addEventListener('DOMContentLoaded', function () {
 
         renderSearchMessage('Usuários', 'Carregando usuários...');
 
-        fetch(userSearchApiUrl + encodeURIComponent(term), {
-            signal: searchRequestController.signal
-        })
-            .then(function (response) {
-                if (!response.ok) {
-                    throw new Error('Falha ao consultar a pesquisa de usuários.');
-                }
-
-                return response.json();
-            })
-            .then(function (users) {
-                if (requestToken !== searchRequestToken) {
-                    return;
-                }
-
-                renderSearchUsers(Array.isArray(users) ? users : []);
-            })
-            .catch(function (error) {
-                if (error && error.name === 'AbortError') {
-                    return;
-                }
-
-                renderSearchMessage('Usuários', 'Não foi possível carregar os usuários.');
-            })
-            .finally(function () {
-                if (requestToken === searchRequestToken) {
-                    searchRequestController = null;
-                }
+        try {
+            const urlBusca = userSearchApiUrl + '?termo=' + encodeURIComponent(term);
+            const response = await fetch(urlBusca, {
+                method: 'GET',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                signal: searchRequestController.signal
             });
+
+            const result = await response.json();
+
+            if (requestToken !== searchRequestToken) {
+                return;
+            }
+
+            if (response.ok && result.success) {
+                renderSearchUsers(result.data || []);
+            } else {
+                renderSearchMessage('Usuários', result.message || 'Falha ao buscar usuários.');
+            }
+        } catch (error) {
+            if (error && error.name === 'AbortError') {
+                return;
+            }
+            renderSearchMessage('Usuários', 'Não foi possível carregar os usuários.');
+        } finally {
+            if (requestToken === searchRequestToken) {
+                searchRequestController = null;
+            }
+        }
     };
 
     const syncSearchState = function () {
@@ -454,7 +465,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (searchWrapper && searchInput && searchDropdown) {
         searchInput.setAttribute('aria-expanded', 'false');
-        renderRecentSearches();
+        
+        // Dispara requisição inicial para buscar histórico quando a página carrega
+        loadRecentSearches();
 
         searchInput.addEventListener('focus', syncSearchState);
         searchInput.addEventListener('click', syncSearchState);
@@ -477,32 +490,21 @@ document.addEventListener('DOMContentLoaded', function () {
         searchDropdown.addEventListener('click', function (event) {
             const deleteButton = event.target.closest('.inputPesquisaExcluirButton');
 
-            if (!deleteButton) {
+            // Caso seja botão de deletar o histórico
+            if (deleteButton) {
+                event.preventDefault();
+                event.stopPropagation();
+
+                const id = deleteButton.getAttribute('data-id');
+                const row = deleteButton.closest('.inputPesquisaSugestaoRow');
+
+                if (id && row) {
+                    deleteSearchHistory(id, row);
+                }
                 return;
             }
 
-            event.preventDefault();
-            event.stopPropagation();
-
-            const row = deleteButton.closest('.inputPesquisaSugestaoRow');
-            if (row) {
-                const termButton = row.querySelector('.inputPesquisaSugestaoItem');
-                if (termButton) {
-                    const term = termButton.dataset.term || termButton.textContent.trim();
-                    const index = recentSearches.indexOf(term);
-
-                    if (index !== -1) {
-                        recentSearches.splice(index, 1);
-                    }
-                }
-
-                row.remove();
-
-                if (!recentSearches.length) {
-                    renderRecentSearches();
-                }
-            }
-
+            // Caso seja botão de sugestão (texto pesquisado)
             const searchItemButton = event.target.closest('.inputPesquisaSugestaoItem');
             if (searchItemButton) {
                 const term = searchItemButton.dataset.term || searchItemButton.textContent.trim();

@@ -46,20 +46,26 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function criarCardCategoria(categoria, index) {
-        var nome = categoria.nome_categoria || 'Categoria';
-        var totalPosts = Number(categoria.total_posts) || 0;
+        // ATUALIZAÇÃO: Buscando as chaves corretas do novo JSON ('nome' e 'total_usos')
+        var nome = categoria.nome || 'Categoria';
+        var totalUsos = Number(categoria.total_usos) || 0;
         var cor = getCorCategoria(index);
+
         var btn = document.createElement('button');
         btn.type = 'button';
         btn.className = 'category-card';
         btn.style.background = 'linear-gradient(135deg, ' + cor[0] + ', ' + cor[1] + ')';
         btn.setAttribute('aria-label', 'Ver categoria ' + nome);
-        btn.title = nome + ' (' + totalPosts + ' posts)';
+
+        // Atualizado para refletir usos/posts no hover do botão
+        btn.title = nome + ' (' + totalUsos + ' usos)';
         btn.innerHTML = '<span>' + nome + '</span>';
+
         btn.addEventListener('click', function () {
             setCategoriaAtiva(btn);
             if (typeof window.seekCarregarPosts === 'function') {
-                window.seekCarregarPosts('/tendencias/' + encodeURIComponent(categoria.id_categoria));
+                // ATUALIZADO: Agora aponta para a nova rota da API
+                window.seekCarregarPosts('/posts/categoria/' + encodeURIComponent(categoria.id));
             }
         });
 
@@ -77,7 +83,8 @@ document.addEventListener('DOMContentLoaded', function () {
         track.appendChild(criarCardTodos());
 
         categorias.forEach(function (categoria, index) {
-            if (categoria && categoria.id_categoria != null) {
+            // ATUALIZAÇÃO: Verificando 'id' em vez de 'id_categoria'
+            if (categoria && categoria.id != null) {
                 track.appendChild(criarCardCategoria(categoria, index + 1));
             }
         });
@@ -90,15 +97,26 @@ document.addEventListener('DOMContentLoaded', function () {
         updateButtons();
 
         try {
-            var response = await fetch(ip_api + '/tendencias');
+            // ATUALIZAÇÃO: Requisição para a nova rota
+            var response = await fetch(ip_api + '/categorias/populares', {
+                method: 'GET'
+            });
+
             if (!response.ok) {
                 throw new Error('Falha ao carregar categorias');
             }
 
-            var categorias = await response.json();
-            renderizarCategorias(Array.isArray(categorias) ? categorias : []);
+            var responseData = await response.json();
+
+            // ATUALIZAÇÃO: Lendo 'success' e passando o array de 'data'
+            if (responseData.success && Array.isArray(responseData.data)) {
+                renderizarCategorias(responseData.data);
+            } else {
+                throw new Error(responseData.message || 'Estrutura de dados inválida');
+            }
         } catch (error) {
-            track.innerHTML = '<span class="category-card" aria-hidden="true">Categorias indisponiveis</span>';
+            console.error('Erro ao buscar categorias:', error);
+            track.innerHTML = '<span class="category-card" aria-hidden="true">Categorias indisponíveis</span>';
             updateButtons();
         }
     }
@@ -127,24 +145,25 @@ document.addEventListener('DOMContentLoaded', function () {
     track.addEventListener('scroll', updateButtons);
     window.addEventListener('resize', updateButtons);
 
+    // Inicializa a requisição
     carregarCategorias();
 
     // CAIXA DE BEM VINDO
 
     function toggleDef() {
-      const ativo = document.getElementById('def-sim').checked;
-      document.getElementById('def-nao').checked = !ativo;
+        const ativo = document.getElementById('def-sim').checked;
+        document.getElementById('def-nao').checked = !ativo;
 
-      document.querySelectorAll('.tipo-cb').forEach(cb => cb.disabled = !ativo);
-      document.querySelectorAll('.tipo-label').forEach(el => {
-        el.style.color = ativo ? '#374151' : '#9ca3af';
-      });
-      document.getElementById('qual-select').disabled = !ativo;
+        document.querySelectorAll('.tipo-cb').forEach(cb => cb.disabled = !ativo);
+        document.querySelectorAll('.tipo-label').forEach(el => {
+            el.style.color = ativo ? '#374151' : '#9ca3af';
+        });
+        document.getElementById('qual-select').disabled = !ativo;
     }
 
     function toggleNao() {
-      const nao = document.getElementById('def-nao').checked;
-      document.getElementById('def-sim').checked = !nao;
-      toggleDef();
+        const nao = document.getElementById('def-nao').checked;
+        document.getElementById('def-sim').checked = !nao;
+        toggleDef();
     }
 });

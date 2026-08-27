@@ -69,47 +69,38 @@
 
                         <div class="adicionar-projeto__search-block">
                             <h2 class="adicionar-projeto__section-title adicionar-projeto__section-title--medium">
-                                Pesquisar</h2>
+                                Adicionar nova categoria
+                            </h2>
                             <div class="adicionar-projeto__search-box">
-                                <img src="img/icons/lupapreta.svg" alt="Buscar">
-                                <input type="text" placeholder="Pesquisar categorias">
+                                <img src="img/icons/lupapreta.svg" alt="Adicionar">
+                                <!-- Input alterado para instruir o usuário a dar Enter -->
+                                <input type="text" id="inputAdicionarCategoria"
+                                    placeholder="Digite a categoria e pressione Enter">
                             </div>
-                        </div>
-
-                        <div class="adicionar-projeto__section-spacer adicionar-projeto__section-spacer--large"></div>
-
-                        <div class="adicionar-projeto__tools-block">
-                            <h2 class="adicionar-projeto__section-title adicionar-projeto__section-title--medium">
-                                Ferramentas</h2>
-                            <div class="adicionar-projeto__chips adicionar-projeto__chips--tools"
-                                id="chips-ferramentas"></div>
                         </div>
                     </section>
                 </section>
 
+                <!-- ... Resto do seu HTML antes do aside ... -->
                 <aside class="adicionar-projeto__sidebar" aria-label="Configurações do projeto">
                     <h1 class="adicionar-projeto__page-heading">Configurações</h1>
 
                     <section class="adicionar-projeto__panel adicionar-projeto__sidebar-card">
                         <h2 class="adicionar-projeto__sidebar-title">Visibilidade:</h2>
-
                         <div class="adicionar-projeto__stack-gap">
                             <div>
                                 <label class="adicionar-projeto__field-label" for="visibilidade">Status de
                                     visibilidade:</label>
                                 <select class="adicionar-projeto__select" id="visibilidade">
-                                    <option>Não publicado</option>
-                                    <option>Público</option>
-                                    <option>Privado</option>
+                                    <option value="privado">Não publicado / Privado</option>
+                                    <option value="publico">Público</option>
                                 </select>
                             </div>
-
-                            <button class="adicionar-projeto__sidebar-button" type="button">
+                            <button class="adicionar-projeto__sidebar-button" type="button" id="btnSalvarRascunho">
                                 <img src="img/icons/salvarpreto.svg" alt="">
                                 <span>Salvar Rascunho</span>
                             </button>
-
-                            <button class="adicionar-projeto__sidebar-button" type="button">
+                            <button class="adicionar-projeto__sidebar-button" type="button" id="btnPublicarProjeto">
                                 <img src="img/icons/foguetepreto.svg" alt="">
                                 <span>Publicar</span>
                             </button>
@@ -120,16 +111,18 @@
                         <h2 class="adicionar-projeto__sidebar-title">Comentários</h2>
                         <label class="adicionar-projeto__field-label" for="comentarios">Quem pode comentar?</label>
                         <select class="adicionar-projeto__select" id="comentarios">
-                            <option>Seguidores</option>
-                            <option>Todos</option>
-                            <option>Ninguém</option>
+                            <option value="SEGUIDORES">Seguidores</option>
+                            <option value="TODOS">Todos</option>
+                            <option value="NINGUEM">Ninguém</option>
                         </select>
                     </section>
 
                     <section class="adicionar-projeto__panel adicionar-projeto__sidebar-card">
                         <h2 class="adicionar-projeto__sidebar-title">Capa do projeto:</h2>
-                        <input class="adicionar-projeto__cover-input" type="file" id="capaProjetoInput" accept="image/*" hidden>
-                        <div class="adicionar-projeto__cover-dropzone" id="capaProjetoDropzone" tabindex="0" role="button" aria-label="Adicionar capa do projeto">
+                        <input class="adicionar-projeto__cover-input" type="file" id="capaProjetoInput" accept="image/*"
+                            hidden>
+                        <div class="adicionar-projeto__cover-dropzone" id="capaProjetoDropzone" tabindex="0"
+                            role="button" aria-label="Adicionar capa do projeto">
                             <div class="adicionar-projeto__cover-placeholder" id="capaProjetoPlaceholder">
                                 <img src="img/icons/capaprojetopreto.svg" alt="Adicionar capa">
                                 <p>Arraste e solte</p>
@@ -138,8 +131,9 @@
                                 <img id="capaProjetoPreviewImg" src="" alt="Pré-visualização da capa do projeto">
                             </div>
                         </div>
-                        <button class="adicionar-projeto__add-button" type="button" id="botaoAdicionarCapa"><span><img
-                                    src="img/icons/setaparacimapreta.svg" alt=""></span> Adicionar</button>
+                        <button class="adicionar-projeto__add-button" type="button" id="botaoAdicionarCapa">
+                            <span><img src="img/icons/setaparacimapreta.svg" alt=""></span> Adicionar
+                        </button>
                     </section>
 
                     <section class="adicionar-projeto__panel adicionar-projeto__sidebar-card">
@@ -157,17 +151,26 @@
                     </section>
 
                     <section class="adicionar-projeto__panel adicionar-projeto__sidebar-card">
-                        <h2 class="adicionar-projeto__sidebar-title">Albums</h2>
-                        <button class="adicionar-projeto__add-button adicionar-projeto__small-action" type="button">＋
-                            Adicionar</button>
-                    </section>
-
-                    <section class="adicionar-projeto__panel adicionar-projeto__sidebar-card">
                         <h2 class="adicionar-projeto__sidebar-title">Colaboradores</h2>
-                        <button class="adicionar-projeto__add-button adicionar-projeto__small-action" type="button">＋
-                            Adicionar</button>
+                        <div id="listaColaboradoresSelecionados" class="adicionar-projeto__colaboradores-lista"></div>
+                        <button class="adicionar-projeto__add-button adicionar-projeto__small-action" type="button"
+                            id="btnAbrirModalColaborador">＋ Adicionar</button>
                     </section>
                 </aside>
+                <!-- ... Fim da Main / Fechamento das divs ... -->
+
+                <!-- MODAL COLABORADORES (Colocar no final do HTML antes dos scripts) -->
+                <div id="modalColaboradores" class="modal-overlay" hidden>
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2>Adicionar Colaborador</h2>
+                            <button type="button" id="btnFecharModalColaboradores" class="modal-close">&times;</button>
+                        </div>
+                        <input type="text" id="inputBuscaColaborador" placeholder="Nome ou E-mail..."
+                            class="modal-input">
+                        <div id="resultadosBuscaColaboradores" class="modal-results"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
