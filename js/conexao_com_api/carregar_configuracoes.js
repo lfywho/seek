@@ -8,14 +8,17 @@ document.addEventListener('DOMContentLoaded', function () {
     const informacoesFeedback = document.getElementById('configuracoesInformacoesFeedback');
     const notificacoesLista = document.getElementById('configuracoesNotificacoesLista');
     
-    let usuarioAtual = null;
+    let usuarioAtual = null; // Dados básicos da sessão
+    let perfilAtual = null;  // Dados detalhados do perfil (PF ou EMPRESA)
 
     async function inicializar() {
-        await carregarUsuario();
+        await carregarUsuarioSidebar();
+        await carregarDadosPerfil();
         await carregarPreferenciasNotificacoes();
     }
 
-    async function carregarUsuario() {
+    // 1. Carrega dados básicos para a sidebar (mantido como estava)
+    async function carregarUsuarioSidebar() {
         try {
             const response = await fetch(ip_api + '/auth/me', {
                 method: 'GET',
@@ -31,10 +34,31 @@ document.addEventListener('DOMContentLoaded', function () {
             if (response.ok && res.success) {
                 usuarioAtual = res.data.usuario;
                 aplicarDadosNoAside(usuarioAtual);
-                renderizarFormularioInformacoes(usuarioAtual);
             }
         } catch (error) {
-            console.error('Erro ao carregar dados do usuário:', error);
+            console.error('Erro ao carregar dados básicos do usuário:', error);
+        }
+    }
+
+    // 2. NOVA FUNÇÃO: Busca os dados detalhados para preencher o formulário
+    async function carregarDadosPerfil() {
+        try {
+            const response = await fetch(ip_api + '/usuarios/perfil', {
+                method: 'GET',
+                credentials: 'include'
+            });
+
+            const res = await response.json();
+            
+            if (response.ok && res.success) {
+                perfilAtual = res.data;
+                renderizarFormularioInformacoes(perfilAtual);
+            } else {
+                mostrarFeedback('Não foi possível carregar as informações do perfil.', true);
+            }
+        } catch (error) {
+            console.error('Erro ao carregar perfil detalhado:', error);
+            mostrarFeedback('Falha de conexão ao carregar perfil.', true);
         }
     }
 
@@ -53,7 +77,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    function renderizarFormularioInformacoes(usuario) {
+    // 3. Modificado para ler a estrutura de /usuarios/perfil
+    function renderizarFormularioInformacoes(dadosPerfil) {
         const panelForm = document.querySelector('.minhas-informações .panel-form');
         if (!panelForm) return;
 
@@ -61,24 +86,26 @@ document.addEventListener('DOMContentLoaded', function () {
         panelForm.innerHTML = '';
         inputsDeArquivo.forEach(el => panelForm.appendChild(el));
 
-        if (usuario.tipo_usuario === 'PF') {
-            criarCampoTexto(panelForm, 'nome_usuario', 'Nome público', usuario.nome_usuario || usuario.nome);
-            criarCampoTexto(panelForm, 'telefone', 'Telefone', usuario.telefone);
-            criarCampoTexto(panelForm, 'cidade', 'Cidade', usuario.cidade);
-            criarCampoTexto(panelForm, 'estado', 'Estado', usuario.estado);
-            criarCampoTextarea(panelForm, 'sobre', 'Sobre mim', usuario.sobre);
-            criarCampoTexto(panelForm, 'linkedin', 'LinkedIn URL', usuario.linkedin);
-            criarCampoTexto(panelForm, 'github', 'GitHub URL', usuario.github);
-            criarCampoTexto(panelForm, 'curriculo', 'Link do Currículo', usuario.curriculo);
-        } else if (usuario.tipo_usuario === 'EMPRESA') {
-            criarCampoTexto(panelForm, 'razao_social', 'Razão Social', usuario.razao_social);
-            criarCampoTexto(panelForm, 'nome_fantasia', 'Nome Fantasia', usuario.nome_fantasia || usuario.nome);
-            criarCampoTexto(panelForm, 'telefone_comercial', 'Telefone Comercial', usuario.telefone_comercial);
-            criarCampoTexto(panelForm, 'categoria_negocio', 'Categoria de Negócio', usuario.categoria_negocio);
-            criarCampoTexto(panelForm, 'numero_funcionarios', 'Número de Funcionários', usuario.numero_funcionarios, 'number');
-            criarCampoTexto(panelForm, 'endereco_completo', 'Endereço Completo', usuario.endereco_completo);
-            criarCampoTextarea(panelForm, 'descricao', 'Descrição da Empresa', usuario.descricao);
-            criarCampoTexto(panelForm, 'site', 'Site', usuario.site);
+        if (dadosPerfil.tipo_usuario === 'PF' && dadosPerfil.perfil_pessoa_fisica) {
+            const pf = dadosPerfil.perfil_pessoa_fisica;
+            criarCampoTexto(panelForm, 'nome_usuario', 'Nome público', pf.nome_usuario);
+            criarCampoTexto(panelForm, 'telefone', 'Telefone', pf.telefone);
+            criarCampoTexto(panelForm, 'cidade', 'Cidade', pf.cidade);
+            criarCampoTexto(panelForm, 'estado', 'Estado', pf.estado);
+            criarCampoTextarea(panelForm, 'sobre', 'Sobre mim', pf.sobre);
+            criarCampoTexto(panelForm, 'linkedin', 'LinkedIn URL', pf.linkedin);
+            criarCampoTexto(panelForm, 'github', 'GitHub URL', pf.github);
+            criarCampoTexto(panelForm, 'curriculo', 'Link do Currículo', pf.curriculo);
+        } else if (dadosPerfil.tipo_usuario === 'EMPRESA' && dadosPerfil.perfil_empresa) {
+            const emp = dadosPerfil.perfil_empresa;
+            criarCampoTexto(panelForm, 'razao_social', 'Razão Social', emp.razao_social);
+            criarCampoTexto(panelForm, 'nome_fantasia', 'Nome Fantasia', emp.nome_fantasia);
+            criarCampoTexto(panelForm, 'telefone_comercial', 'Telefone Comercial', emp.telefone_comercial);
+            criarCampoTexto(panelForm, 'categoria_negocio', 'Categoria de Negócio', emp.categoria_negocio);
+            criarCampoTexto(panelForm, 'numero_funcionarios', 'Número de Funcionários', emp.numero_funcionarios, 'number');
+            criarCampoTexto(panelForm, 'endereco_completo', 'Endereço Completo', emp.endereco_completo);
+            criarCampoTextarea(panelForm, 'descricao', 'Descrição da Empresa', emp.descricao);
+            criarCampoTexto(panelForm, 'site', 'Site', emp.site);
         }
     }
 
@@ -109,13 +136,14 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     async function salvarInformacoes() {
-        if (!usuarioAtual) return;
+        if (!perfilAtual) return;
         
         salvarInformacoesButton.disabled = true;
         salvarInformacoesButton.textContent = 'Salvando...';
         mostrarFeedback('', false);
 
         try {
+            // Uploads de imagem (mantidos)
             const fotoInput = document.getElementById('configuracoesFotoInput');
             if (fotoInput && fotoInput.files[0]) {
                 const fdFoto = new FormData();
@@ -141,7 +169,7 @@ document.addEventListener('DOMContentLoaded', function () {
             let corpoRequisicao = {};
             let endpoint = '';
 
-            if (usuarioAtual.tipo_usuario === 'PF') {
+            if (perfilAtual.tipo_usuario === 'PF') {
                 endpoint = '/usuarios/perfil-pessoa-física';
                 corpoRequisicao = {
                     nome_usuario: document.getElementById('input_nome_usuario')?.value,
@@ -181,7 +209,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 mostrarFeedback('Configurações salvas com sucesso!', false);
                 if(fotoInput) fotoInput.value = '';
                 if(bannerInput) bannerInput.value = '';
-                await carregarUsuario(); 
+                
+                // Recarrega tudo para manter o front sincronizado
+                await carregarUsuarioSidebar(); 
+                await carregarDadosPerfil();
             } else {
                 mostrarFeedback(res.message || 'Erro ao salvar as configurações.', true);
             }

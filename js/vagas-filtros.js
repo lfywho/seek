@@ -1,19 +1,19 @@
 document.addEventListener('DOMContentLoaded', function () {
-    var categoriasList = document.getElementById('vagasCategoriasList');
-    var categoriasStatus = document.getElementById('vagasCategoriasStatus');
-    var range = document.getElementById('vagasTempoRange');
-    var maxText = document.getElementById('vagasTempoMax');
-    var unitText = document.getElementById('vagasTempoUnidade');
-    var unitRadios = document.querySelectorAll('input[name="tempo-postagem"]');
+    const categoriasList = document.getElementById('vagasCategoriasList');
+    const categoriasStatus = document.getElementById('vagasCategoriasStatus');
+    const range = document.getElementById('vagasTempoRange');
+    const maxText = document.getElementById('vagasTempoMax');
+    const unitText = document.getElementById('vagasTempoUnidade');
+    const unitRadios = document.querySelectorAll('input[name="tempo-postagem"]');
 
     if (!categoriasList || !categoriasStatus || !range || !maxText || !unitText || !unitRadios.length) {
         return;
     }
 
-    var filterState = {
-        categoria: '',
-        tempo: 'dias',
-        dias: ''
+    // O estado agora guarda o ID da categoria
+    const filterState = {
+        categoriaId: null, 
+        dias: 7 
     };
 
     function notifyChange() {
@@ -26,15 +26,6 @@ document.addEventListener('DOMContentLoaded', function () {
         categoriasStatus.textContent = texto;
     }
 
-    function escapeHtml(value) {
-        return String(value == null ? '' : value)
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;')
-            .replace(/'/g, '&#39;');
-    }
-
     function renderCategorias(categorias) {
         categoriasList.innerHTML = '';
 
@@ -45,29 +36,41 @@ document.addEventListener('DOMContentLoaded', function () {
 
         setCategoriasStatus('');
 
-        categorias.forEach(function (categoria) {
-            var nome = categoria && categoria.nome_categoria ? String(categoria.nome_categoria) : '';
-            if (!nome) {
-                return;
-            }
+        categorias.forEach(categoria => {
+            const id = categoria.id;
+            const nome = categoria.nome;
+            const quantidade = categoria.quantidade_vagas || 0;
 
-            var label = document.createElement('label');
+            if (!id || !nome) return;
+
+            const label = document.createElement('label');
             label.className = 'filtro-opcao';
 
-            var input = document.createElement('input');
+            const input = document.createElement('input');
             input.type = 'checkbox';
             input.name = 'categoria-vaga';
-            input.checked = filterState.categoria === nome;
+            input.value = id;
+            input.checked = (filterState.categoriaId === id);
 
-            var texto = document.createElement('span');
-            texto.textContent = nome;
+            const texto = document.createElement('span');
+            texto.textContent = `${nome} (${quantidade})`;
 
             label.appendChild(input);
             label.appendChild(texto);
 
-            label.addEventListener('click', function () {
-                filterState.categoria = filterState.categoria === nome ? '' : nome;
-                renderCategorias(categorias);
+            label.addEventListener('click', (e) => {
+                // Impede clique duplo por borbulhamento do checkbox
+                if (e.target.tagName !== 'INPUT') return; 
+                
+                // Toggle do ID da categoria
+                filterState.categoriaId = input.checked ? id : null;
+                
+                // Desmarca os outros checkboxes
+                document.querySelectorAll('input[name="categoria-vaga"]').forEach(cb => {
+                    if (cb !== input) cb.checked = false;
+                });
+
+                syncStateGlobal();
                 notifyChange();
             });
 
@@ -76,43 +79,50 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function syncTempoControls() {
-        var selected = document.querySelector('input[name="tempo-postagem"]:checked');
-        var unit = selected ? selected.value : 'dias';
-        var isCustomDays = unit === 'dias';
-        var diasValor = isCustomDays ? String(range.value || '7') : '';
+        const selected = document.querySelector('input[name="tempo-postagem"]:checked');
+        const unit = selected ? selected.value : 'dias';
+        const isCustomDays = unit === 'dias';
 
-        range.max = isCustomDays ? '365' : (unit === 'hoje' ? '1' : unit === 'semana' ? '7' : unit === 'mes' ? '30' : unit === 'ano' ? '365' : '365');
-        if (isCustomDays && (!range.value || Number(range.value) < 1)) {
-            range.value = '7';
-            diasValor = '7';
+        // Mapeia o valor para dias
+        let totalDias = 365; // Padrão "Todos" / "Ano"
+        if (unit === 'hoje') totalDias = 1;
+        else if (unit === 'semana') totalDias = 7;
+        else if (unit === 'mes') totalDias = 30;
+        else if (isCustomDays) {
+            totalDias = Number(range.value) || 7;
         }
+
+        // Configurações do input range
+        range.max = isCustomDays ? '365' : String(totalDias);
         if (!isCustomDays) {
             range.value = range.max;
         }
 
-        filterState.tempo = unit;
-        filterState.dias = diasValor;
+        filterState.dias = totalDias;
         maxText.textContent = range.value;
         unitText.textContent = isCustomDays ? 'dias' : unit;
 
+        syncStateGlobal();
+    }
+
+    function syncStateGlobal() {
         if (window.seekVagasFilterState) {
-            window.seekVagasFilterState.categoria = filterState.categoria;
-            window.seekVagasFilterState.tempo = filterState.tempo;
+            window.seekVagasFilterState.categoriaId = filterState.categoriaId;
             window.seekVagasFilterState.dias = filterState.dias;
         }
     }
 
     range.addEventListener('input', function () {
         maxText.textContent = range.value;
-        var selectedTempo = document.querySelector('input[name="tempo-postagem"]:checked');
+        const selectedTempo = document.querySelector('input[name="tempo-postagem"]:checked');
         if (selectedTempo && selectedTempo.value === 'dias') {
             syncTempoControls();
             notifyChange();
         }
     });
 
-    unitRadios.forEach(function (radio) {
-        radio.addEventListener('change', function () {
+    unitRadios.forEach(radio => {
+        radio.addEventListener('change', () => {
             syncTempoControls();
             notifyChange();
         });
@@ -120,30 +130,30 @@ document.addEventListener('DOMContentLoaded', function () {
 
     window.seekVagasFilterState = filterState;
 
-    window.seekVagasAtualizarCategorias = function (categorias) {
-        renderCategorias(categorias);
-    };
-
     window.seekVagasRecarregar = function () {
         if (typeof window.seekVagasRecarregarLista === 'function') {
             window.seekVagasRecarregarLista();
         }
     };
 
+    // Inicializa valores da tela
     syncTempoControls();
 
-    fetch(ip_api + '/postsvagas/top-categorias')
-        .then(function (response) {
-            if (!response.ok) {
-                throw new Error('Falha ao carregar categorias');
-            }
-
-            return response.json();
-        })
-        .then(function (categorias) {
-            renderCategorias(categorias);
-        })
-        .catch(function () {
-            setCategoriasStatus('Nao foi possivel carregar as categorias.');
-        });
+    // Carregar as categorias mais utilizadas da API
+    fetch(ip_api + '/vagas/mais-utilizados', {
+        method: "GET",
+        credentials: "include" // Importante em rotas protegidas
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success && data.data) {
+            renderCategorias(data.data);
+        } else {
+            setCategoriasStatus('Nenhuma categoria disponível.');
+        }
+    })
+    .catch(error => {
+        console.error("Erro ao carregar top categorias:", error);
+        setCategoriasStatus('Não foi possível carregar as categorias.');
+    });
 });
