@@ -30,8 +30,9 @@
     <div class="modal-body">
 
       <div class="left-col">
-        <div class="avatar" title="Adicionar foto de perfil">
-          <i class="ti ti-photo-plus"></i>
+        <div class="avatar" id="avatarEmpresaBox" title="Adicionar foto de perfil" style="cursor: pointer;">
+          <i class="ti ti-photo-plus" id="iconAvatarEmpresa"></i>
+          <input type="file" id="fotoEmpresa" accept="image/*" style="display: none;" />
         </div>
 
         <span class="avatar-label">Adicionar foto de perfil</span>
@@ -74,7 +75,7 @@
           </div>
 
           <div class="field-wrap">
-            <input id="empresaCnpj" class="field-input" type="text" placeholder="CNPJ" />
+            <input id="empresaSite" class="field-input" type="text" placeholder="Site (Ex: https://empresa.com)" />
           </div>
 
         </div>
@@ -92,7 +93,7 @@
   </div>
 
 
-  <!-- ══════════════════════════════════
+<!-- ══════════════════════════════════
        MODAL 2 — Pessoa Física
   ══════════════════════════════════ -->
   <div class="modal" id="modalPessoa" style="display:none;">
@@ -109,8 +110,9 @@
 
       <div class="left-col">
 
-        <div class="avatar" title="Adicionar foto de perfil">
-          <i class="ti ti-photo-plus"></i>
+        <div class="avatar" id="avatarPessoaBox" title="Adicionar foto de perfil" style="cursor: pointer;">
+          <i class="ti ti-photo-plus" id="iconAvatarPessoa"></i>
+          <input type="file" id="fotoPessoa" accept="image/*" style="display: none;" />
         </div>
 
         <span class="avatar-label">Adicionar foto de perfil</span>
@@ -121,7 +123,17 @@
             <input id="pessoaNomeUsuario" class="field-input-full" type="text" placeholder="Nome de Usuário" />
           </div>
 
-          <input id="pessoaProfissao" class="field-input-full" type="text" placeholder="Sua Profissão" />
+          <div class="field-wrap" style="margin-bottom:8px">
+            <input id="pessoaProfissao" class="field-input-full" type="text" placeholder="Sua Profissão" />
+          </div>
+
+          <div class="field-wrap" style="margin-bottom:8px">
+            <input id="pessoaLinkedin" class="field-input-full" type="text" placeholder="URL do LinkedIn" />
+          </div>
+
+          <div class="field-wrap" style="margin-bottom:8px">
+            <input id="pessoaGithub" class="field-input-full" type="text" placeholder="URL do GitHub" />
+          </div>
 
         </div>
 
@@ -139,15 +151,19 @@
 
         <hr class="divider" />
 
-        <span class="section-label">Certificados</span>
+        <!-- MODIFICADO: Substituição de Certificados pelo Anexo de Currículo -->
+        <span class="section-label">Currículo</span>
 
-        <button class="add-section-btn" style="margin-bottom:6px">
-          Adicionar seção ao perfil
+        <input type="file" id="arquivoCurriculo" accept=".pdf, application/pdf" style="display: none;" />
+        
+        <button type="button" id="btnAnexarCurriculo" class="add-section-btn" style="margin-bottom:6px;">
+          Anexar Currículo (.pdf)
         </button>
-
-        <button class="plus-circle">
-          +
-        </button>
+        
+        <!-- Span para mostrar o nome do arquivo selecionado -->
+        <span id="nomeArquivoCurriculo" style="font-size: 0.85em; color: #666; display: block; margin-top: 4px;">
+          Nenhum arquivo selecionado
+        </span>
 
       </div>
 
