@@ -26,12 +26,12 @@
     <main class="conteudo-galeria">
         <section class="galeria-layout" aria-label="Galeria de projetos">
             <aside class="galeria-filtros" aria-label="Filtros da galeria">
-                <details class="galeria-filter-panel">
-                    <summary class="galeria-filter-summary">
-                        <span>Filtros</span>
-                        <span aria-hidden="true">⌄</span>
-                    </summary>
+                <button class="galeria-filtro-toggle" type="button" aria-expanded="false" aria-controls="galeriaFiltroPanel">
+                    <span class="galeria-filtro-toggle__icon" aria-hidden="true"><img src="/img/galeriaFiltro.svg" alt="Filtrar"></span>
+                    <span>Filtrar</span>
+                </button>
 
+                <div id="galeriaFiltroPanel" class="galeria-filter-panel">
                     <div class="galeria-filter-content">
                         <section class="galeria-filter-group">
                             <h2>Campos de criação</h2>
@@ -71,7 +71,7 @@
                             </div>
                         </section>
                     </div>
-                </details>
+                </div>
             </aside>
 
             <section class="galeria-grid" aria-label="Projetos em destaque">
@@ -160,6 +160,27 @@
     <script src="js/header.js"></script>
     <script src="js/cursos-carousel.js"></script>
     <script src="js/Acessibilidade/ModoEscuro.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const layout = document.querySelector('.galeria-layout');
+            const toggle = document.querySelector('.galeria-filtro-toggle');
+
+            if (!layout || !toggle) return;
+
+            const setFilterState = (isOpen) => {
+                layout.classList.toggle('galeria-layout--filtro-aberto', isOpen);
+                toggle.classList.toggle('is-active', isOpen);
+                toggle.setAttribute('aria-expanded', String(isOpen));
+            };
+
+            setFilterState(false);
+
+            toggle.addEventListener('click', function () {
+                const isOpen = !layout.classList.contains('galeria-layout--filtro-aberto');
+                setFilterState(isOpen);
+            });
+        });
+    </script>
 </body>
 
 </html>
