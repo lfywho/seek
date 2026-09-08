@@ -6,37 +6,155 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Seek | Procure caminhos, crie possibilidades</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="icon" type="image/x-icon" href="/Landing-page/imgs/favicon.svg">
-
+    <link rel="icon" type="image/x-icon" href="imgs/favicon.svg">
 </head>
 
 <body>
-    <header class="site-header"><a class="brand" href="index.html" aria-label="Seek - início"><img
-                src="imgs/logo_com_nome.svg" alt="Seek"></a>
-        <nav class="main-nav" aria-label="Navegação principal"><a href="nossa_missao.html">Nossa missão</a><a
-                href="index.html" aria-current="page">Explorar</a><a href="quem_somos..html">Sobre nós</a><a
-                href="contato.html">Contato</a><a href="#beneficios">Assinatura</a></nav><div class="header-actions"><a
-                class="login-button" href="../login.html">Entrar</a></div>
+    <header class="site-header">
+        <a class="brand" href="#inicio" aria-label="Seek - início"><img src="imgs/logo_com_nome.svg" alt="Seek"></a>
+        <nav class="main-nav" aria-label="Navegação principal">
+            <a href="#inicio" aria-current="page">Explorar</a>
+            <a href="#missao">Nossa missão</a>
+            <a href="#sobre">Sobre nós</a>
+            <a href="#contato">Contato</a>
+            <a href="#beneficios">Assinatura</a>
+        </nav>
+        <div class="header-actions"><a class="login-button" href="../login.html">Entrar</a></div>
     </header>
-    <main class="page-shell hero">
-        <section class="hero-copy">
-            <h1>Procure caminhos<br>Crie <span>possibilidades</span></h1>
-            <p>Seek é uma plataforma que conecta mentes criativas com empresas, projetos, que precisam deles.</p>
-            <div class="actions"><a class="button button-primary" href="nossa_missao.html">Explorar projetos</a><a
-                    class="button button-outline" href="contato.html">Criar conta gratuita</a></div>
-            <div class="benefits" id="beneficios">
-                <div class="benefit"><img src="imgs/equipe.svg" alt=""><strong>Conexões reais</strong><span>Com
-                        profissionais no Brasil inteiro</span></div>
-                <div class="benefit"><img src="imgs/escudo.svg" alt=""><strong>Plataforma segura</strong><span>E
-                        transparente com todos</span></div>
-                <div class="benefit"><img src="imgs/raio.svg" alt=""><strong>Mais visibilidade</strong><span>Para seu
-                        talento e portfolio</span></div>
+
+    <main>
+        <section class="page-shell hero" id="inicio">
+            <div class="hero-copy">
+                <h1>Procure caminhos<br>Crie <span>possibilidades</span></h1>
+                <p>Seek é uma plataforma que conecta mentes criativas com empresas, projetos, que precisam deles.</p>
+                <div class="actions"><a class="button button-primary" href="#missao">Explorar projetos</a><a
+                        class="button button-outline" href="#contato">Criar conta gratuita</a></div>
+                <div class="benefits" id="beneficios">
+                    <div class="benefit"><img src="imgs/equipe.svg" alt=""><strong>Conexões reais</strong><span>Com
+                            profissionais no Brasil inteiro</span></div>
+                    <div class="benefit"><img src="imgs/escudo.svg" alt=""><strong>Plataforma segura</strong><span>E
+                            transparente com todos</span></div>
+                    <div class="benefit"><img src="imgs/raio.svg" alt=""><strong>Mais visibilidade</strong><span>Para
+                            seu talento e portfolio</span></div>
+                </div>
+            </div>
+            <div class="hero-art" aria-hidden="true">
+                <div class="hero-frame"></div>
             </div>
         </section>
-        <div class="hero-art" aria-hidden="true">
-            <div class="hero-frame"></div>
-        </div>
+
+        <section class="page-shell split-page" id="missao">
+            <div class="copy-column">
+                <h2>Nossa missão</h2>
+                <div class="eyebrow-line"></div>
+                <p>O Seek é uma plataforma criativa feita para conectar pessoas talentosas a oportunidades reais. Seja
+                    um freelancer, estudou ou empresa, aqui você encontra o espaço ideal para colaborar, contratar e
+                    crescer.</p>
+                <ul class="check-list">
+                    <li>Encontre os melhores talentos para o seu projeto</li>
+                    <li>Publique seu trabalho e ganhe destaque</li>
+                    <li>Participe de vagas e projetos incríveis</li>
+                    <li>Venda sua arte na nossa “Galeria”</li>
+                    <li>Faça parte da nossa comunidade criativa</li>
+                </ul>
+            </div>
+            <div class="mission-image"><img src="imgs/foto_do_site.png" alt="Visão geral da plataforma Seek"></div>
+        </section>
+
+        <section class="page-shell about-grid" id="sobre">
+            <div class="copy-column">
+                <h2>Quem nós somos?</h2>
+                <div class="eyebrow-line"></div>
+                <p>Somos uma plataforma criada por e para criativos. Acreditamos no poder da colaboração e na força das
+                    ideias que se conectam.</p>
+                <p>Nosso objetivo é facilitar caminhos, abrir portas e impulsionar carreiras.</p>
+                <p>Estamos empenhados a trazer a melhor experiência para os usuários, e temos certeza de que com o Seek,
+                    vocês podem mais.</p>
+                <div class="stats">
+                    <div class="stat"><strong>+25K</strong><span>Projetos publicados</span></div>
+                    <div class="stat"><strong>+8K</strong><span>Criadores ativos</span></div>
+                    <div class="stat"><strong>+2K</strong><span>Empresas parceiras</span></div>
+                    <div class="stat"><strong>+4</strong><span>Regiões alcançadas</span></div>
+                </div>
+            </div>
+            <div class="team">
+                <h2>Nossa equipe</h2>
+                <div class="eyebrow-line"></div>
+                <div class="team-grid">
+                    <article class="member"><img src="imgs/equipe.svg" alt="">
+                        <div>
+                            <h3>Nome do membro</h3>
+                            <p>Descrição breve sobre função ou sobre o membro em si, não deve passar mais do que umas 7
+                                linhas para não quebrar o equilíbrio da página</p>
+                        </div>
+                    </article>
+                    <article class="member"><img src="imgs/equipe.svg" alt="">
+                        <div>
+                            <h3>Nome do membro</h3>
+                            <p>Descrição breve sobre função ou sobre o membro em si, não deve passar mais do que umas 7
+                                linhas para não quebrar o equilíbrio da página</p>
+                        </div>
+                    </article>
+                    <article class="member"><img src="imgs/equipe.svg" alt="">
+                        <div>
+                            <h3>Nome do membro</h3>
+                            <p>Descrição breve sobre função ou sobre o membro em si, não deve passar mais do que umas 7
+                                linhas para não quebrar o equilíbrio da página</p>
+                        </div>
+                    </article>
+                    <article class="member"><img src="imgs/equipe.svg" alt="">
+                        <div>
+                            <h3>Nome do membro</h3>
+                            <p>Descrição breve sobre função ou sobre o membro em si, não deve passar mais do que umas 7
+                                linhas para não quebrar o equilíbrio da página</p>
+                        </div>
+                    </article>
+                    <article class="member"><img src="imgs/equipe.svg" alt="">
+                        <div>
+                            <h3>Nome do membro</h3>
+                            <p>Descrição breve sobre função ou sobre o membro em si, não deve passar mais do que umas 7
+                                linhas para não quebrar o equilíbrio da página</p>
+                        </div>
+                    </article>
+                    <article class="member"><img src="imgs/equipe.svg" alt="">
+                        <div>
+                            <h3>Nome do membro</h3>
+                            <p>Descrição breve sobre função ou sobre o membro em si, não deve passar mais do que umas 7
+                                linhas para não quebrar o equilíbrio da página</p>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="page-shell contact-grid" id="contato">
+            <div class="contact-copy">
+                <h2>Contato</h2>
+                <div class="eyebrow-line"></div>
+                <p>Tem alguma dúvida, sugestão ou quer falar com a gente? Preencha o formulário ou envie um e-mail.
+                    Vamos adorar conversar e sanar a dúvida de vocês!</p>
+                <div class="contact-details">
+                    <div class="contact-detail"><img src="imgs/email.svg" alt="">
+                        <div>Email<span>hello@luminary.io</span></div>
+                    </div>
+                    <div class="contact-detail"><img src="imgs/telefone.svg" alt="">
+                        <div>Phone<span>(16) 9999-9999</span></div>
+                    </div>
+                    <div class="contact-detail"><img src="imgs/local.svg" alt="">
+                        <div>Address<span>Matão, SP - Brasil</span></div>
+                    </div>
+                </div>
+            </div>
+            <form class="contact-form" action="#" method="post"><input type="text" name="nome"
+                    placeholder="Nome completo" aria-label="Nome completo" required><input type="email" name="email"
+                    placeholder="Email" aria-label="Email" required><input type="text" name="assunto"
+                    placeholder="Assunto" aria-label="Assunto" required><textarea name="mensagem" placeholder="Mensagem"
+                    aria-label="Mensagem" required></textarea>
+                <div class="form-action"><button class="button" type="submit">Enviar mensagem</button></div>
+            </form>
+        </section>
     </main>
-<script src="nav-transition.js"></script>
+    <script src="nav-transition.js"></script>
 </body>
+
 </html>
