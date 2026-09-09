@@ -15,6 +15,8 @@
     --textoSuave: #9da0a8;
     --linha: rgba(255, 255, 255, .16);
     --gradiente_1: linear-gradient(110deg, #0758ff, #7620e8);
+    --superficie: #161b21;
+    --borda-superficie: #3b444e;
 }
 
 html {
@@ -106,8 +108,27 @@ textarea {
 .header-actions {
     align-items: center;
     display: flex;
+    gap: 10px;
     justify-content: flex-end;
-    min-width: 120px;
+    min-width: 240px;
+}
+
+.theme-toggle {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, .25);
+    border-radius: 22px;
+    color: #d9d9dc;
+    cursor: pointer;
+    font-size: 13px;
+    padding: 7px 13px;
+    transition: background .2s ease, color .2s ease, border-color .2s ease;
+}
+
+.theme-toggle:hover,
+.theme-toggle:focus-visible {
+    background: rgba(255, 255, 255, .12);
+    border-color: currentColor;
+    outline: 0;
 }
 
 .login-button {
@@ -447,8 +468,8 @@ h2 {
 
 .contact-form input,
 .contact-form textarea {
-    background: #161b21;
-    border: 1px solid #3b444e;
+    background: var(--superficie);
+    border: 1px solid var(--borda-superficie);
     border-radius: 18px;
     color: #fff;
     outline: 0;
@@ -469,6 +490,105 @@ h2 {
 .contact-form input:focus,
 .contact-form textarea:focus {
     border-color: #5f43ff;
+}
+
+body.light-mode {
+    --fundoEscuro: #f5f7fb;
+    --textoClaro: #171923;
+    --textoSuave: #596273;
+    --linha: rgba(24, 31, 46, .16);
+    --superficie: #fff;
+    --borda-superficie: #cbd3df;
+    background: var(--fundoEscuro);
+}
+
+.light-mode .site-header {
+    background: rgba(255, 255, 255, .92);
+    border-color: rgba(24, 31, 46, .14);
+    box-shadow: 0 8px 30px rgba(42, 54, 76, .08);
+}
+
+.light-mode .brand img {
+    opacity: 0;
+    width: 0;
+}
+
+.light-mode .brand {
+    align-items: center;
+    background: url('imgs/logo.svg') left center / 40px 40px no-repeat;
+    display: flex;
+    height: 40px;
+    padding-left: 48px;
+}
+
+.light-mode .brand::after {
+    color: #171923;
+    content: 'Seek';
+    font-size: 27px;
+    font-weight: 800;
+    letter-spacing: -1.5px;
+}
+
+.light-mode .main-nav a,
+.light-mode .theme-toggle {
+    color: #596273;
+}
+
+.light-mode .main-nav a:hover,
+.light-mode .main-nav a[aria-current='page'] {
+    color: #171923;
+}
+
+.light-mode .theme-toggle:hover,
+.light-mode .theme-toggle:focus-visible {
+    background: #edf1f8;
+}
+
+.light-mode .hero-copy p,
+.light-mode .benefit span {
+    color: #596273;
+}
+
+.light-mode .button-outline {
+    border-color: #aeb8c8;
+    color: #171923;
+}
+
+.light-mode .hero-art::before {
+    background: radial-gradient(circle, rgba(65, 116, 255, .2), transparent 67%);
+}
+
+.light-mode .check-list li {
+    color: #30394a;
+}
+
+.light-mode .check-list li::before {
+    border-color: #c2cad8;
+}
+
+.light-mode .team {
+    border-color: #d4dbe6;
+}
+
+.light-mode .member p,
+.light-mode .stat span,
+.light-mode .contact-detail span {
+    color: #687386;
+}
+
+.light-mode .contact-detail img {
+    mix-blend-mode: multiply;
+    opacity: .78;
+}
+
+.light-mode .contact-form input,
+.light-mode .contact-form textarea {
+    color: #171923;
+}
+
+.light-mode .contact-form input::placeholder,
+.light-mode .contact-form textarea::placeholder {
+    color: #7a8495;
 }
 
 .form-action {
@@ -548,6 +668,15 @@ h2 {
 
     .header-actions {
         min-width: auto;
+    }
+
+    .theme-toggle {
+        font-size: 0;
+        padding: 6px 10px;
+    }
+
+    .theme-toggle span {
+        font-size: 18px;
     }
 
     .login-button {

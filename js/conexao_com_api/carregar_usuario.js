@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var seguirContainer = document.getElementById('container-seguir-mensagem');
     var seguirButton = seguirContainer ? seguirContainer.querySelector('.usuario-btn--primary') : null;
     var mensagemButton = seguirContainer ? seguirContainer.querySelector('.usuario-btn--secondary') : null;
-    
+
     // Variáveis de Estado
     var idUsuarioPaginaAtual = null;
     var estaSeguindoUsuario = false;
@@ -167,7 +167,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             var result = await response.json();
-            
+
             if (response.ok && result.success) {
                 renderizarRelacionamentos(result.data);
             } else {
@@ -183,14 +183,22 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- CONTROLE DE UI DO PERFIL ---
 
     function esconderAcoesDoProprioPerfil(isProprioPerfil) {
+        // Oculta botões de seguir/mensagem se for o próprio perfil
         if (seguirContainer) seguirContainer.style.display = isProprioPerfil ? 'none' : '';
         if (mensagemButton) mensagemButton.style.display = isProprioPerfil ? 'none' : '';
 
-        var menuPopover = document.querySelector('.usuario-profile-card__menu-popover');
+        // Atualiza o menu de opções (três pontinhos)
+        var menuPopover = document.getElementById('usuarioProfileMenu');
         if (menuPopover) {
-            Array.from(menuPopover.children).forEach(function(item) {
-                item.style.display = isProprioPerfil ? 'none' : '';
-            });
+            if (isProprioPerfil) {
+                // edit = true (Mostra apenas "Editar perfil")
+                menuPopover.innerHTML = '<button type="button" class="usuario-profile-card__menu-item" role="menuitem">Editar perfil</button>';
+            } else {
+                // edit = false (Mostra "Denunciar" e "Bloquear")
+                menuPopover.innerHTML =
+                    '<button type="button" class="usuario-profile-card__menu-item usuario-profile-card__menu-item--danger" role="menuitem">Denunciar</button>' +
+                    '<button type="button" class="usuario-profile-card__menu-item usuario-profile-card__menu-item--danger" role="menuitem">Bloquear</button>';
+            }
         }
     }
 
@@ -365,9 +373,9 @@ document.addEventListener('DOMContentLoaded', function () {
         avatarImage.src = foto;
         avatarImage.alt = 'Foto de perfil de ' + nome;
         nomeElement.textContent = nome;
-        
-        if (usuarioElement) usuarioElement.textContent = 'Perfil do usuário'; 
-        
+
+        if (usuarioElement) usuarioElement.textContent = 'Perfil do usuário';
+
         descricaoElement.textContent = descricao;
 
         if (statsValues[0]) statsValues[0].textContent = String(usuario.total_seguidores ?? 0);
