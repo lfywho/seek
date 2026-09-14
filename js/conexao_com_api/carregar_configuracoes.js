@@ -77,9 +77,18 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    function escapeHtml(valor) {
+        return String(valor ?? '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
     // 3. Modificado para ler a estrutura de /usuarios/perfil
     function renderizarFormularioInformacoes(dadosPerfil) {
-        const panelForm = document.querySelector('.minhas-informações .panel-form');
+        const panelForm = document.querySelector('.minhas-informacoes .panel-form');
         if (!panelForm) return;
 
         const inputsDeArquivo = Array.from(panelForm.querySelectorAll('.field-group--file'));
@@ -88,43 +97,56 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (dadosPerfil.tipo_usuario === 'PF' && dadosPerfil.perfil_pessoa_fisica) {
             const pf = dadosPerfil.perfil_pessoa_fisica;
-            criarCampoTexto(panelForm, 'nome_usuario', 'Nome público', pf.nome_usuario);
-            criarCampoTexto(panelForm, 'telefone', 'Telefone', pf.telefone);
-            criarCampoTexto(panelForm, 'cidade', 'Cidade', pf.cidade);
-            criarCampoTexto(panelForm, 'estado', 'Estado', pf.estado);
-            criarCampoTextarea(panelForm, 'sobre', 'Sobre mim', pf.sobre);
-            criarCampoTexto(panelForm, 'linkedin', 'LinkedIn URL', pf.linkedin);
-            criarCampoTexto(panelForm, 'github', 'GitHub URL', pf.github);
-            criarCampoTexto(panelForm, 'curriculo', 'Link do Currículo', pf.curriculo);
+            criarCampoTexto(panelForm, 'nome_usuario', 'Nome de usuario', 'Altera seu nome de usuario cadastrado', pf.nome_usuario, 'text', 'placeholder_do_usuario_atual_em_cinza');
+            criarCampoTexto(panelForm, 'telefone', 'Telefone', 'Altera seu telefone de contato', pf.telefone, 'tel', 'placeholder_do_telefone_atual_em_cinza');
+            criarCampoTexto(panelForm, 'cidade', 'Cidade', 'Altera sua cidade', pf.cidade, 'text', 'placeholder_da_cidade_atual_em_cinza');
+            criarCampoTexto(panelForm, 'estado', 'Estado', 'Altera seu estado', pf.estado, 'text', 'placeholder_do_estado_atual_em_cinza');
+            criarCampoTextarea(panelForm, 'sobre', 'Biografia', 'Modifica sua biografia', pf.sobre, 'Uma pequena descricao sobre voce, o que voce faz e com o que voce trabalha, sua jornada academica, etc...');
+            criarCampoTexto(panelForm, 'linkedin', 'LinkedIn URL', 'Altera o link do seu LinkedIn', pf.linkedin, 'url', 'placeholder_linkedin_atual_em_cinza');
+            criarCampoTexto(panelForm, 'github', 'GitHub URL', 'Altera o link do seu GitHub', pf.github, 'url', 'placeholder_github_atual_em_cinza');
+            criarCampoTexto(panelForm, 'curriculo', 'Link do Curriculo', 'Altera o link do seu curriculo', pf.curriculo, 'url', 'placeholder_curriculo_atual_em_cinza');
         } else if (dadosPerfil.tipo_usuario === 'EMPRESA' && dadosPerfil.perfil_empresa) {
             const emp = dadosPerfil.perfil_empresa;
-            criarCampoTexto(panelForm, 'razao_social', 'Razão Social', emp.razao_social);
-            criarCampoTexto(panelForm, 'nome_fantasia', 'Nome Fantasia', emp.nome_fantasia);
-            criarCampoTexto(panelForm, 'telefone_comercial', 'Telefone Comercial', emp.telefone_comercial);
-            criarCampoTexto(panelForm, 'categoria_negocio', 'Categoria de Negócio', emp.categoria_negocio);
-            criarCampoTexto(panelForm, 'numero_funcionarios', 'Número de Funcionários', emp.numero_funcionarios, 'number');
-            criarCampoTexto(panelForm, 'endereco_completo', 'Endereço Completo', emp.endereco_completo);
-            criarCampoTextarea(panelForm, 'descricao', 'Descrição da Empresa', emp.descricao);
-            criarCampoTexto(panelForm, 'site', 'Site', emp.site);
+            criarCampoTexto(panelForm, 'razao_social', 'Razao Social', 'Altera a razao social da empresa', emp.razao_social, 'text', 'placeholder_da_razao_social_atual_em_cinza');
+            criarCampoTexto(panelForm, 'nome_fantasia', 'Nome Fantasia', 'Altera o nome publico da empresa', emp.nome_fantasia, 'text', 'placeholder_do_nome_fantasia_atual_em_cinza');
+            criarCampoTexto(panelForm, 'telefone_comercial', 'Telefone Comercial', 'Altera o telefone comercial', emp.telefone_comercial, 'tel', 'placeholder_do_telefone_atual_em_cinza');
+            criarCampoTexto(panelForm, 'categoria_negocio', 'Categoria de Negocio', 'Altera a categoria de negocio', emp.categoria_negocio, 'text', 'placeholder_da_categoria_atual_em_cinza');
+            criarCampoTexto(panelForm, 'numero_funcionarios', 'Numero de Funcionarios', 'Altera o tamanho da equipe', emp.numero_funcionarios, 'number', 'placeholder_numero_funcionarios_atual_em_cinza');
+            criarCampoTexto(panelForm, 'endereco_completo', 'Endereco Completo', 'Altera o endereco da empresa', emp.endereco_completo, 'text', 'placeholder_do_endereco_atual_em_cinza');
+            criarCampoTextarea(panelForm, 'descricao', 'Biografia', 'Modifica a descricao da empresa', emp.descricao, 'Uma pequena descricao sobre a empresa, o que faz e com o que trabalha...');
+            criarCampoTexto(panelForm, 'site', 'Site', 'Altera o site da empresa', emp.site, 'url', 'placeholder_site_atual_em_cinza');
         }
     }
 
-    function criarCampoTexto(container, id, label, valor, type = 'text') {
+    function criarCampoTexto(container, id, label, nota, valor, type = 'text', placeholder = '') {
         const div = document.createElement('div');
         div.className = 'field-group field-group--stack';
+        const campoId = escapeHtml(id);
+        const campoType = escapeHtml(type);
+        const campoLabel = escapeHtml(label);
+        const campoNota = escapeHtml(nota);
+        const campoPlaceholder = escapeHtml(placeholder || label);
+        const campoValor = escapeHtml(valor);
         div.innerHTML = `
-            <span>${label}</span>
-            <input id="input_${id}" type="${type}" placeholder="${label}" value="${valor || ''}">
+            <span>${campoLabel}</span>
+            <p class="field-note">${campoNota}</p>
+            <input id="input_${campoId}" type="${campoType}" placeholder="${campoPlaceholder}" value="${campoValor}">
         `;
         container.appendChild(div);
     }
 
-    function criarCampoTextarea(container, id, label, valor) {
+    function criarCampoTextarea(container, id, label, nota, valor, placeholder = '') {
         const div = document.createElement('div');
         div.className = 'field-group field-group--stack';
+        const campoId = escapeHtml(id);
+        const campoLabel = escapeHtml(label);
+        const campoNota = escapeHtml(nota);
+        const campoPlaceholder = escapeHtml(placeholder || label);
+        const campoValor = escapeHtml(valor);
         div.innerHTML = `
-            <span>${label}</span>
-            <textarea id="input_${id}" rows="4" placeholder="${label}">${valor || ''}</textarea>
+            <span>${campoLabel}</span>
+            <p class="field-note">${campoNota}</p>
+            <textarea id="input_${campoId}" rows="4" placeholder="${campoPlaceholder}">${campoValor}</textarea>
         `;
         container.appendChild(div);
     }
@@ -231,10 +253,10 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     const dicNotificacoes = {
-        email_like_post: { titulo: 'Curtidas', descricao: 'Avisos quando alguém curtir seus posts.' },
-        email_novo_seguidor: { titulo: 'Seguidores', descricao: 'Avisos quando alguém começar a seguir você.' },
-        email_login: { titulo: 'Login', descricao: 'Avisos sobre acessos e atividades na sua conta.' },
-        email_comentarios: { titulo: 'Comentários', descricao: 'Avisos de comentários nos seus posts.' }
+        email_like_post: { titulo: 'Nova curtidas', descricao: 'Ativa ou desativa as notificacoes de novas curtidas.' },
+        email_novo_seguidor: { titulo: 'Novos seguidores', descricao: 'Ativa ou desativa as notificacoes de novos seguidores.' },
+        email_login: { titulo: 'Ligar ou desligar as notificacoes', descricao: 'Tira completamente as notificacoes.' },
+        email_comentarios: { titulo: 'Comentarios', descricao: 'Ativa ou desativa as notificacoes de comentarios.' }
     };
 
     async function carregarPreferenciasNotificacoes() {
@@ -262,16 +284,19 @@ document.addEventListener('DOMContentLoaded', function () {
         
         for (const [chave, valor] of Object.entries(preferencias)) {
             const infoTextos = dicNotificacoes[chave] || { titulo: chave, descricao: 'Ative ou desative esta notificação.' };
+            const titulo = escapeHtml(infoTextos.titulo);
+            const descricao = escapeHtml(infoTextos.descricao);
+            const chaveSegura = escapeHtml(chave);
             
             const row = document.createElement('div');
             row.className = 'panel-row panel-row--split';
             row.innerHTML = `
                 <div>
-                    <strong>${infoTextos.titulo}</strong>
-                    <span>${infoTextos.descricao}</span>
+                    <strong>${titulo}</strong>
+                    <span>${descricao}</span>
                 </div>
                 <label class="toggle">
-                    <input type="checkbox" data-chave="${chave}" ${valor === true ? 'checked' : ''}>
+                    <input type="checkbox" data-chave="${chaveSegura}" ${valor === true ? 'checked' : ''}>
                     <span></span>
                 </label>
             `;

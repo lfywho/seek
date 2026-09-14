@@ -1,4 +1,4 @@
-// js/configura.js
+// js/Configura.js
 
 function mostrar(classe, elemento) {
   document.querySelectorAll('.Esquerda > div').forEach(div => {
@@ -15,7 +15,6 @@ function mostrar(classe, elemento) {
   if (painel) {
     painel.style.display = 'block';
     painel.classList.add('active');
-    painel.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 }
 

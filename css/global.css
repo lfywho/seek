@@ -3708,7 +3708,6 @@ body {
 
 @media (max-width: 620px) {
     .galeria-page .cabecalho {
-        height: 58px;
         gap: 10px;
         padding: 0 14px;
     }
@@ -6409,19 +6408,12 @@ body.vaga-page.vaga-page--v2{
 }
 
 .configuracoes {
-  display: grid;
-  grid-template-columns: minmax(280px, 320px) minmax(0, 1fr);
+  display: flex;
   gap: 24px;
   width: 100%;
   min-height: 100vh;
   padding: 32px;
   background: #f4f6fb;
-}
-
-.configuracoes__sidebar {
-  position: sticky;
-  top: 24px;
-  align-self: start;
 }
 
 .sidebar__panel {
@@ -7166,4 +7158,794 @@ body.vaga-page.vaga-page--v2{
 
 .modo-escuro .button--primary {
     box-shadow: none;
+}
+
+/* CONFIGURACOES - layout do prototipo */
+
+.configuracoes-page {
+    background: #ffffff;
+}
+
+.configuracoes-page .navegarPaginas a {
+    font-size: 12px;
+}
+
+.configuracoes-page .abaAtiva {
+    border-bottom-width: 3px;
+}
+
+.configuracoes-page .inputPesquisaWrapper {
+    width: min(560px, 48vw);
+}
+
+.configuracoes-page .inputPesquisa {
+    height: 24px;
+    padding: 0 36px;
+    font-size: 12px;
+}
+
+.configuracoes-page .inputPesquisaIconLeft {
+    left: 14px;
+}
+
+.configuracoes-page .inputPesquisaIconRight {
+    right: 14px;
+}
+
+.configuracoes-page .inputPesquisaIcon {
+    width: 13px;
+    height: 13px;
+}
+
+.configuracoes-page .menusHeader {
+    gap: 20px;
+    margin-left: 34px;
+}
+
+.configuracoes-page .menuHeaderButton img {
+    width: 15px;
+    height: 15px;
+}
+
+.configuracoes-page .perfilDropdown #perfilMenuButton img {
+    width: 28px;
+    height: 28px;
+}
+
+.configuracoes-page .configuracoes {
+    width: min(1200px, calc(100% - 32px));
+    min-height: calc(100vh - 42px);
+    margin: 0 auto;
+    padding: 20px 0 0;
+    display: grid;
+    grid-template-columns: 280px minmax(0, 1fr);
+    justify-content: center;
+    gap: 28px;
+    background: #ffffff;
+}
+
+.configuracoes-page .configuracoes__sidebar {
+    position: sticky;
+    top: 54px;
+    align-self: start;
+}
+
+.configuracoes-page .sidebar__panel {
+    padding: 0;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.configuracoes-page .sidebar__heading {
+    display: none;
+}
+
+.configuracoes-page .sidebar__perfil {
+    display: grid;
+    grid-template-columns: 92px minmax(0, 1fr);
+    gap: 14px;
+    align-items: center;
+    padding: 0 0 14px;
+    border-bottom: 0;
+}
+
+.configuracoes-page .sidebar__perfil img {
+    width: 92px;
+    height: 92px;
+    margin: 0;
+    border: 0;
+    background: #d9d9d9;
+}
+
+.configuracoes-page .sidebar__perfil-text {
+    min-width: 0;
+}
+
+.configuracoes-page .sidebar__eyebrow {
+    display: block;
+    margin: 0 0 3px;
+    color: #777777;
+    font-size: 10px;
+    font-weight: 500;
+    line-height: 1.1;
+}
+
+.configuracoes-page .sidebar__perfil p {
+    margin: 0;
+    color: #0c0c0c;
+    font-size: 20px;
+    font-weight: 800;
+    line-height: 1.1;
+}
+
+.configuracoes-page .sidebar__perfil span:not(.sidebar__eyebrow) {
+    display: block;
+    margin-top: 4px;
+    color: #777777;
+    font-size: 11px;
+    line-height: 1.25;
+}
+
+.configuracoes-page .sidebar__menu {
+    margin-top: 6px;
+    padding-left: 6px;
+}
+
+.configuracoes-page .sidebar__menu ul {
+    gap: 8px;
+}
+
+.configuracoes-page .sidebar__menu-item a {
+    min-height: 34px;
+    width: min(180px, 100%);
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 0;
+    color: #111111;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.configuracoes-page .sidebar__menu-item a img {
+    width: 15px;
+    height: 15px;
+    filter: brightness(0);
+}
+
+.configuracoes-page .sidebar__menu-item.active a,
+.configuracoes-page .sidebar__menu-item a:hover {
+    background: #efeff2;
+    color: #111111;
+}
+
+.configuracoes-page .sidebar__menu-item.active a::before {
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 5px;
+    border-radius: 0;
+    background: #3165f4;
+}
+
+.configuracoes-page .sidebar__menu-divider {
+    width: min(170px, 100%);
+    height: 1px;
+    margin: 10px 0;
+    background: #cfcfd3;
+}
+
+.configuracoes-page .configuracoes__content {
+    min-height: calc(100vh - 70px);
+    padding: 0;
+    background: #ffffff;
+    border: 1px solid #c7c7cf;
+    border-radius: 0;
+    box-shadow: none;
+    overflow: visible;
+}
+
+.configuracoes-page .tab-panel {
+    min-height: inherit;
+}
+
+.configuracoes-page .panel-header,
+.configuracoes-page .panel-header--grey {
+    margin: 0;
+    padding: 10px 12px 9px;
+    background: #e9e9ee;
+    border: 0;
+    border-bottom: 1px solid #c7c7cf;
+    border-radius: 0;
+}
+
+.configuracoes-page .panel-title {
+    margin: 0 0 4px;
+    color: #080808;
+    font-size: 28px;
+    line-height: 1.1;
+}
+
+.configuracoes-page .panel-description {
+    margin: 0;
+    max-width: none;
+    color: #6a6a6a;
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+.configuracoes-page .panel-section {
+    display: grid;
+    gap: 32px;
+    padding: 40px 18px 24px;
+}
+
+.configuracoes-page .panel-section--after {
+    padding-top: 26px;
+}
+
+.configuracoes-page .panel-row {
+    padding: 0;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    gap: 6px;
+}
+
+.configuracoes-page .panel-row.panel-row--split {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: 22px;
+}
+
+.configuracoes-page .panel-row strong,
+.configuracoes-page .field-group span {
+    display: block;
+    color: #111111;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.25;
+}
+
+.configuracoes-page .panel-row span,
+.configuracoes-page .field-group .field-note {
+    display: block;
+    margin-top: 2px;
+    color: #777777;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.configuracoes-page .select-pill select {
+    min-width: 110px;
+    height: 34px;
+    padding: 0 32px 0 18px;
+    border: 0;
+    border-radius: 999px;
+    background: #ececf1;
+    color: #111111;
+    box-shadow: none;
+    font-size: 13px;
+    font-weight: 700;
+    text-align: center;
+}
+
+.configuracoes-page .select-pill::after {
+    right: 12px;
+    width: 7px;
+    height: 7px;
+    background: none;
+    border-right: 2px solid #111111;
+    border-bottom: 2px solid #111111;
+    transform: rotate(45deg) translateY(-2px);
+}
+
+.configuracoes-page .dropdown {
+    display: inline-flex;
+    justify-content: center;
+}
+
+.configuracoes-page .dropdown-toggle {
+    width: 32px;
+    height: 28px;
+    border: 0;
+    background: transparent;
+    color: #111111;
+    font-size: 32px;
+    line-height: 1;
+    transform: translateY(-4px);
+}
+
+.configuracoes-page .dropdown-toggle[aria-expanded="true"],
+.configuracoes-page .dropdown-toggle:hover {
+    background: transparent;
+}
+
+.configuracoes-page .dropdown-menu {
+    top: calc(100% + 2px);
+    min-width: 180px;
+    border-radius: 4px;
+    box-shadow: 0 12px 26px rgba(0, 0, 0, 0.14);
+}
+
+.configuracoes-page .toggle {
+    width: 48px;
+    height: 25px;
+}
+
+.configuracoes-page .toggle span {
+    background: #ededf2;
+}
+
+.configuracoes-page .toggle span::after {
+    top: 2px;
+    left: 3px;
+    width: 21px;
+    height: 21px;
+    background: #ffffff;
+    box-shadow: none;
+}
+
+.configuracoes-page .toggle input:checked + span {
+    background: #ededf2;
+}
+
+.configuracoes-page .toggle input:checked + span::after {
+    transform: translateX(21px);
+    background: #3165f4;
+}
+
+.configuracoes-page .button--pill {
+    min-width: 82px;
+    height: 32px;
+    padding: 0 14px;
+    border: 0;
+    border-radius: 7px;
+    background: #ececf1;
+    color: #111111;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.configuracoes-page .panel-form {
+    width: 100%;
+    max-width: 760px;
+    display: grid;
+    gap: 28px;
+    padding: 40px 18px 20px;
+}
+
+.configuracoes-page .panel-form--account {
+    gap: 32px;
+}
+
+.configuracoes-page .field-group {
+    display: grid;
+    gap: 5px;
+    color: #111111;
+}
+
+.configuracoes-page .field-group--file {
+    grid-template-columns: minmax(0, 1fr) 28px;
+    align-items: center;
+    gap: 16px;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+}
+
+.configuracoes-page .field-group--file > div {
+    gap: 0;
+}
+
+.configuracoes-page .file-action {
+    width: 24px;
+    height: 24px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+}
+
+.configuracoes-page .file-action img {
+    width: 15px;
+    height: 15px;
+    filter: brightness(0);
+}
+
+.configuracoes-page .field-group input,
+.configuracoes-page .field-group textarea {
+    width: 100%;
+    border: 0;
+    border-radius: 999px;
+    background: #e8e8ed;
+    color: #111111;
+    padding: 0 16px;
+    font-size: 14px;
+    min-height: 38px;
+    box-shadow: none;
+    outline: none;
+}
+
+.configuracoes-page .field-group textarea {
+    min-height: 90px;
+    border-radius: 14px;
+    padding: 12px 16px;
+    resize: vertical;
+}
+
+.configuracoes-page .field-group input::placeholder,
+.configuracoes-page .field-group textarea::placeholder {
+    color: #9d9da5;
+}
+
+.configuracoes-page .field-group--control {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    padding-left: 18px;
+}
+
+.configuracoes-page .settings-checkbox {
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.configuracoes-page .settings-checkbox input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.configuracoes-page .settings-checkbox span {
+    width: 18px;
+    height: 18px;
+    border-radius: 3px;
+    background: #e8e8ed;
+    border: 1px solid #d5d5dd;
+}
+
+.configuracoes-page .settings-checkbox input:checked + span {
+    background: #3165f4;
+    border-color: #3165f4;
+    box-shadow: inset 0 0 0 3px #e8e8ed;
+}
+
+.configuracoes-page .panel-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+    padding: 0 16px 20px;
+}
+
+.configuracoes-page .panel-actions--end {
+    justify-content: flex-end;
+}
+
+.configuracoes-page .panel-actions .button--primary {
+    min-width: 110px;
+    height: 38px;
+    padding: 0 22px;
+    border-radius: 999px;
+    background: #3165f4;
+    color: #ffffff;
+    box-shadow: none;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.configuracoes-page #configuracoesInformacoesFeedback {
+    margin: 0;
+    font-size: 12px;
+}
+
+@media (max-width: 1100px) {
+    .configuracoes-page .cabecalho {
+        height: auto;
+        flex-wrap: wrap;
+        gap: 8px 16px;
+        padding: 8px 16px;
+    }
+
+    .configuracoes-page .inputPesquisaWrapper {
+        order: 3;
+        width: 100%;
+    }
+
+    .configuracoes-page .menusHeader {
+        margin-left: auto;
+    }
+
+    .configuracoes-page .configuracoes {
+        width: min(760px, calc(100% - 28px));
+        min-height: calc(100vh - 54px);
+        grid-template-columns: 1fr;
+        gap: 18px;
+        padding-top: 18px;
+    }
+
+    .configuracoes-page .configuracoes__sidebar {
+        position: static;
+    }
+
+    .configuracoes-page .sidebar__perfil {
+        width: max-content;
+        max-width: 100%;
+    }
+
+    .configuracoes-page .sidebar__menu {
+        padding-left: 0;
+        overflow-x: auto;
+    }
+
+    .configuracoes-page .sidebar__menu ul {
+        width: max-content;
+        grid-auto-flow: column;
+        grid-auto-columns: max-content;
+        grid-template-columns: none;
+        align-items: center;
+        padding-bottom: 6px;
+    }
+
+    .configuracoes-page .sidebar__menu-divider {
+        width: 1px;
+        height: 24px;
+        margin: 0 6px;
+    }
+
+    .configuracoes-page .configuracoes__content {
+        min-height: auto;
+    }
+}
+
+@media (max-width: 640px) {
+
+    .configuracoes-page .navegarPaginas {
+        order: 2;
+        width: 100%;
+        height: auto;
+        gap: 14px;
+        margin: 0;
+        overflow-x: auto;
+    }
+
+    .configuracoes-page .menusHeader {
+        gap: 14px;
+    }
+
+    .configuracoes-page .configuracoes {
+        width: min(100% - 16px, 520px);
+        padding-top: 14px;
+        gap: 16px;
+    }
+
+    .configuracoes-page .sidebar__perfil {
+        grid-template-columns: 72px minmax(0, 1fr);
+        gap: 10px;
+    }
+
+    .configuracoes-page .sidebar__perfil img {
+        width: 72px;
+        height: 72px;
+    }
+
+    .configuracoes-page .sidebar__menu-item a {
+        width: auto;
+        min-height: 38px;
+        padding: 9px 12px;
+        font-size: 12px;
+    }
+
+    .configuracoes-page .panel-header,
+    .configuracoes-page .panel-header--grey {
+        padding: 12px 14px 11px;
+    }
+
+    .configuracoes-page .panel-title {
+        font-size: 24px;
+    }
+
+    .configuracoes-page .panel-description {
+        font-size: 11px;
+    }
+
+    .configuracoes-page .panel-section,
+    .configuracoes-page .panel-form {
+        padding: 24px 14px 18px;
+    }
+
+    .configuracoes-page .panel-row.panel-row--split,
+    .configuracoes-page .field-group--control {
+        grid-template-columns: 1fr;
+        justify-items: start;
+        gap: 10px;
+    }
+
+    .configuracoes-page .panel-row strong,
+    .configuracoes-page .field-group span {
+        font-size: 14px;
+    }
+
+    .configuracoes-page .panel-row span,
+    .configuracoes-page .field-group .field-note {
+        font-size: 11px;
+    }
+
+    .configuracoes-page .select-pill,
+    .configuracoes-page .select-pill select {
+        width: 100%;
+    }
+
+    .configuracoes-page .field-group input,
+    .configuracoes-page .field-group textarea {
+        min-height: 40px;
+        font-size: 14px;
+    }
+
+    .configuracoes-page .panel-actions {
+        justify-content: flex-start;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .configuracoes-page .panel-actions .button--primary {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .configuracoes-page .configuracoes {
+        width: calc(100% - 10px);
+        gap: 12px;
+        padding-top: 10px;
+    }
+
+    .configuracoes-page .sidebar__perfil {
+        grid-template-columns: 64px minmax(0, 1fr);
+    }
+
+    .configuracoes-page .sidebar__perfil img {
+        width: 64px;
+        height: 64px;
+    }
+
+    .configuracoes-page .sidebar__eyebrow {
+        font-size: 9px;
+    }
+
+    .configuracoes-page .sidebar__perfil p {
+        font-size: 18px;
+    }
+
+    .configuracoes-page .sidebar__perfil span:not(.sidebar__eyebrow) {
+        font-size: 10px;
+    }
+
+    .configuracoes-page .sidebar__menu-item a {
+        min-height: 36px;
+        font-size: 11px;
+        padding: 8px 10px;
+    }
+
+    .configuracoes-page .panel-title {
+        font-size: 22px;
+    }
+
+    .configuracoes-page .panel-description {
+        font-size: 10px;
+    }
+
+    .configuracoes-page .panel-section,
+    .configuracoes-page .panel-form {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .configuracoes-page .panel-row strong,
+    .configuracoes-page .field-group span {
+        font-size: 13px;
+    }
+
+    .configuracoes-page .panel-row span,
+    .configuracoes-page .field-group .field-note {
+        font-size: 10px;
+    }
+
+    .configuracoes-page .field-group input,
+    .configuracoes-page .field-group textarea {
+        min-height: 38px;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 360px) {
+    .configuracoes-page .configuracoes {
+        width: calc(100% - 8px);
+    }
+
+    .configuracoes-page .sidebar__menu-item a {
+        gap: 6px;
+        padding: 7px 8px;
+    }
+
+    .configuracoes-page .sidebar__menu-item a img {
+        width: 13px;
+        height: 13px;
+    }
+
+    .configuracoes-page .panel-actions .button--primary {
+        min-width: 0;
+    }
+}
+
+.configuracoes-page.modo-escuro {
+    background: var(--ModoEscuroBase);
+}
+
+.configuracoes-page.modo-escuro .configuracoes,
+.configuracoes-page.modo-escuro .sidebar__panel,
+.configuracoes-page.modo-escuro .configuracoes__content {
+    background: var(--ModoEscuroBase);
+    color: var(--textoClaro);
+}
+
+.configuracoes-page.modo-escuro .configuracoes__content,
+.configuracoes-page.modo-escuro .panel-header--grey {
+    border-color: var(--ModoEscuroMesc2);
+}
+
+.configuracoes-page.modo-escuro .panel-header--grey,
+.configuracoes-page.modo-escuro .sidebar__menu-item.active a,
+.configuracoes-page.modo-escuro .sidebar__menu-item a:hover {
+    background: var(--ModoEscuroFilt);
+}
+
+.configuracoes-page.modo-escuro .sidebar__perfil p,
+.configuracoes-page.modo-escuro .sidebar__menu-item a,
+.configuracoes-page.modo-escuro .panel-title,
+.configuracoes-page.modo-escuro .panel-row strong,
+.configuracoes-page.modo-escuro .field-group span {
+    color: var(--textoClaro);
+}
+
+.configuracoes-page.modo-escuro .sidebar__eyebrow,
+.configuracoes-page.modo-escuro .sidebar__perfil span:not(.sidebar__eyebrow),
+.configuracoes-page.modo-escuro .panel-description,
+.configuracoes-page.modo-escuro .panel-row span,
+.configuracoes-page.modo-escuro .field-group .field-note {
+    color: #a5adba;
+}
+
+.configuracoes-page.modo-escuro .sidebar__menu-item a img,
+.configuracoes-page.modo-escuro .file-action img {
+    filter: brightness(0) invert(1);
+}
+
+.configuracoes-page.modo-escuro .sidebar__menu-divider {
+    background: var(--ModoEscuroMesc2);
+}
+
+.configuracoes-page.modo-escuro .field-group input,
+.configuracoes-page.modo-escuro .field-group textarea,
+.configuracoes-page.modo-escuro .select-pill select,
+.configuracoes-page.modo-escuro .button--pill {
+    background: var(--ModoEscuroFilt2);
+    color: var(--textoClaro);
+}
+
+.configuracoes-page.modo-escuro .toggle span,
+.configuracoes-page.modo-escuro .toggle input:checked + span,
+.configuracoes-page.modo-escuro .settings-checkbox span {
+    background: var(--ModoEscuroMesc2);
+}
+
+.configuracoes-page.modo-escuro .select-pill::after {
+    border-color: var(--textoClaro);
 }

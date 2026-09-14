@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Seek - Configurações</title>
+  <title>Seek - Configura&ccedil;&otilde;es</title>
   <link rel="stylesheet" href="css/global.css">
   <link rel="shortcut icon" href="img/favicon.png" type="image/x-icon">
 </head>
-<body id="todo">
+<body id="todo" class="configuracoes-page">
 
   <header class="cabecalho"></header>
 
@@ -15,21 +15,23 @@
 
     <aside class="configuracoes__sidebar Direita">
       <div class="sidebar__panel">
-        <div class="sidebar__heading">
-          <p>CONFIGURAÇÕES</p>
-        </div>
-
         <div class="perfil sidebar__perfil">
           <img id="configuracoesPerfilFoto" src="img/userProfilepreto.png" alt="Perfil">
-          <p><strong id="configuracoesPerfilNome">Nome do usuário</strong></p>
-          <span id="configuracoesPerfilLocalizacao">Localização</span>
+          <div class="sidebar__perfil-text">
+            <span class="sidebar__eyebrow">CONFIGURA&Ccedil;&Otilde;ES</span>
+            <p><strong id="configuracoesPerfilNome">Nome do usu&aacute;rio</strong></p>
+            <span id="configuracoesPerfilLocalizacao">Localiza&ccedil;&atilde;o</span>
+          </div>
         </div>
 
-        <nav class="sidebar__menu">
+        <nav class="sidebar__menu" aria-label="Configura&ccedil;&otilde;es da conta">
           <ul>
-            <li class="sidebar__menu-item active"><a onclick="mostrar('notificações', this)"><img src="img/icons/email.svg" alt=""> <span>Notificações</span></a></li>
+            <li class="sidebar__menu-item active"><a onclick="mostrar('privacidade', this)"><img src="img/icons/privacidade.svg" alt=""> <span>Privacidade</span></a></li>
+            <li class="sidebar__menu-item"><a onclick="mostrar('notificacoes', this)"><img src="img/icons/email.svg" alt=""> <span>Notifica&ccedil;&otilde;es</span></a></li>
             <li class="sidebar__menu-item"><a onclick="mostrar('acessibilidade', this)"><img src="img/icons/usuario.svg" alt=""> <span>Acessibilidade</span></a></li>
-            <li class="sidebar__menu-item"><a onclick="mostrar('minhas-informações', this)"><img src="img/icons/config.svg" alt=""> <span>Minhas informações</span></a></li>
+            <li class="sidebar__menu-divider" aria-hidden="true"></li>
+            <li class="sidebar__menu-item"><a onclick="mostrar('email-senha', this)"><img src="img/icons/email.svg" alt=""> <span>Email e senha</span></a></li>
+            <li class="sidebar__menu-item"><a onclick="mostrar('minhas-informacoes', this)"><img src="img/icons/config.svg" alt=""> <span>Minhas informa&ccedil;&otilde;es</span></a></li>
           </ul>
         </nav>
       </div>
@@ -37,28 +39,124 @@
 
     <section class="configuracoes__content Esquerda">
 
-      <div class="tab-panel notificações active">
+      <div class="tab-panel privacidade active">
         <div class="panel-header panel-header--grey">
-          <p class="panel-title"><strong>Notificações</strong></p>
-          <p class="panel-description">Nesta aba você gerencia quais avisos você deseja receber ou silenciar.</p>
+          <p class="panel-title"><strong>Privacidade</strong></p>
+          <p class="panel-description">Nesta aba voc&ecirc; poder&aacute; definir suas prefer&ecirc;ncias de quem pode acessar seus conte&uacute;dos.</p>
+        </div>
+
+        <div class="panel-section">
+          <div class="panel-row panel-row--split">
+            <div>
+              <strong>Quem pode ver seu perfil?</strong>
+              <span>Define se sua conta aparece na barra de pesquisa.</span>
+            </div>
+            <div class="select-pill">
+              <select aria-label="Quem pode ver seu perfil">
+                <option selected>Todos</option>
+                <option>Seguidores</option>
+                <option>Somente eu</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="panel-row panel-row--split">
+            <div>
+              <strong>Quem pode ver seus posts?</strong>
+              <span>Define quem visualiza seus posts.</span>
+            </div>
+            <div class="select-pill">
+              <select aria-label="Quem pode ver seus posts">
+                <option selected>Todos</option>
+                <option>Seguidores</option>
+                <option>Somente eu</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="panel-row panel-row--split">
+            <div>
+              <strong>Quem pode comentar?</strong>
+              <span>Define quem pode adicionar coment&aacute;rios nos seus posts.</span>
+            </div>
+            <div class="select-pill">
+              <select aria-label="Quem pode comentar">
+                <option selected>Todos</option>
+                <option>Seguidores</option>
+                <option>Ningu&eacute;m</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="panel-row panel-row--split panel-row--action">
+            <div>
+              <strong>Usu&aacute;rios bloqueados</strong>
+              <span>Mostra as pessoas que voc&ecirc; bloqueou.</span>
+            </div>
+            <div class="dropdown" data-dropdown="bloqueados">
+              <button class="dropdown-toggle" type="button" aria-label="Abrir usu&aacute;rios bloqueados" aria-expanded="false">&#8964;</button>
+              <div class="dropdown-menu" role="menu">
+                <div class="dropdown-item">Ver bloqueados</div>
+                <div class="dropdown-item">Adicionar bloqueado</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel-row panel-row--split panel-row--action">
+            <div>
+              <strong>Palavras bloqueadas</strong>
+              <span>Mostra as palavras que voc&ecirc; bloqueou, para ningu&eacute;m utilizar elas no seu perfil.</span>
+            </div>
+            <div class="dropdown" data-dropdown="palavras">
+              <button class="dropdown-toggle" type="button" aria-label="Abrir palavras bloqueadas" aria-expanded="false">&#8964;</button>
+              <div class="dropdown-menu" role="menu">
+                <div class="dropdown-item">Ver palavras bloqueadas</div>
+                <div class="dropdown-item">Adicionar palavra</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel notificacoes">
+        <div class="panel-header panel-header--grey">
+          <p class="panel-title"><strong>Notifica&ccedil;&otilde;es</strong></p>
+          <p class="panel-description">Nesta aba voc&ecirc; gerencia quais avisos voc&ecirc; deseja receber ou silenciar.</p>
         </div>
 
         <div id="configuracoesNotificacoesLista" class="panel-section">
-          <p class="field-note">Carregando preferências de notificações...</p>
+          <p class="field-note">Carregando prefer&ecirc;ncias de notifica&ccedil;&otilde;es...</p>
+        </div>
+
+        <div class="panel-section panel-section--after">
+          <div class="panel-row panel-row--split panel-row--action">
+            <div>
+              <strong>Silenciar notifica&ccedil;&otilde;es</strong>
+              <span>Voc&ecirc; define quanto tempo vai ficar sem notifica&ccedil;&otilde;es.</span>
+            </div>
+            <div class="dropdown" data-dropdown="silenciar">
+              <button class="dropdown-toggle" type="button" aria-label="Abrir op&ccedil;&otilde;es para silenciar" aria-expanded="false">&#8964;</button>
+              <div class="dropdown-menu" role="menu">
+                <div class="dropdown-item" data-value="1h">Por 1 hora</div>
+                <div class="dropdown-item" data-value="8h">Por 8 horas</div>
+                <div class="dropdown-item" data-value="24h">Por 24 horas</div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
       <div class="tab-panel acessibilidade">
         <div class="panel-header panel-header--grey">
           <p class="panel-title"><strong>Acessibilidade</strong></p>
-          <p class="panel-description">Nesta aba você pode alterar as configurações para deixar sua experiência no site mais acessível.</p>
+          <p class="panel-description">Nesta aba voc&ecirc; pode alterar as configura&ccedil;&otilde;es para deixar sua experi&ecirc;ncia no site mais acess&iacute;vel.</p>
         </div>
 
         <div class="panel-section">
           <div class="panel-row panel-row--split">
             <div>
               <strong>Tamanho das fontes</strong>
-              <span>Você pode alterar o tamanho da fonte do site.</span>
+              <span>Voc&ecirc; pode alterar o tamanho da fonte do site.</span>
             </div>
             <button type="button" class="button button--pill">Aa+1.0</button>
           </div>
@@ -82,49 +180,82 @@
               <span></span>
             </label>
           </div>
-          <div class="panel-row panel-row--split">
-            <div>
-              <strong>Modo escuro</strong>
-              <span>Alterne o modo escuro para o tema do site.</span>
-            </div>
-            <button id="btnModoEscuro" class="button button--pill" type="button" aria-pressed="false" aria-label="Alternar modo escuro" onclick="window.modoEscuro && window.modoEscuro.toggle()">Alternar Modo Escuro</button>
-          </div>
         </div>
       </div>
 
-      <div class="tab-panel minhas-informações">
+      <div class="tab-panel email-senha">
         <div class="panel-header panel-header--grey">
-          <p class="panel-title"><strong>Minhas Informações</strong></p>
-          <p class="panel-description">Aqui você pode revisar e atualizar suas informações pessoais.</p>
+          <p class="panel-title"><strong>Email e senha</strong></p>
+          <p class="panel-description">Nesta aba voc&ecirc; poder&aacute; alterar seu email, sua senha, e ativar o fator de duas etapas.</p>
+        </div>
+
+        <div class="panel-form panel-form--account">
+          <div class="field-group field-group--stack">
+            <span>E-mail</span>
+            <p class="field-note">Altera o seu e-mail de cadastro.</p>
+            <input type="email" placeholder="placeholder_do_email_atual_em_cinza">
+          </div>
+
+          <div class="field-group field-group--stack">
+            <span>Senha atual</span>
+            <p class="field-note">Onde fica sua senha atual.</p>
+            <input type="password" placeholder="****************">
+          </div>
+
+          <div class="field-group field-group--stack">
+            <span>Alterar senha</span>
+            <p class="field-note">Altera sua senha de cadastro.</p>
+            <input type="password" placeholder="placeholder_senha_nova">
+          </div>
+
+          <div class="field-group field-group--control">
+            <div>
+              <span>Ativar fator de duas etapas</span>
+              <p class="field-note">Ativa o modo alto contraste.</p>
+            </div>
+            <label class="settings-checkbox">
+              <input type="checkbox" checked>
+              <span></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="panel-actions panel-actions--end">
+          <button type="button" class="button button--primary">Confirmar</button>
+        </div>
+      </div>
+
+      <div class="tab-panel minhas-informacoes">
+        <div class="panel-header panel-header--grey">
+          <p class="panel-title"><strong>Minhas informa&ccedil;&otilde;es</strong></p>
+          <p class="panel-description">Nesta aba voc&ecirc; pode alterar as suas informa&ccedil;&otilde;es pessoais.</p>
         </div>
 
         <div class="panel-form">
           <div class="field-group field-group--file">
             <div>
               <span>Foto de perfil</span>
-              <p class="field-note">Envie ou altere sua foto de perfil.</p>
             </div>
             <label class="file-action">
               <input id="configuracoesFotoInput" type="file" accept="image/*">
-              <img src="img/icons/usuario.svg" alt="Selecionar foto">
+              <img src="img/icons/capaprojetopreto.svg" alt="Selecionar foto">
             </label>
           </div>
 
           <div class="field-group field-group--file">
             <div>
-              <span>Foto do banner</span>
-              <p class="field-note">Personalize o banner do seu perfil.</p>
+              <span>Foto do Banner</span>
             </div>
             <label class="file-action">
               <input id="configuracoesBannerInput" type="file" accept="image/*">
               <img src="img/icons/capaprojetopreto.svg" alt="Selecionar banner">
             </label>
           </div>
-          
-          <!-- Os demais inputs (PF ou EMPRESA) serão injetados dinamicamente via JS aqui -->
+
+          <!-- Os demais inputs (PF ou EMPRESA) serao injetados dinamicamente via JS aqui -->
         </div>
 
-        <div class="panel-actions">
+        <div class="panel-actions panel-actions--end">
           <button id="configuracoesSalvarInformacoes" type="button" class="button button--primary">Salvar</button>
           <p id="configuracoesInformacoesFeedback" class="field-note" aria-live="polite"></p>
         </div>
@@ -138,9 +269,7 @@
   <script src="js/usuario_logado.js"></script>
   <script src="js/Acessibilidade/traducao.js"></script>
   <script src="js/Acessibilidade/ModoEscuro.js"></script>
-  
-  <!-- Scripts separados -->
-  <script src="js/configura.js"></script>
+  <script src="js/Configura.js"></script>
   <script src="js/conexao_com_api/carregar_configuracoes.js"></script>
 </body>
 </html>
