@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seek - Planos</title>
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="shortcut icon" href="img/favicon.png" type="image/x-icon">
+</head>
+
+<body data-active-nav="explorar" id="todo">
+  <header class="cabecalho"></header>
+
+  <main class="conteudo conteudo-planos">
+    <section class="planos" aria-labelledby="planos-title">
+      <h1 id="planos-title">Faça upgrade do seu plano</h1>
+      <p class="planos__subtitulo">
+        Escolha o plano ideal para divulgar, vender e ganhar mais destaque no Seek.
+      </p>
+
+      <div class="planos__toggle" role="tablist" aria-label="Escolha do período do plano">
+        <button type="button" class="planos__toggle-btn is-active" data-periodo="mensal" aria-selected="true">
+          Mensal
+        </button>
+        <button type="button" class="planos__toggle-btn" data-periodo="anual" aria-selected="false">
+          Anual
+        </button>
+      </div>
+
+      <div class="planos__grid">
+        <article class="plano-card plano-card--gratis" aria-label="Plano grátis">
+          <h2>Grátis</h2>
+          <div class="plano-card__price">R$0</div>
+          <p class="plano-card__description">Para quem está começando</p>
+
+          <div class="plano-card__features">
+            <div class="plano-feature">
+              <span class="plano-feature__icon">✓</span>
+              <span>Portfólio público no Seek</span>
+            </div>
+            <div class="plano-feature">
+              <span class="plano-feature__icon">✓</span>
+              <span>Portfólio público no Seek</span>
+            </div>
+            <div class="plano-feature">
+              <span class="plano-feature__icon">✓</span>
+              <span>Portfólio público no Seek</span>
+            </div>
+            <div class="plano-feature">
+              <span class="plano-feature__icon">✓</span>
+              <span>Portfólio público no Seek</span>
+            </div>
+            <div class="plano-feature">
+              <span class="plano-feature__icon">✓</span>
+              <span>Portfólio público no Seek</span>
+            </div>
+          </div>
+
+          <button type="button" class="plano-card__button plano-card__button--secondary">
+            Plano atual
+          </button>
+        </article>
+
+        <article class="plano-card plano-card--premium is-featured" aria-label="Plano premium">
+          <div class="plano-card__topline">
+            <h2>Premium</h2>
+            <span class="plano-card__badge">Mais popular</span>
+          </div>
+
+          <div class="plano-card__price" data-price-monthly="R$23"><span>R$</span>23<span class="plano-card__period">/mês</span></div>
+          <p class="plano-card__description">Para criadores que querem vender e aparecer mais na plataforma</p>
+
+          <div class="plano-card__features">
+            <div class="plano-feature">
+              <span class="plano-feature__icon">✓</span>
+              <span>Taxa zero em vendas de projetos e artes</span>
+            </div>
+            <div class="plano-feature">
+              <span class="plano-feature__icon">✓</span>
+              <span>Maior destaque nas páginas Explorar e Galeria</span>
+            </div>
+            <div class="plano-feature">
+              <span class="plano-feature__icon">✓</span>
+              <span>Seleto premium no perfil</span>
+            </div>
+            <div class="plano-feature">
+              <span class="plano-feature__icon">✓</span>
+              <span>Prioridade nas recomendações da plataforma</span>
+            </div>
+            <div class="plano-feature">
+              <span class="plano-feature__icon">✓</span>
+              <span>Estatísticas avançadas de visualização e engajamento</span>
+            </div>
+            <div class="plano-feature">
+              <span class="plano-feature__icon">✓</span>
+              <span>Suporte prioritário</span>
+            </div>
+          </div>
+
+          <button type="button" class="plano-card__button plano-card__button--primary">
+            Assinar Premium
+          </button>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/ambiente.js"></script>
+  <script src="js/header.js"></script>
+  <script src="js/usuario_logado.js"></script>
+  <script src="js/Acessibilidade/traducao.js"></script>
+  <script src="js/Acessibilidade/ModoEscuro.js"></script>
+
+  <script>
+    const toggleButtons = document.querySelectorAll('.planos__toggle-btn');
+    const premiumPrice = document.querySelector('.plano-card--premium .plano-card__price');
+
+    toggleButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const selected = button.dataset.periodo;
+        toggleButtons.forEach(item => {
+          const active = item === button;
+          item.classList.toggle('is-active', active);
+          item.setAttribute('aria-selected', String(active));
+        });
+
+        if (selected === 'anual') {
+          premiumPrice.innerHTML = '<span>R$</span>19<span class="plano-card__period">/mês</span>';
+          premiumPrice.setAttribute('data-price-annual', 'R$19');
+        } else {
+          premiumPrice.innerHTML = '<span>R$</span>23<span class="plano-card__period">/mês</span>';
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>
