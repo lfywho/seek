@@ -658,4 +658,4 @@ document.addEventListener('DOMContentLoaded', function () {
         atualizarEstadoBotaoRecuperacao();
     }
 
-})();
+});
