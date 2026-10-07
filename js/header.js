@@ -165,9 +165,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const searchDropdownList = document.getElementById('inputPesquisaDropdownList');
     const searchIconButtons = searchWrapper ? searchWrapper.querySelectorAll('.inputPesquisaIconButton') : [];
 
-    const userSearchApiUrl = ip_api + '/usuarios/pesquisar';
-    const historySearchApiUrl = ip_api + '/usuarios/historico-pesquisas';
-    
+    const userSearchApiUrl = typeof ip_api !== 'undefined' ? ip_api + '/usuarios/pesquisar' : '';
+    const historySearchApiUrl = typeof ip_api !== 'undefined' ? ip_api + '/usuarios/historico-pesquisas' : '';
+    const useMockSearch = !userSearchApiUrl || !historySearchApiUrl;
+
     let recentSearches = []; // Agora armazena objetos da API { id, termo_pesquisa }
 
     let searchDebounceTimer = null;
@@ -225,6 +226,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- CARREGAR HISTÓRICO DE PESQUISA ---
     const loadRecentSearches = async function () {
+        if (useMockSearch) {
+            recentSearches = [
+                { id: 1, termo_pesquisa: 'Ana' },
+                { id: 2, termo_pesquisa: 'Beatriz' },
+                { id: 3, termo_pesquisa: 'UI/UX' }
+            ];
+            renderRecentSearches();
+            return;
+        }
+
         try {
             const response = await fetch(historySearchApiUrl, {
                 method: 'GET',
@@ -238,7 +249,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     renderRecentSearches();
                 }
             } else {
-                // Caso falhe (ex: 401 Unauthorized), exibe estado vazio padrão silenciosamente
                 recentSearches = [];
                 renderRecentSearches();
             }
@@ -253,6 +263,18 @@ document.addEventListener('DOMContentLoaded', function () {
     const deleteSearchHistory = async function (id, rowElement) {
         const deleteBtn = rowElement.querySelector('.inputPesquisaExcluirButton');
         if (deleteBtn) deleteBtn.disabled = true; // Impede múltiplos cliques
+
+        if (useMockSearch) {
+            recentSearches = recentSearches.filter(function (item) {
+                return String(item.id) !== String(id);
+            });
+
+            rowElement.remove();
+            if (!recentSearches.length) {
+                renderRecentSearches();
+            }
+            return;
+        }
 
         try {
             const response = await fetch(historySearchApiUrl + '/' + id, {
@@ -335,6 +357,26 @@ document.addEventListener('DOMContentLoaded', function () {
     const searchUsers = async function (term) {
         cancelPendingSearch();
 
+        if (!userSearchApiUrl || useMockSearch) {
+            const normalizedTerm = term.toLowerCase();
+            const filteredUsers = [
+                { id: 1, nome: 'Ana Souza', foto_perfil: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80' },
+                { id: 2, nome: 'Lucas Ferreira', foto_perfil: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80' },
+                { id: 3, nome: 'Beatriz Costa', foto_perfil: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=200&q=80' },
+                { id: 4, nome: 'Mateus Ribeiro', foto_perfil: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=200&q=80' },
+                { id: 5, nome: 'Carolina Lima', foto_perfil: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=80' },
+                { id: 6, nome: 'Rafael Almeida', foto_perfil: 'https://images.unsplash.com/photo-1504593811423-6dd665756598?auto=format&fit=crop&w=200&q=80' },
+                { id: 7, nome: 'Isabela Mendes', foto_perfil: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=200&q=80' },
+                { id: 8, nome: 'Gabriel Nunes', foto_perfil: 'https://images.unsplash.com/photo-1504257432389-52343af06ae3?auto=format&fit=crop&w=200&q=80' }
+            ].filter(function (user) {
+                const userName = (user.nome || '').toLowerCase();
+                return userName.includes(normalizedTerm);
+            });
+
+            renderSearchUsers(filteredUsers);
+            return;
+        }
+
         const requestToken = searchRequestToken;
         searchRequestController = new AbortController();
 
@@ -398,6 +440,22 @@ document.addEventListener('DOMContentLoaded', function () {
         searchDebounceTimer = setTimeout(function () {
             searchUsers(term);
         }, 300);
+    };
+
+    const submitSearch = function () {
+        if (!searchInput) {
+            return;
+        }
+
+        const term = searchInput.value.trim();
+        if (!term.length) {
+            openSearchDropdown();
+            renderRecentSearches();
+            return;
+        }
+
+        const targetUrl = 'pesquisa.html?q=' + encodeURIComponent(term);
+        window.location.href = targetUrl;
     };
 
     const setSearchIcons = function (isOpen) {
@@ -472,6 +530,12 @@ document.addEventListener('DOMContentLoaded', function () {
         searchInput.addEventListener('focus', syncSearchState);
         searchInput.addEventListener('click', syncSearchState);
         searchInput.addEventListener('input', syncSearchState);
+        searchInput.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                submitSearch();
+            }
+        });
         searchWrapper.addEventListener('click', function () {
             openSearchDropdown();
             if (!searchInput.value.trim().length) {
@@ -483,7 +547,7 @@ document.addEventListener('DOMContentLoaded', function () {
             button.addEventListener('click', function (event) {
                 event.preventDefault();
                 event.stopPropagation();
-                syncSearchState();
+                submitSearch();
             });
         });
 

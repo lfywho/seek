@@ -108,6 +108,28 @@
                     </section>
 
                     <section class="adicionar-projeto__panel adicionar-projeto__sidebar-card">
+                        <h2 class="adicionar-projeto__sidebar-title">Tipo de post</h2>
+                        <div class="adicionar-projeto__tipo-post" id="tipoPostContainer">
+                            <label class="adicionar-projeto__tipo-option">
+                                <input type="radio" name="tipoPost" value="padrao" checked>
+                                <span>Post padrão</span>
+                            </label>
+                            <label class="adicionar-projeto__tipo-option">
+                                <input type="radio" name="tipoPost" value="galeria">
+                                <span>Post na galeria</span>
+                            </label>
+                        </div>
+
+                        <div class="adicionar-projeto__preco-wrapper" id="precoPostWrapper" hidden>
+                            <label class="adicionar-projeto__field-label" for="precoPost">Preço do item</label>
+                            <div class="adicionar-projeto__preco-input-wrap">
+                                <span>R$</span>
+                                <input class="adicionar-projeto__preco-input" type="number" id="precoPost" min="0" step="0.01" placeholder="0,00">
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="adicionar-projeto__panel adicionar-projeto__sidebar-card">
                         <h2 class="adicionar-projeto__sidebar-title">Comentários</h2>
                         <label class="adicionar-projeto__field-label" for="comentarios">Quem pode comentar?</label>
                         <select class="adicionar-projeto__select" id="comentarios">

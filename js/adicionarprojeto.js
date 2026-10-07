@@ -284,6 +284,28 @@ if (chipsContainer && inputAdicionarCategoria) {
     });
 }
 
+const tipoPostRadios = document.querySelectorAll('input[name="tipoPost"]');
+const precoPostWrapper = document.getElementById('precoPostWrapper');
+const precoPostInput = document.getElementById('precoPost');
+
+function atualizarTipoPost() {
+    if (!tipoPostRadios.length || !precoPostWrapper) return;
+
+    const selecionado = document.querySelector('input[name="tipoPost"]:checked');
+    const isGaleria = selecionado && selecionado.value === 'galeria';
+    precoPostWrapper.hidden = !isGaleria;
+
+    if (!isGaleria && precoPostInput) {
+        precoPostInput.value = '';
+    }
+}
+
+tipoPostRadios.forEach((radio) => {
+    radio.addEventListener('change', atualizarTipoPost);
+});
+
+atualizarTipoPost();
+
 if (tituloProjetoInput) tituloProjetoInput.addEventListener('input', () => limparEstadoInvalido(tituloProjetoInput));
 if (detalhesProjeto) detalhesProjeto.addEventListener('input', () => limparEstadoInvalido(detalhesProjeto));
 
