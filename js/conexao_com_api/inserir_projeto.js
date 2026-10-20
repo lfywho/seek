@@ -18,7 +18,7 @@ window.apiProjeto = {
                     return data.data; // Retorna o array de usuários
                 }
             } else if (response.status === 401) {
-                alert("Sua sessão expirou. Faça login novamente.");
+                (window.seekNotificar || window.alert)("Sua sessão expirou. Faça login novamente.");
             }
             return null;
         } catch (error) {
@@ -41,15 +41,15 @@ window.apiProjeto = {
             if (response.ok && data.success) {
                 return true;
             } else if (response.status === 401) {
-                alert("Sessão expirada. Faça login novamente.");
+                (window.seekNotificar || window.alert)("Sessão expirada. Faça login novamente.");
                 return false;
             } else {
-                alert("Erro ao publicar: " + (data.message || "Tente novamente."));
+                (window.seekNotificar || window.alert)("Erro ao publicar: " + (data.message || "Tente novamente."));
                 return false;
             }
         } catch (error) {
             console.error("Erro na comunicação com a API ao postar projeto:", error);
-            alert("Erro de comunicação com o servidor.");
+            (window.seekNotificar || window.alert)("Erro de comunicação com o servidor.");
             return false;
         }
     }

@@ -75,6 +75,11 @@ function configurarUploadCurriculo() {
  */
 async function verificarPrimeiroLogin() {
     try {
+        const usuario = window.seekSessaoAutenticada
+            ? await window.seekSessaoAutenticada
+            : null;
+        if (!usuario) return;
+
         const response = await fetch(`${ip_api}/usuarios/verificar-primeiro-login`, {
             method: "GET",
             credentials: "include"
@@ -89,7 +94,7 @@ async function verificarPrimeiroLogin() {
 
         const data = await response.json();
         if (data.success && data.data && data.data.primeiro_login === true) {
-            await abrirModalPorTipoUsuario();
+            abrirModalPorTipoUsuario(usuario);
         }
 
     } catch (erro) {
@@ -100,19 +105,10 @@ async function verificarPrimeiroLogin() {
 /**
  * 2. Abre o modal correto baseado no tipo de usuário
  */
-async function abrirModalPorTipoUsuario() {
+function abrirModalPorTipoUsuario(usuario) {
     try {
-        const response = await fetch(`${ip_api}/auth/me`, {
-            method: "GET",
-            credentials: "include"
-        });
-
-        if (!response.ok) return;
-
-        const data = await response.json();
-
-        if (data.success && data.data && data.data.usuario) {
-            const tipoUsuario = data.data.usuario.tipo_usuario;
+        if (usuario) {
+            const tipoUsuario = usuario.tipo_usuario;
             const modalEmpresa = document.getElementById("modalEmpresa");
             const modalPessoa = document.getElementById("modalPessoa");
 
@@ -176,7 +172,7 @@ async function salvarPerfilPessoaFisica(event) {
 
     } catch (erro) {
         console.error(erro);
-        alert(erro.message || "Ocorreu um erro ao concluir o cadastro.");
+        (window.seekNotificar || window.alert)(erro.message || "Ocorreu um erro ao concluir o cadastro.");
     } finally {
         btn.disabled = false;
         btn.innerText = textoOriginal;
@@ -228,7 +224,7 @@ async function salvarPerfilEmpresa(event) {
 
     } catch (erro) {
         console.error(erro);
-        alert(erro.message || "Ocorreu um erro ao concluir o cadastro.");
+        (window.seekNotificar || window.alert)(erro.message || "Ocorreu um erro ao concluir o cadastro.");
     } finally {
         btn.disabled = false;
         btn.innerText = textoOriginal;

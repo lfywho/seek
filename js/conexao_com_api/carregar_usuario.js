@@ -248,6 +248,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (seguirButton) {
         seguirButton.addEventListener('click', async function () {
             if (!idUsuarioPaginaAtual) return;
+            if (window.seekExigirLogin && !(await window.seekExigirLogin('Você precisa estar logado para seguir um usuÃ¡rio.'))) return;
             seguirButton.disabled = true;
 
             try {
@@ -259,7 +260,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
 
                 if (response.status === 401) {
-                    alert('Você precisa estar logado para seguir um usuário.');
+                    (window.seekNotificar || window.alert)('Você precisa estar logado para seguir um usuário.');
                     return;
                 }
 
@@ -270,11 +271,11 @@ document.addEventListener('DOMContentLoaded', function () {
                     atualizarBotaoSeguir();
                     ajustarTotalSeguidores(estaSeguindoUsuario ? 1 : -1);
                 } else {
-                    alert(result.message || 'Ocorreu um erro ao processar sua solicitação.');
+                    (window.seekNotificar || window.alert)(result.message || 'Ocorreu um erro ao processar sua solicitação.');
                 }
             } catch (error) {
                 console.error(error);
-                alert('Erro de comunicação com o servidor.');
+                (window.seekNotificar || window.alert)('Erro de comunicação com o servidor.');
             } finally {
                 seguirButton.disabled = false;
             }
@@ -424,7 +425,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         } catch (error) {
             console.error(error);
-            alert("Não foi possível carregar as informações do perfil.");
+            (window.seekNotificar || window.alert)("Não foi possível carregar as informações do perfil.");
         }
     }
 

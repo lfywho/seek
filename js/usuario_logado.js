@@ -240,21 +240,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     async function iniciarHeaderUsuario() {
         try {
-            var response = await fetch(ip_api + '/auth/me', {
-                method: 'GET',
-                credentials: 'include'
-            });
+            var usuario = window.seekSessaoAutenticada
+                ? await window.seekSessaoAutenticada
+                : null;
 
-            if (!response.ok) {
-                // Se for 401, o cookie não existe ou expirou
-                aplicarModoDeslogado();
-                return;
-            }
-
-            var data = await response.json();
-            
-            if (data.success && data.data && data.data.usuario) {
-                aplicarDadosNoHeader(data.data.usuario);
+            if (usuario) {
+                aplicarDadosNoHeader(usuario);
 
                 var botao = buscarBotaoSairOuEntrar();
                 if (botao) {
@@ -265,9 +256,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (notificationsReloadButton) notificationsReloadButton.disabled = false;
 
                 carregarNotificacoes();
-            } else {
-                aplicarModoDeslogado();
-            }
+            } else aplicarModoDeslogado();
         } catch (error) {
             console.error("Erro ao verificar autenticação:", error);
             aplicarModoDeslogado();
@@ -573,21 +562,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     async function iniciarHeaderUsuario() {
         try {
-            var response = await fetch(ip_api + '/auth/me', {
-                method: 'GET',
-                credentials: 'include'
-            });
+            var usuario = window.seekSessaoAutenticada
+                ? await window.seekSessaoAutenticada
+                : null;
 
-            if (!response.ok) {
-                // Se for 401, o cookie não existe ou expirou
-                aplicarModoDeslogado();
-                return;
-            }
-
-            var data = await response.json();
-            
-            if (data.success && data.data && data.data.usuario) {
-                aplicarDadosNoHeader(data.data.usuario);
+            if (usuario) {
+                aplicarDadosNoHeader(usuario);
 
                 var botao = buscarBotaoSairOuEntrar();
                 if (botao) {
@@ -598,9 +578,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (notificationsReloadButton) notificationsReloadButton.disabled = false;
 
                 carregarNotificacoes();
-            } else {
-                aplicarModoDeslogado();
-            }
+            } else aplicarModoDeslogado();
         } catch (error) {
             console.error("Erro ao verificar autenticação:", error);
             aplicarModoDeslogado();

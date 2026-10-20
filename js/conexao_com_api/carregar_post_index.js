@@ -301,6 +301,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	}
 
 	async function submitComment(postId, rawText) {
+		if (window.seekExigirLogin && !(await window.seekExigirLogin('Você precisa estar logado para comentar.'))) return;
 		var text = (rawText || '').trim();
 		if (!text) return;
 
@@ -337,7 +338,7 @@ document.addEventListener('DOMContentLoaded', function () {
 			
 		} catch (error) {
 			console.error(error);
-			alert('Não foi possível enviar o comentário.');
+			(window.seekNotificar || window.alert)('Não foi possível enviar o comentário.');
 		} finally {
 			sendCommentButton.disabled = false;
 		}
@@ -422,6 +423,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	}
 
 	async function alternarSeguimentoAutor(idAutor) {
+		if (window.seekExigirLogin && !(await window.seekExigirLogin('Você precisa estar logado para seguir o dono do post.'))) return;
 		var estaSeguindo = modalSidebarFollowButton.dataset.seguindo === '1';
 		var method = estaSeguindo ? 'DELETE' : 'POST';
 
@@ -652,6 +654,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	}
 
 	async function toggleLike() {
+		if (window.seekExigirLogin && !(await window.seekExigirLogin('Você precisa estar logado para curtir.'))) return;
 		var postId = Number(modal.dataset.currentPostId);
 		var state = postState[postId];
 		if (!state) return;
@@ -672,7 +675,7 @@ document.addEventListener('DOMContentLoaded', function () {
 				updateLikeButton(postId);
 			} else {
 				// Requer auth / status 401
-				if(response.status === 401) alert("Faça login para curtir.");
+				if(response.status === 401) (window.seekNotificar || window.alert)("Faça login para curtir.");
 			}
 		} catch (error) {
 			console.error(error);
@@ -700,7 +703,7 @@ document.addEventListener('DOMContentLoaded', function () {
 				state.favorite = !state.favorite;
 				updateFavoriteButton(postId);
 			} else {
-				if(response.status === 401) alert("Faça login para salvar o post.");
+				if(response.status === 401) (window.seekNotificar || window.alert)("Faça login para salvar o post.");
 			}
 		} catch (error) {
 			console.error(error);
@@ -723,7 +726,7 @@ document.addEventListener('DOMContentLoaded', function () {
 				await alternarSeguimentoAutor(idAutor);
 			} catch (error) {
 				console.error(error);
-				alert("Não foi possível realizar esta ação no momento.");
+				(window.seekNotificar || window.alert)("Não foi possível realizar esta ação no momento.");
 			} finally {
 				modalSidebarFollowButton.disabled = false;
 			}
@@ -818,9 +821,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
 		if (navigator.clipboard && navigator.clipboard.writeText) {
 			await navigator.clipboard.writeText(shareUrl);
-			alert('Link copiado para a área de transferência.');
+			(window.seekNotificar || window.alert)('Link copiado para a área de transferência.');
 		} else {
-			alert('Copie este link: ' + shareUrl);
+			(window.seekNotificar || window.alert)('Copie este link: ' + shareUrl);
 		}
 	});
 

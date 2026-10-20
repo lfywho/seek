@@ -82,11 +82,17 @@ document.addEventListener('DOMContentLoaded', function () {
         track.innerHTML = '';
         track.appendChild(criarCardTodos());
 
-        categorias.forEach(function (categoria, index) {
+        var categoriasComPosts = categorias.filter(function (categoria) {
+            if (!categoria || categoria.id == null) return false;
+
+            var quantidade = categoria.total_usos ?? categoria.total_posts ?? categoria.quantidade_posts ?? categoria.posts_count;
+            // Sem contagem explícita, preserva compatibilidade com respostas antigas da API.
+            return quantidade == null || Number(quantidade) > 0;
+        });
+
+        categoriasComPosts.forEach(function (categoria, index) {
             // ATUALIZAÇÃO: Verificando 'id' em vez de 'id_categoria'
-            if (categoria && categoria.id != null) {
-                track.appendChild(criarCardCategoria(categoria, index + 1));
-            }
+            track.appendChild(criarCardCategoria(categoria, index + 1));
         });
 
         updateButtons();

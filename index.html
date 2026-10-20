@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Seek - Início</title>
   <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/notifications.css">
   <link rel="shortcut icon" href="img/favicon.png" type="image/x-icon">
 </head>
 
@@ -334,6 +335,10 @@
   </div>
 
   <script src="js/ambiente.js"></script>
+  <script type="module">
+    import NotificationManager from './js/NotificationManager.js';
+    window.NotificationManager = NotificationManager;
+  </script>
   <script src="js/conexao_com_api/carregar_post_index.js"></script>
   <script src="js/carousel.js"></script>
   <script src="js/header.js"></script>

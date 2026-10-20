@@ -158,6 +158,55 @@ function montarHeader() {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+    if (!document.querySelector('link[data-seek-notifications]')) {
+        const notificationStyles = document.createElement('link');
+        notificationStyles.rel = 'stylesheet';
+        notificationStyles.href = 'css/notifications.css';
+        notificationStyles.dataset.seekNotifications = 'true';
+        document.head.appendChild(notificationStyles);
+    }
+
+    window.seekNotificar = async function (mensagem, options) {
+        const manager = await import('./NotificationManager.js').then(function (module) {
+            window.NotificationManager = module.default;
+            return module.default;
+        });
+        manager.simple(mensagem, options);
+    };
+    /*
+        import('./NotificationManager.js').then(function (module) {
+            window.NotificationManager = module.default;
+            module.default.simple(mensagem, options);
+        }).catch(function (error) {
+            console.error('Não foi possível carregar as notificações:', error);
+            console.error('Mensagem de notificação:', mensagem);
+        });
+    };
+    */
+    // Compartilha a verificação de sessão com os outros scripts da página.
+    // Assim, rotas que exigem login só são chamadas depois de confirmar a sessão.
+    window.seekSessaoAutenticada = fetch(typeof ip_api !== 'undefined' ? ip_api + '/auth/me' : '', {
+        method: 'GET',
+        credentials: 'include'
+    }).then(async function (response) {
+        if (!response.ok) return null;
+
+        const contentType = response.headers.get('content-type') || '';
+        if (!contentType.includes('application/json')) return null;
+        const data = await response.json();
+        return data.success && data.data && data.data.usuario ? data.data.usuario : null;
+    }).catch(function (error) {
+        console.error('Erro ao verificar autenticação:', error);
+        return null;
+    });
+
+    window.seekExigirLogin = async function (mensagem) {
+        const usuario = await window.seekSessaoAutenticada;
+        if (usuario) return true;
+        window.seekNotificar(mensagem || 'Você precisa estar logado para realizar esta ação.');
+        return false;
+    };
+
     const searchWrapper = document.querySelector('.inputPesquisaWrapper');
     const searchInput = document.querySelector('.inputPesquisa');
     const searchDropdown = document.getElementById('inputPesquisaDropdown');
@@ -200,6 +249,20 @@ document.addEventListener('DOMContentLoaded', function () {
         return dropdown.root && dropdown.button && dropdown.menu;
     });
 
+    document.querySelectorAll('a[href="adicionarprojeto.html"], a[href="adicionarvaga.html"]').forEach(function (link) {
+        link.addEventListener('click', async function (event) {
+            if (await window.seekExigirLogin('Você precisa estar logado para criar um post ou uma vaga.')) return;
+            event.preventDefault();
+        });
+    });
+
+    document.querySelectorAll('a[href="configuracaoes.html"]').forEach(function (link) {
+        link.addEventListener('click', async function (event) {
+            if (await window.seekExigirLogin('Você precisa estar logado para acessar as configurações.')) return;
+            event.preventDefault();
+        });
+    });
+
     if (!dropdowns.length) {
         if (!(searchWrapper && searchInput && searchDropdown)) {
             return;
@@ -226,6 +289,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- CARREGAR HISTÓRICO DE PESQUISA ---
     const loadRecentSearches = async function () {
+        const usuario = await window.seekSessaoAutenticada;
+        if (!usuario) {
+            recentSearches = [];
+            renderRecentSearches();
+            return;
+        }
+
         if (useMockSearch) {
             recentSearches = [
                 { id: 1, termo_pesquisa: 'Ana' },
@@ -383,7 +453,7 @@ document.addEventListener('DOMContentLoaded', function () {
         renderSearchMessage('Usuários', 'Carregando usuários...');
 
         try {
-            const urlBusca = userSearchApiUrl + '?termo=' + encodeURIComponent(term);
+            const urlBusca = userSearchApiUrl + '?termo=' + encodeURIComponent(term) + '&historico=false';
             const response = await fetch(urlBusca, {
                 method: 'GET',
                 credentials: 'include',
@@ -393,6 +463,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 signal: searchRequestController.signal
             });
 
+            const contentType = response.headers.get('content-type') || '';
+            if (!contentType.includes('application/json')) {
+                throw new Error('A API de pesquisa não retornou JSON.');
+            }
             const result = await response.json();
 
             if (requestToken !== searchRequestToken) {

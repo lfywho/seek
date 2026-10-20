@@ -573,7 +573,7 @@ if (modalColaboradores && btnAbrirModalColaborador && btnFecharModalColaboradore
             if (!isSelected) {
                 div.addEventListener('click', () => {
                     if (colaboradoresSelecionados.length >= MAX_COLABORADORES) {
-                        return alert(`Você pode adicionar no máximo ${MAX_COLABORADORES} colaboradores.`);
+                        return (window.seekNotificar || window.alert)(`Você pode adicionar no máximo ${MAX_COLABORADORES} colaboradores.`);
                     }
                     colaboradoresSelecionados.push(user);
                     renderizarColaboradoresSelecionados();
@@ -689,4 +689,4 @@ if (btnPublicarProjeto) {
         btnPublicarProjeto.disabled = false;
         btnPublicarProjeto.style.opacity = '1';
     });
-}   
+}

@@ -12,7 +12,13 @@ document.addEventListener('DOMContentLoaded', function () {
     let perfilAtual = null;  // Dados detalhados do perfil (PF ou EMPRESA)
 
     async function inicializar() {
-        await carregarUsuarioSidebar();
+        const usuario = window.seekSessaoAutenticada
+            ? await window.seekSessaoAutenticada
+            : null;
+        if (!usuario) return;
+
+        usuarioAtual = usuario;
+        aplicarDadosNoAside(usuarioAtual);
         await carregarDadosPerfil();
         await carregarPreferenciasNotificacoes();
     }
@@ -336,7 +342,7 @@ document.addEventListener('DOMContentLoaded', function () {
         } catch (error) {
             console.error('Erro ao atualizar notificação:', error);
             input.checked = !novoValor;
-            alert('Não foi possível alterar a configuração. Tente novamente.');
+            (window.seekNotificar || window.alert)('Não foi possível alterar a configuração. Tente novamente.');
         } finally {
             input.disabled = false;
         }
