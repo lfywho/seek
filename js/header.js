@@ -1,5 +1,6 @@
 function montarHeader() {
     var activeNav = (document.body && document.body.dataset.activeNav ? document.body.dataset.activeNav : 'explorar').toLowerCase();
+    var protegerBuscaDoAutofill = document.body && document.body.classList.contains('configuracoes-page');
 
     function buildNavItem(chave, label, href) {
         if (activeNav === chave) {
@@ -44,7 +45,9 @@ function montarHeader() {
         <button type="button" class="inputPesquisaIconButton inputPesquisaIconLeft" aria-label="Pesquisar">
             <img class="inputPesquisaIcon" src="img/icons/lupapreta.svg" alt="">
         </button>
-        <input class="inputPesquisa" type="search">
+        <input class="inputPesquisa" type="search" name="site-search" autocomplete="off"
+            autocapitalize="none" autocorrect="off" spellcheck="false" aria-label="Pesquisar"
+            ${protegerBuscaDoAutofill ? 'readonly data-prevent-autofill="true"' : ''}>
         <button type="button" class="inputPesquisaIconButton inputPesquisaIconRight" aria-label="Abrir filtros">
             <img class="inputPesquisaIcon" src="img/icons/filtroinputpreto.svg" alt="">
         </button>
@@ -246,6 +249,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const searchDropdownTitle = document.getElementById('inputPesquisaDropdownTitle');
     const searchDropdownList = document.getElementById('inputPesquisaDropdownList');
     const searchIconButtons = searchWrapper ? searchWrapper.querySelectorAll('.inputPesquisaIconButton') : [];
+    const searchAutofillGuard = searchInput && searchInput.dataset.preventAutofill === 'true';
     const mobileMenuToggle = document.getElementById('mobileMenuToggle');
     const mobileNavigation = document.getElementById('mobileNavigation');
     const mobileHeaderActions = document.getElementById('mobileHeaderActions');
@@ -258,6 +262,24 @@ document.addEventListener('DOMContentLoaded', function () {
         document.querySelector('.notificationsDropdown'),
         document.querySelector('.optionsDropdown')
     ].filter(Boolean);
+
+    if (searchAutofillGuard) {
+        const limparBuscaPreenchidaAutomaticamente = function () {
+            if (searchInput.readOnly) {
+                searchInput.value = '';
+            }
+        };
+        const liberarBuscaParaDigitacao = function () {
+            searchInput.readOnly = false;
+        };
+
+        limparBuscaPreenchidaAutomaticamente();
+        requestAnimationFrame(limparBuscaPreenchidaAutomaticamente);
+        window.setTimeout(limparBuscaPreenchidaAutomaticamente, 250);
+        window.addEventListener('pageshow', limparBuscaPreenchidaAutomaticamente);
+        searchInput.addEventListener('pointerdown', liberarBuscaParaDigitacao, { once: true });
+        searchInput.addEventListener('keydown', liberarBuscaParaDigitacao, { once: true });
+    }
 
     const syncCompactHeaderActions = function () {
         if (!(mobileHeaderActions && menusHeader && perfilDropdown)) {

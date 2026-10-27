@@ -8177,13 +8177,21 @@ body.vaga-page.vaga-page--v2{
     .configuracoes-page .configuracoes {
         width: min(760px, calc(100% - 28px));
         min-height: calc(100vh - 54px);
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
+        justify-content: stretch;
         gap: 18px;
         padding-top: 18px;
     }
 
-    .configuracoes-page .configuracoes__sidebar {
+    .configuracoes-page .configuracoes__sidebar,
+    .configuracoes-page .configuracoes__content {
         position: static;
+        width: 100%;
+        min-width: 0;
+    }
+
+    .configuracoes-page .sidebar__panel {
+        min-width: 0;
     }
 
     .configuracoes-page .sidebar__perfil {
@@ -8193,7 +8201,15 @@ body.vaga-page.vaga-page--v2{
 
     .configuracoes-page .sidebar__menu {
         padding-left: 0;
+        width: 100%;
+        min-width: 0;
         overflow-x: auto;
+        overscroll-behavior-x: contain;
+        scrollbar-width: none;
+    }
+
+    .configuracoes-page .sidebar__menu::-webkit-scrollbar {
+        display: none;
     }
 
     .configuracoes-page .sidebar__menu ul {
@@ -8211,14 +8227,12 @@ body.vaga-page.vaga-page--v2{
         margin: 0 6px;
     }
 
-    .configuracoes-page .configuracoes__content {
-        min-height: auto;
-    }
+    .configuracoes-page .configuracoes__content { min-height: auto; }
 }
 
 @media (max-width: 640px) {
     .configuracoes-page .configuracoes {
-        width: min(100% - 16px, 520px);
+        width: min(calc(100% - 16px), 520px);
         padding-top: 14px;
         gap: 16px;
     }
