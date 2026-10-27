@@ -9,8 +9,26 @@ function montarHeader() {
         return '<a href="' + href + '">' + label + '</a>';
     }
 
-    const header = document.querySelector('header');
+    function buildMobileNavItem(chave, label, href) {
+        var activeClass = activeNav === chave ? ' mobileNavigation__link--active' : '';
+        var currentPage = activeNav === chave ? ' aria-current="page"' : '';
+
+        return '<a class="mobileNavigation__link' + activeClass + '" href="' + href + '"' + currentPage + '>' + label + '</a>';
+    }
+
+    const header = document.querySelector('.cabecalho');
+    if (!header) {
+        return;
+    }
+
     header.innerHTML = `
+    <button type="button" class="mobileMenuToggle" id="mobileMenuToggle" aria-label="Abrir menu de navegação"
+        aria-controls="mobileNavigation" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
     <div class="logo">
         <a href="index.html"><img src="img/logo.png" alt=""></a>
     </div>
@@ -47,7 +65,10 @@ function montarHeader() {
             </button>
 
             <div class="messagesDropdownMenu" id="messagesMenu" hidden>
-                <div class="messagesDropdownTitle" data-i18n="messagesTitle">Caixa de mensagem</div>
+                <div class="mobileFullscreenToolbar">
+                    <div class="messagesDropdownTitle" data-i18n="messagesTitle">Caixa de mensagem</div>
+                    <button type="button" class="mobileDropdownClose" data-close-mobile-dropdown aria-label="Fechar mensagens">×</button>
+                </div>
 
                 <div class="messagesDropdownList">
                     <div class="notificationCard">
@@ -72,7 +93,10 @@ function montarHeader() {
             <div class="notificationsDropdownMenu" id="notificationsMenu" hidden>
                 <div class="notificationsDropdownHeader">
                     <div class="notificationsDropdownTitle" data-i18n="notificationsTitle">Caixa de notificação</div>
-                    <button type="button" class="notificationsClearAllButton" id="notificationsClearAllButton" data-i18n="notificationsClearAll">Excluir todas</button>
+                    <div class="notificationsDropdownHeaderActions">
+                        <button type="button" class="notificationsClearAllButton" id="notificationsClearAllButton" data-i18n="notificationsClearAll">Excluir todas</button>
+                        <button type="button" class="mobileDropdownClose" data-close-mobile-dropdown aria-label="Fechar notificações">×</button>
+                    </div>
                 </div>
 
                 <div class="notificationsDropdownList" id="notificationsList">
@@ -154,7 +178,16 @@ function montarHeader() {
                 </div>
             </div>
         </div>
-    </div>`;
+    </div>
+
+    <nav class="mobileNavigation" id="mobileNavigation" aria-label="Navegação principal" hidden>
+        ${buildMobileNavItem('explorar', 'Explorar', 'index.html')}
+        ${buildMobileNavItem('galeria', 'Galeria', 'galeria.html')}
+        ${buildMobileNavItem('vagas', 'Vagas', 'vagas.html')}
+        ${buildMobileNavItem('criar', 'Criar', 'adicionarprojeto.html')}
+        <div class="mobileNavigation__divider" aria-hidden="true"></div>
+        <div class="mobileHeaderActions" id="mobileHeaderActions"></div>
+    </nav>`;
 }
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -213,6 +246,43 @@ document.addEventListener('DOMContentLoaded', function () {
     const searchDropdownTitle = document.getElementById('inputPesquisaDropdownTitle');
     const searchDropdownList = document.getElementById('inputPesquisaDropdownList');
     const searchIconButtons = searchWrapper ? searchWrapper.querySelectorAll('.inputPesquisaIconButton') : [];
+    const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+    const mobileNavigation = document.getElementById('mobileNavigation');
+    const mobileHeaderActions = document.getElementById('mobileHeaderActions');
+    const menusHeader = document.querySelector('.menusHeader');
+    const perfilDropdown = document.querySelector('.perfilDropdown');
+    const compactHeaderQuery = window.matchMedia('(max-width: 950px)');
+    const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const movableHeaderActions = [
+        document.querySelector('.messagesDropdown'),
+        document.querySelector('.notificationsDropdown'),
+        document.querySelector('.optionsDropdown')
+    ].filter(Boolean);
+
+    const syncCompactHeaderActions = function () {
+        if (!(mobileHeaderActions && menusHeader && perfilDropdown)) {
+            return;
+        }
+
+        if (compactHeaderQuery.matches) {
+            movableHeaderActions.forEach(function (action) {
+                mobileHeaderActions.appendChild(action);
+            });
+            return;
+        }
+
+        if (movableHeaderActions[0]) {
+            menusHeader.insertBefore(movableHeaderActions[0], perfilDropdown);
+        }
+        if (movableHeaderActions[1]) {
+            menusHeader.insertBefore(movableHeaderActions[1], perfilDropdown);
+        }
+        if (movableHeaderActions[2]) {
+            menusHeader.appendChild(movableHeaderActions[2]);
+        }
+    };
+
+    syncCompactHeaderActions();
 
     const userSearchApiUrl = typeof ip_api !== 'undefined' ? ip_api + '/usuarios/pesquisar' : '';
     const historySearchApiUrl = typeof ip_api !== 'undefined' ? ip_api + '/usuarios/historico-pesquisas' : '';
@@ -248,6 +318,7 @@ document.addEventListener('DOMContentLoaded', function () {
     ].filter(function (dropdown) {
         return dropdown.root && dropdown.button && dropdown.menu;
     });
+    const pendingDropdownClosures = new WeakMap();
 
     document.querySelectorAll('a[href="adicionarprojeto.html"], a[href="adicionarvaga.html"]').forEach(function (link) {
         link.addEventListener('click', async function (event) {
@@ -573,19 +644,71 @@ document.addEventListener('DOMContentLoaded', function () {
         setSearchIcons(false);
     };
 
+    const isFullscreenMobileDropdown = function (dropdown) {
+        return compactHeaderQuery.matches &&
+            !reducedMotionQuery.matches &&
+            mobileNavigation &&
+            mobileNavigation.contains(dropdown.root) &&
+            (dropdown.menu.id === 'messagesMenu' || dropdown.menu.id === 'notificationsMenu');
+    };
+
     const closeDropdown = function (dropdown) {
         dropdown.root.classList.remove('is-open');
         dropdown.button.setAttribute('aria-expanded', 'false');
-        dropdown.menu.hidden = true;
+
+        if (dropdown.menu.hidden || !isFullscreenMobileDropdown(dropdown)) {
+            dropdown.menu.classList.remove('is-closing');
+            dropdown.menu.hidden = true;
+            return;
+        }
+
+        if (pendingDropdownClosures.has(dropdown.menu)) {
+            return;
+        }
+
+        const finishClosing = function (event) {
+            if (event && event.target !== dropdown.menu) {
+                return;
+            }
+
+            dropdown.menu.classList.remove('is-closing');
+            dropdown.menu.hidden = true;
+            pendingDropdownClosures.delete(dropdown.menu);
+        };
+
+        pendingDropdownClosures.set(dropdown.menu, finishClosing);
+        dropdown.menu.addEventListener('animationend', finishClosing);
+        dropdown.menu.classList.add('is-closing');
+    };
+
+    const closeMobileNavigation = function () {
+        if (!(mobileMenuToggle && mobileNavigation)) {
+            return;
+        }
+
+        mobileMenuToggle.classList.remove('is-open');
+        mobileMenuToggle.setAttribute('aria-expanded', 'false');
+        mobileMenuToggle.setAttribute('aria-label', 'Abrir menu de navegação');
+        mobileNavigation.hidden = true;
     };
 
     const openDropdown = function (dropdown) {
+        const pendingClose = pendingDropdownClosures.get(dropdown.menu);
+        if (pendingClose) {
+            dropdown.menu.removeEventListener('animationend', pendingClose);
+            pendingDropdownClosures.delete(dropdown.menu);
+        }
+
+        dropdown.menu.classList.remove('is-closing');
         dropdowns.forEach(function (item) {
             if (item !== dropdown) {
                 closeDropdown(item);
             }
         });
 
+        if (!(mobileNavigation && mobileNavigation.contains(dropdown.root))) {
+            closeMobileNavigation();
+        }
         dropdown.root.classList.add('is-open');
         dropdown.button.setAttribute('aria-expanded', 'true');
         dropdown.menu.hidden = false;
@@ -594,6 +717,38 @@ document.addEventListener('DOMContentLoaded', function () {
     const closeAllDropdowns = function () {
         dropdowns.forEach(closeDropdown);
     };
+
+    if (mobileMenuToggle && mobileNavigation) {
+        mobileMenuToggle.addEventListener('click', function (event) {
+            event.stopPropagation();
+
+            if (!mobileNavigation.hidden) {
+                closeMobileNavigation();
+                return;
+            }
+
+            closeAllDropdowns();
+            closeSearchDropdown();
+            mobileMenuToggle.classList.add('is-open');
+            mobileMenuToggle.setAttribute('aria-expanded', 'true');
+            mobileMenuToggle.setAttribute('aria-label', 'Fechar menu de navegação');
+            mobileNavigation.hidden = false;
+        });
+    }
+
+    document.querySelectorAll('[data-close-mobile-dropdown]').forEach(function (button) {
+        button.addEventListener('click', function (event) {
+            event.stopPropagation();
+
+            const dropdown = dropdowns.find(function (item) {
+                return item.root.contains(button);
+            });
+
+            if (dropdown) {
+                closeDropdown(dropdown);
+            }
+        });
+    });
 
     if (searchWrapper && searchInput && searchDropdown) {
         searchInput.setAttribute('aria-expanded', 'false');
@@ -672,6 +827,10 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
+        if (mobileNavigation && mobileMenuToggle && !mobileNavigation.contains(event.target) && !mobileMenuToggle.contains(event.target)) {
+            closeMobileNavigation();
+        }
+
         if (searchWrapper && !searchWrapper.contains(event.target)) {
             closeSearchDropdown();
         }
@@ -681,13 +840,33 @@ document.addEventListener('DOMContentLoaded', function () {
         if (event.key === 'Escape') {
             closeAllDropdowns();
             closeSearchDropdown();
+            closeMobileNavigation();
         }
     });
 
     window.addEventListener('scroll', function () {
         closeAllDropdowns();
         closeSearchDropdown();
+        closeMobileNavigation();
     }, { passive: true });
+
+    window.addEventListener('resize', function () {
+        if (window.innerWidth > 950) {
+            closeMobileNavigation();
+        }
+    });
+
+    const handleCompactHeaderChange = function () {
+        closeAllDropdowns();
+        closeMobileNavigation();
+        syncCompactHeaderActions();
+    };
+
+    if (compactHeaderQuery.addEventListener) {
+        compactHeaderQuery.addEventListener('change', handleCompactHeaderChange);
+    } else if (compactHeaderQuery.addListener) {
+        compactHeaderQuery.addListener(handleCompactHeaderChange);
+    }
 });
 
 montarHeader();

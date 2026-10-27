@@ -2186,6 +2186,41 @@ textarea {
     display: flex;
     align-items: center;
     padding: 0 30px;
+    position: relative;
+    z-index: 30;
+}
+
+.mobileMenuToggle,
+.mobileNavigation {
+    display: none;
+}
+
+.mobileDropdownClose {
+    display: none;
+}
+
+@keyframes mobileFullscreenPanelEnter {
+    from {
+        opacity: 0;
+        transform: translateY(18px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes mobileFullscreenPanelExit {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    to {
+        opacity: 0;
+        transform: translateY(14px);
+    }
 }
 
 .logo {
@@ -8402,4 +8437,318 @@ body.vaga-page.vaga-page--v2{
 
 .configuracoes-page.modo-escuro .select-pill::after {
     border-color: var(--textoClaro);
+}
+
+/* Navegação compacta para celular */
+@media (max-width: 950px) {
+    .cabecalho,
+    .galeria-page .cabecalho {
+        display: grid;
+        grid-template-columns: minmax(44px, 1fr) auto minmax(44px, 1fr);
+        grid-template-rows: 70px;
+        gap: 0;
+        height: 70px;
+        padding: 0 20px;
+        z-index: 100;
+    }
+
+    .mobileMenuToggle {
+        grid-column: 1;
+        grid-row: 1;
+        justify-self: start;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 5px;
+        width: 44px;
+        height: 44px;
+        padding: 8px;
+        border: 0;
+        border-radius: 10px;
+        background: transparent;
+        cursor: pointer;
+    }
+
+    .mobileMenuToggle span {
+        display: block;
+        width: 30px;
+        height: 3px;
+        border-radius: 999px;
+        background: #ffffff;
+        transform-origin: center;
+        transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    .mobileMenuToggle.is-open span:nth-child(1) {
+        transform: translateY(8px) rotate(45deg);
+    }
+
+    .mobileMenuToggle.is-open span:nth-child(2) {
+        opacity: 0;
+    }
+
+    .mobileMenuToggle.is-open span:nth-child(3) {
+        transform: translateY(-8px) rotate(-45deg);
+    }
+
+    .mobileMenuToggle:focus-visible {
+        outline: 2px solid var(--azulC);
+        outline-offset: 2px;
+    }
+
+    .logo,
+    .galeria-page .logo {
+        grid-column: 2;
+        grid-row: 1;
+        justify-self: center;
+        width: 125px;
+        height: auto;
+        margin: 0;
+        flex: none;
+    }
+
+    .logo a {
+        display: flex;
+        align-items: center;
+    }
+
+    .logo a img {
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+
+    .navegarPaginas,
+    .inputPesquisaWrapper {
+        display: none;
+    }
+
+    .menusHeader,
+    .galeria-page .menusHeader {
+        grid-column: 3;
+        grid-row: 1;
+        justify-self: end;
+        margin: 0;
+        gap: 0;
+    }
+
+    .menusHeader > .messagesDropdown,
+    .menusHeader > .notificationsDropdown,
+    .menusHeader > .optionsDropdown {
+        display: none;
+    }
+
+    #perfilMenuButton img {
+        width: 32px;
+        height: 32px;
+    }
+
+    .mobileNavigation {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        left: 0;
+        z-index: 35;
+        flex-direction: column;
+        padding: 12px 20px 18px;
+        background: var(--pretoHeader);
+        border-top: 1px solid rgba(255, 255, 255, 0.14);
+        box-shadow: 0 18px 26px rgba(0, 0, 0, 0.24);
+    }
+
+    .mobileNavigation:not([hidden]) {
+        display: flex;
+    }
+
+    .mobileNavigation__link {
+        display: flex;
+        align-items: center;
+        min-height: 46px;
+        padding: 10px 14px;
+        border-radius: 10px;
+        color: #ffffff;
+        font-size: 16px;
+        font-weight: 600;
+        transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .mobileNavigation__link:hover,
+    .mobileNavigation__link:focus-visible,
+    .mobileNavigation__link--active {
+        color: #ffffff;
+        background: rgba(99, 94, 236, 0.38);
+        outline: none;
+    }
+
+    .mobileNavigation__link:focus-visible {
+        box-shadow: 0 0 0 2px var(--azulC);
+    }
+
+    .mobileNavigation__divider {
+        height: 1px;
+        margin: 8px 14px;
+        background: rgba(255, 255, 255, 0.16);
+    }
+
+    .mobileHeaderActions {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .mobileHeaderActions .messagesDropdown,
+    .mobileHeaderActions .notificationsDropdown,
+    .mobileHeaderActions .optionsDropdown {
+        position: static;
+        display: block;
+    }
+
+    .mobileHeaderActions .menuHeaderButton {
+        width: 100%;
+        min-height: 46px;
+        padding: 10px 14px;
+        border-radius: 10px;
+        color: #ffffff;
+        justify-content: flex-start;
+        gap: 12px;
+    }
+
+    .mobileHeaderActions .menuHeaderButton::before {
+        order: 1;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    .mobileHeaderActions #messagesMenuButton::before {
+        content: 'Mensagens';
+    }
+
+    .mobileHeaderActions #notificationsMenuButton::before {
+        content: 'Notificações';
+    }
+
+    .mobileHeaderActions #optionsMenuButton::before {
+        content: 'Mais opções';
+    }
+
+    .mobileHeaderActions .menuHeaderButton img {
+        order: 0;
+        width: 22px;
+        height: 22px;
+        object-fit: contain;
+    }
+
+    .mobileHeaderActions .menuHeaderButton:hover {
+        transform: none;
+        background: rgba(99, 94, 236, 0.38);
+    }
+
+    .mobileHeaderActions .messagesDropdownMenu,
+    .mobileHeaderActions .notificationsDropdownMenu,
+    .mobileHeaderActions .optionsDropdownMenu {
+        position: static;
+        width: 100%;
+        margin: 4px 0 8px;
+        box-shadow: none;
+    }
+
+    .mobileHeaderActions .messagesDropdownMenu,
+    .mobileHeaderActions .notificationsDropdownMenu {
+        position: fixed;
+        inset: 0;
+        z-index: 50;
+        width: 100vw;
+        min-height: 100dvh;
+        height: 100dvh;
+        margin: 0;
+        padding: max(20px, env(safe-area-inset-top)) 20px 24px;
+        border-radius: 0;
+        background: #f7f7f7;
+        overflow-y: auto;
+    }
+
+    .mobileHeaderActions .messagesDropdownMenu:not([hidden]),
+    .mobileHeaderActions .notificationsDropdownMenu:not([hidden]) {
+        display: flex;
+        flex-direction: column;
+        animation: mobileFullscreenPanelEnter 0.26s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    .mobileHeaderActions .messagesDropdownMenu.is-closing,
+    .mobileHeaderActions .notificationsDropdownMenu.is-closing {
+        pointer-events: none;
+        animation: mobileFullscreenPanelExit 0.2s ease-in both;
+    }
+
+    .mobileHeaderActions .mobileFullscreenToolbar,
+    .mobileHeaderActions .notificationsDropdownHeader {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin: 0 0 18px;
+    }
+
+    .mobileHeaderActions .messagesDropdownTitle,
+    .mobileHeaderActions .notificationsDropdownTitle {
+        margin: 0;
+        font-size: 20px;
+        font-weight: 700;
+    }
+
+    .mobileHeaderActions .notificationsDropdownHeaderActions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .mobileHeaderActions .mobileDropdownClose {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+        width: 40px;
+        height: 40px;
+        padding: 0;
+        border: 0;
+        border-radius: 50%;
+        background: #e5e5e5;
+        color: #111111;
+        font-size: 30px;
+        line-height: 1;
+        cursor: pointer;
+    }
+
+    .mobileHeaderActions .mobileDropdownClose:hover,
+    .mobileHeaderActions .mobileDropdownClose:focus-visible {
+        background: #d6d6d6;
+        outline: 2px solid var(--azulC);
+        outline-offset: 2px;
+    }
+
+    .mobileHeaderActions .messagesDropdownList,
+    .mobileHeaderActions .notificationsDropdownList {
+        flex: 1;
+        max-height: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .mobileHeaderActions .messagesDropdownMenu:not([hidden]),
+    .mobileHeaderActions .notificationsDropdownMenu:not([hidden]) {
+        animation: none;
+    }
+}
+
+@media (max-width: 360px) {
+    .cabecalho,
+    .galeria-page .cabecalho {
+        padding-right: 14px;
+        padding-left: 14px;
+    }
+
+    .logo,
+    .galeria-page .logo {
+        width: 110px;
+    }
 }
