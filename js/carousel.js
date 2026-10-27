@@ -12,6 +12,18 @@ document.addEventListener('DOMContentLoaded', function () {
         ['#303030', '#4d4d4d'],
         ['#262626', '#404040']
     ];
+    var artesCategoria = [
+        { termos: ['fotografia', 'foto'], imagem: '../img/categories/fotografia.png', posicao: 'center 48%' },
+        { termos: ['3d', 'animacao', 'game art', 'render'], imagem: '../img/categories/arte-3d.png', posicao: 'center 46%' },
+        { termos: ['ui', 'ux'], imagem: '../img/categories/ui-ux.png', posicao: 'center 52%' },
+        { termos: ['produto', 'arquitetura'], imagem: '../img/categories/design-produtos.png', posicao: 'center 52%' },
+        { termos: ['moda'], imagem: '../img/categories/moda.png', posicao: 'center 46%' },
+        {
+            termos: ['todos', 'design', 'desenho', 'branding', 'marca', 'logotipo', 'tipografia', 'lettering', 'ilustracao', 'concept', 'urbano', 'storyboard', 'motion', 'editorial', 'direcao de arte'],
+            imagem: '../img/categories/design-grafico.png',
+            posicao: 'center 48%'
+        }
+    ];
 
     if (!track || !prev || !next) {
         return;
@@ -19,6 +31,29 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function getCorCategoria(index) {
         return cores[index % cores.length];
+    }
+
+    function normalizarCategoria(nome) {
+        return String(nome || '')
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .toLowerCase();
+    }
+
+    function aplicarArteCategoria(botao, nome, cor) {
+        var nomeNormalizado = normalizarCategoria(nome);
+        var arte = artesCategoria.find(function (item) {
+            return item.termos.some(function (termo) {
+                return nomeNormalizado.indexOf(termo) !== -1;
+            });
+        });
+
+        botao.style.setProperty('--category-fallback', 'linear-gradient(135deg, ' + cor[0] + ', ' + cor[1] + ')');
+
+        if (arte) {
+            botao.style.setProperty('--category-image', 'url("' + arte.imagem + '")');
+            botao.style.setProperty('--category-position', arte.posicao);
+        }
     }
 
     function setCategoriaAtiva(botaoAtivo) {
@@ -32,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function () {
         var btn = document.createElement('button');
         btn.type = 'button';
         btn.className = 'category-card is-active';
-        btn.style.background = 'linear-gradient(135deg, ' + cor[0] + ', ' + cor[1] + ')';
+        aplicarArteCategoria(btn, 'Todos', cor);
         btn.setAttribute('aria-label', 'Ver todos os posts');
         btn.innerHTML = '<span>Todos</span>';
         btn.addEventListener('click', function () {
@@ -54,7 +89,7 @@ document.addEventListener('DOMContentLoaded', function () {
         var btn = document.createElement('button');
         btn.type = 'button';
         btn.className = 'category-card';
-        btn.style.background = 'linear-gradient(135deg, ' + cor[0] + ', ' + cor[1] + ')';
+        aplicarArteCategoria(btn, nome, cor);
         btn.setAttribute('aria-label', 'Ver categoria ' + nome);
 
         // Atualizado para refletir usos/posts no hover do botão

@@ -24,17 +24,52 @@ document.addEventListener('DOMContentLoaded', function () {
         { nome: 'Produto', cor: ['#3f2f1f', '#6a5032'] },
         { nome: 'Direção de arte', cor: ['#2f2f2f', '#505050'] }
     ];
+    var artesCategoria = [
+        { termos: ['fotografia', 'foto'], imagem: '../img/categories/fotografia.png', posicao: 'center 48%' },
+        { termos: ['3d', 'animacao', 'game art', 'render'], imagem: '../img/categories/arte-3d.png', posicao: 'center 46%' },
+        { termos: ['ui', 'ux'], imagem: '../img/categories/ui-ux.png', posicao: 'center 52%' },
+        { termos: ['produto', 'arquitetura'], imagem: '../img/categories/design-produtos.png', posicao: 'center 52%' },
+        { termos: ['moda'], imagem: '../img/categories/moda.png', posicao: 'center 46%' },
+        {
+            termos: ['design', 'desenho', 'branding', 'marca', 'logotipo', 'tipografia', 'lettering', 'ilustracao', 'concept', 'urbano', 'storyboard', 'motion', 'editorial', 'direcao de arte'],
+            imagem: '../img/categories/design-grafico.png',
+            posicao: 'center 48%'
+        }
+    ];
 
     var track = document.getElementById('categoriesTrack');
     if (!track) {
         return;
     }
 
+    function normalizarCategoria(nome) {
+        return String(nome || '')
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .toLowerCase();
+    }
+
+    function aplicarArteCategoria(card, categoria) {
+        var nomeNormalizado = normalizarCategoria(categoria.nome);
+        var arte = artesCategoria.find(function (item) {
+            return item.termos.some(function (termo) {
+                return nomeNormalizado.indexOf(termo) !== -1;
+            });
+        });
+
+        card.style.setProperty('--category-fallback', 'linear-gradient(135deg, ' + categoria.cor[0] + ', ' + categoria.cor[1] + ')');
+
+        if (arte) {
+            card.style.setProperty('--category-image', 'url("' + arte.imagem + '")');
+            card.style.setProperty('--category-position', arte.posicao);
+        }
+    }
+
     categorias.forEach(function (categoria) {
         var card = document.createElement('button');
         card.className = 'category-card';
         card.type = 'button';
-        card.style.background = 'linear-gradient(135deg, ' + categoria.cor[0] + ', ' + categoria.cor[1] + ')';
+        aplicarArteCategoria(card, categoria);
         card.setAttribute('aria-label', 'Filtrar por ' + categoria.nome);
         card.innerHTML = '<span>' + categoria.nome + '</span>';
         track.appendChild(card);
