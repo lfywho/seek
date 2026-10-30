@@ -8156,6 +8156,20 @@ body.vaga-page.vaga-page--v2{
     justify-content: flex-end;
 }
 
+.configuracoes-page .panel-actions--account {
+    flex-wrap: wrap;
+}
+
+.configuracoes-page .panel-actions--account .button--primary {
+    margin-left: auto;
+}
+
+.configuracoes-page .panel-actions--account #configuracoesContaFeedback {
+    flex: 0 0 100%;
+    margin: 0;
+    text-align: right;
+}
+
 .configuracoes-page .panel-actions .button--primary {
     min-width: 110px;
     height: 38px;

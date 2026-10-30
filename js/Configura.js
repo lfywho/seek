@@ -15,8 +15,31 @@ function mostrar(classe, elemento) {
   if (painel) {
     painel.style.display = 'block';
     painel.classList.add('active');
+    try {
+      sessionStorage.setItem('configuracoesAbaAtiva', classe);
+    } catch (error) {
+      console.warn('Não foi possível salvar a aba ativa:', error);
+    }
   }
 }
+
+function restaurarAbaAtiva() {
+  let classeSalva = 'privacidade';
+
+  try {
+    classeSalva = sessionStorage.getItem('configuracoesAbaAtiva') || classeSalva;
+  } catch (error) {
+    console.warn('Não foi possível ler a aba salva:', error);
+  }
+
+  const painel = document.querySelector('.Esquerda > .' + classeSalva);
+  if (!painel) return;
+
+  const link = document.querySelector('.sidebar__menu-item a[onclick*="' + classeSalva + '"]');
+  mostrar(classeSalva, link);
+}
+
+document.addEventListener('DOMContentLoaded', restaurarAbaAtiva);
 
 // Comportamento do Dropdown
 document.addEventListener('click', function(e) {

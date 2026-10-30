@@ -7,9 +7,229 @@ document.addEventListener('DOMContentLoaded', function () {
     const salvarInformacoesButton = document.getElementById('configuracoesSalvarInformacoes');
     const informacoesFeedback = document.getElementById('configuracoesInformacoesFeedback');
     const notificacoesLista = document.getElementById('configuracoesNotificacoesLista');
+    const emailInput = document.getElementById('configuracoesEmail');
+    const senhaAtualInput = document.getElementById('configuracoesSenhaAtual');
+    const novaSenhaInput = document.getElementById('configuracoesNovaSenha');
+    const confirmarContaButton = document.getElementById('configuracoesConfirmarConta');
+    const contaFeedback = document.getElementById('configuracoesContaFeedback');
     
     let usuarioAtual = null; // Dados básicos da sessão
     let perfilAtual = null;  // Dados detalhados do perfil (PF ou EMPRESA)
+
+    function mostrarFeedbackConta(mensagem, ehErro) {
+        if (!contaFeedback) return;
+        contaFeedback.textContent = mensagem;
+        contaFeedback.style.color = ehErro ? '#b91c1c' : '#166534';
+    }
+
+    async function obterNotificationManager() {
+        if (window.NotificationManager) return window.NotificationManager;
+        const modulo = await import('../NotificationManager.js');
+        window.NotificationManager = modulo.default;
+        return modulo.default;
+    }
+
+    async function confirmarAlteracao(titulo, mensagem) {
+        const manager = await obterNotificationManager();
+        return new Promise(function (resolve) {
+            manager.modal(mensagem, {
+                title: titulo,
+                closeOnEscape: false,
+                closeOnOverlay: false,
+                buttons: [
+                    {
+                        text: 'Cancelar',
+                        variant: 'secondary',
+                        onClick: function () {
+                            resolve(false);
+                        }
+                    },
+                    {
+                        text: 'Confirmar',
+                        onClick: function () {
+                            resolve(true);
+                        }
+                    }
+                ]
+            });
+        });
+    }
+
+    async function solicitarCodigoEmail() {
+        const manager = await obterNotificationManager();
+        return new Promise(function (resolve) {
+            manager.modal('Digite o código enviado para o novo e-mail para concluir a alteração.', {
+                title: 'Confirmar novo e-mail',
+                closeOnEscape: false,
+                closeOnOverlay: false,
+                input: {
+                    label: 'Código de confirmação',
+                    type: 'text',
+                    inputMode: 'numeric',
+                    autocomplete: 'one-time-code',
+                    maxLength: 6
+                },
+                buttons: [
+                    {
+                        text: 'Cancelar',
+                        variant: 'secondary',
+                        onClick: function () {
+                            resolve('');
+                        }
+                    },
+                    {
+                        text: 'Confirmar',
+                        onClick: function (codigo) {
+                            resolve(String(codigo || '').trim());
+                        }
+                    }
+                ]
+            });
+        });
+    }
+
+    async function lerResposta(response) {
+        try {
+            return await response.json();
+        } catch (error) {
+            return {};
+        }
+    }
+
+    async function alterarEmail() {
+        const novoEmail = emailInput ? emailInput.value.trim() : '';
+        const senhaAtual = senhaAtualInput ? senhaAtualInput.value : '';
+
+        if (!novoEmail || !senhaAtual) {
+            mostrarFeedbackConta('Informe o novo e-mail e a senha atual.', true);
+            return false;
+        }
+
+        const confirmado = await confirmarAlteracao(
+            'Confirmar alteração de e-mail',
+            'Deseja solicitar a alteração do seu e-mail? Um código de confirmação será enviado para o novo endereço.'
+        );
+        if (!confirmado) return false;
+
+        confirmarContaButton.disabled = true;
+        mostrarFeedbackConta('Enviando código de confirmação...', false);
+
+        try {
+            const response = await fetch(ip_api + '/auth/email', {
+                method: 'PUT',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    novo_email: novoEmail,
+                    senha_atual: senhaAtual
+                })
+            });
+            const res = await lerResposta(response);
+
+            if (!response.ok || !res.success) {
+                throw new Error(res.message || 'Não foi possível solicitar a alteração do e-mail.');
+            }
+
+            const codigo = await solicitarCodigoEmail();
+            if (!codigo || !codigo.trim()) {
+                mostrarFeedbackConta('A alteração foi solicitada, mas o código não foi informado.', true);
+                return false;
+            }
+
+            const confirmacaoResponse = await fetch(ip_api + '/auth/email/confirmar', {
+                method: 'POST',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ codigo: codigo.trim() })
+            });
+            const confirmacao = await lerResposta(confirmacaoResponse);
+
+            if (!confirmacaoResponse.ok || !confirmacao.success) {
+                throw new Error(confirmacao.message || 'Não foi possível confirmar o novo e-mail.');
+            }
+
+            if (usuarioAtual) usuarioAtual.email = novoEmail;
+            mostrarFeedbackConta(confirmacao.message || 'E-mail alterado com sucesso.', false);
+            if (!novaSenhaInput || !novaSenhaInput.value) {
+                senhaAtualInput.value = '';
+            }
+            await carregarUsuarioSidebar();
+            return true;
+        } catch (error) {
+            console.error('Erro ao alterar e-mail:', error);
+            mostrarFeedbackConta(error.message || 'Falha na conexão com o servidor.', true);
+            return false;
+        } finally {
+            confirmarContaButton.disabled = false;
+        }
+    }
+
+    async function alterarSenha() {
+        const senhaAtual = senhaAtualInput ? senhaAtualInput.value : '';
+        const novaSenha = novaSenhaInput ? novaSenhaInput.value : '';
+
+        if (!senhaAtual || !novaSenha) {
+            mostrarFeedbackConta('Informe a senha atual e a nova senha.', true);
+            return false;
+        }
+
+        const confirmado = await confirmarAlteracao(
+            'Confirmar alteração de senha',
+            'Deseja alterar sua senha? Você poderá precisar entrar novamente em outros dispositivos.'
+        );
+        if (!confirmado) return false;
+
+        confirmarContaButton.disabled = true;
+        mostrarFeedbackConta('Alterando senha...', false);
+
+        try {
+            const response = await fetch(ip_api + '/auth/password', {
+                method: 'PUT',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    senha_atual: senhaAtual,
+                    nova_senha: novaSenha
+                })
+            });
+            const res = await lerResposta(response);
+
+            if (!response.ok || !res.success) {
+                throw new Error(res.message || 'Não foi possível alterar a senha.');
+            }
+
+            mostrarFeedbackConta(res.message || 'Senha alterada com sucesso.', false);
+            senhaAtualInput.value = '';
+            novaSenhaInput.value = '';
+            return true;
+        } catch (error) {
+            console.error('Erro ao alterar senha:', error);
+            mostrarFeedbackConta(error.message || 'Falha na conexão com o servidor.', true);
+            return false;
+        } finally {
+            confirmarContaButton.disabled = false;
+        }
+    }
+
+    async function alterarCredenciais() {
+        mostrarFeedbackConta('', false);
+        const novoEmail = emailInput ? emailInput.value.trim() : '';
+        const senhaAtual = senhaAtualInput ? senhaAtualInput.value : '';
+        const novaSenha = novaSenhaInput ? novaSenhaInput.value : '';
+
+        const emailSeraAlterado = novoEmail && novoEmail !== String(usuarioAtual && usuarioAtual.email || '').trim();
+
+        if (emailSeraAlterado) {
+            const emailAlterado = await alterarEmail();
+            if (!emailAlterado) return;
+        }
+
+        if (senhaAtual && novaSenha) {
+            await alterarSenha();
+        } else if (!emailSeraAlterado) {
+            mostrarFeedbackConta('Informe um novo e-mail ou preencha os campos de senha.', true);
+        }
+    }
 
     async function inicializar() {
         const usuario = window.seekSessaoAutenticada
@@ -19,6 +239,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         usuarioAtual = usuario;
         aplicarDadosNoAside(usuarioAtual);
+        if (emailInput) emailInput.value = usuarioAtual.email || '';
         await carregarDadosPerfil();
         await carregarPreferenciasNotificacoes();
     }
@@ -36,7 +257,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
-            const res = await response.json();
+            const res = await lerResposta(response);
             if (response.ok && res.success) {
                 usuarioAtual = res.data.usuario;
                 aplicarDadosNoAside(usuarioAtual);
@@ -54,7 +275,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 credentials: 'include'
             });
 
-            const res = await response.json();
+            const res = await lerResposta(response);
             
             if (response.ok && res.success) {
                 perfilAtual = res.data;
@@ -176,22 +397,30 @@ document.addEventListener('DOMContentLoaded', function () {
             if (fotoInput && fotoInput.files[0]) {
                 const fdFoto = new FormData();
                 fdFoto.append('foto', fotoInput.files[0]);
-                await fetch(ip_api + '/usuarios/foto-perfil', {
+                const respostaFoto = await fetch(ip_api + '/usuarios/foto-perfil', {
                     method: 'PUT',
                     credentials: 'include',
                     body: fdFoto
                 });
+                const resultadoFoto = await lerResposta(respostaFoto);
+                if (!respostaFoto.ok || resultadoFoto.success === false) {
+                    throw new Error(resultadoFoto.message || 'Não foi possível atualizar a foto de perfil.');
+                }
             }
 
             const bannerInput = document.getElementById('configuracoesBannerInput');
             if (bannerInput && bannerInput.files[0]) {
                 const fdBanner = new FormData();
                 fdBanner.append('banner', bannerInput.files[0]);
-                await fetch(ip_api + '/usuarios/banner-perfil', {
+                const respostaBanner = await fetch(ip_api + '/usuarios/banner-perfil', {
                     method: 'PUT',
                     credentials: 'include',
                     body: fdBanner
                 });
+                const resultadoBanner = await lerResposta(respostaBanner);
+                if (!respostaBanner.ok || resultadoBanner.success === false) {
+                    throw new Error(resultadoBanner.message || 'Não foi possível atualizar o banner.');
+                }
             }
 
             let corpoRequisicao = {};
@@ -231,7 +460,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 body: JSON.stringify(corpoRequisicao)
             });
 
-            const res = await response.json();
+            const res = await lerResposta(response);
 
             if (response.ok) {
                 mostrarFeedback('Configurações salvas com sucesso!', false);
@@ -247,7 +476,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         } catch (error) {
             console.error(error);
-            mostrarFeedback('Falha na conexão com o servidor.', true);
+            mostrarFeedback(error.message || 'Falha na conexão com o servidor.', true);
         } finally {
             salvarInformacoesButton.disabled = false;
             salvarInformacoesButton.textContent = 'Salvar';
@@ -256,6 +485,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (salvarInformacoesButton) {
         salvarInformacoesButton.addEventListener('click', salvarInformacoes);
+    }
+
+    if (confirmarContaButton) {
+        confirmarContaButton.addEventListener('click', alterarCredenciais);
     }
 
     const dicNotificacoes = {

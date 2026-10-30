@@ -87,6 +87,27 @@
     margin-bottom: 24px;
 }
 
+.seek-notification__input-label {
+    display: block;
+    margin: -8px 0 24px;
+    color: inherit;
+    font-weight: 600;
+}
+
+.seek-notification__input {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 44px;
+    margin-top: 8px;
+    padding: 10px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    color: #222;
+    background: #fff;
+    font: inherit;
+}
+
 .seek-notification__actions {
     display: flex;
     justify-content: center;

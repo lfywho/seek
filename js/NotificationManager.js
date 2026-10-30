@@ -74,6 +74,26 @@ const NotificationManager = (() => {
         text.textContent = String(message ?? '');
         dialog.appendChild(text);
 
+        let input;
+        if (options.input) {
+            const inputLabel = document.createElement('label');
+            inputLabel.className = 'seek-notification__input-label';
+            inputLabel.textContent = String(options.input.label || 'Valor');
+
+            input = document.createElement('input');
+            input.className = 'seek-notification__input';
+            input.type = options.input.type || 'text';
+            input.value = options.input.value || '';
+            input.placeholder = options.input.placeholder || '';
+            input.autocomplete = options.input.autocomplete || 'off';
+            input.required = options.input.required !== false;
+            if (options.input.inputMode) input.inputMode = options.input.inputMode;
+            if (options.input.maxLength) input.maxLength = options.input.maxLength;
+
+            inputLabel.appendChild(input);
+            dialog.appendChild(inputLabel);
+        }
+
         const buttons = Array.isArray(options.buttons) ? options.buttons.slice(0, 2) : [];
         if (buttons.length) {
             const actions = document.createElement('div');
@@ -87,7 +107,9 @@ const NotificationManager = (() => {
                 action.addEventListener('click', async () => {
                     action.disabled = true;
                     try {
-                        if (typeof button.onClick === 'function') await button.onClick();
+                        if (typeof button.onClick === 'function') {
+                            await button.onClick(input ? input.value : undefined);
+                        }
                     } finally {
                         close(overlay);
                     }
@@ -118,8 +140,12 @@ const NotificationManager = (() => {
             };
             document.addEventListener('keydown', onKeyDown);
         }
-        const firstButton = dialog.querySelector('button');
-        if (firstButton) firstButton.focus();
+        if (input) {
+            input.focus();
+        } else {
+            const firstButton = dialog.querySelector('button');
+            if (firstButton) firstButton.focus();
+        }
         return overlay;
     }
 
